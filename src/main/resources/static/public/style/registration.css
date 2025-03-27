@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #202020;
+}
+
+.registration {
+    width: 100%;
+    height: calc(100vh - 80px);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 60%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.registration-form-holder {
+    width: 80%;
+    padding: 50px;
+
+    border: solid 3px #ffffff;
+    border-radius: 18px;
+    letter-spacing: 0.05em;
+
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.registration-title {
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 30px;
+
+    font-size: 36px;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.registration-table {
+    border-spacing: 2px 20px;
+}
+
+.registration-table tr td:last-child {
+    text-align: end;
+}
+
+.field-label {
+    font-size: 36px;
+}
+
+.field-input {
+    width: 95%;
+    padding: 0 20px;
+    border-radius: 25px;
+
+    font-size: 32px;
+    line-height: 1.3;
+    letter-spacing: 0.03em;
+}
+
+.field-input-center  {
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.registration-btn {
+    width: 35%;
+    padding: 10px 40px;
+    margin: 15px auto 0;
+
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+
+    border-radius: 16px;
+    border: solid 3px #000000;
+
+    background-color: #ffffff;
+
+    transition: color linear 0.15s,
+                background-color linear 0.15s,
+                border linear 0.15s;
+}
+
+.registration-btn:hover {
+    border: dashed 3px #ffffff;
+
+    color: #ffffff;
+    background-color: #000000;
+}
+
+.login-block {
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    text-align: center;
+
+    color: #ffffff;
+    opacity: 50%;
+}
+
+.login-block:hover {
+    opacity: 100%;
+}
+
+.login-link-text {
+    margin-right: 4px;
+}
+
+.login-link {
+    color: #ffffff;
+}
+
+.registration-error {
+    display: none;
+    text-align: center;
+}
+
+.registration-error-message {
+    width: 85%;
+    margin: 0 auto;
+
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+
+    color: #f93f3f;
+}

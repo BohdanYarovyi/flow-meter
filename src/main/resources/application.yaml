@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+app:
+  base-url: http://localhost:${server.port}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5002/flow-meter
+    username: serveruser
+    password: password123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: false

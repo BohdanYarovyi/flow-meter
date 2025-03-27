@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+		<meta charset="UTF-8">
+		<title>Header</title>
+		<link rel="stylesheet" href="public/style/header.css">
+</head>
+<body>
+		<header class="header">
+				<div class="header-logo">
+						<a href="/">Flowmeter</a>
+				</div>
+				<div class="header-navigation">
+						<div class="header-nav-item">
+								<a class="header-nav-button" href="/flow">Flow</a>
+						</div>
+						<div class="header-nav-item">
+								<a class="header-nav-button" href="/profile">Profile</a>
+						</div>
+						<div class="header-nav-item" sec:authorize  ="!isAuthenticated()">
+								<a class="header-nav-button" href="/login">Login</a>
+						</div>
+						<div class="header-nav-item" sec:authorize="isAuthenticated()">
+								<a class="header-nav-button" href="/logout">Logout</a>
+						</div>
+				</div>
+		</header>
+</body>
+</html>

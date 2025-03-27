@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #202020;
+}
+
+.login {
+    width: 100%;
+    height: calc(100vh - 80px);
+}
+
+.container {
+    width: 50%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.login-form-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+
+    width: 80%;
+    padding: 60px;
+    border: solid 3px #ffffff;
+    border-radius: 18px;
+
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.login-form-input-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    margin: 0 auto;
+}
+
+.form-label {
+    font-size: 44px;
+    letter-spacing: 0.05em;
+
+    color: #ffffff;
+}
+
+.form-input {
+    max-width: 80%;
+    padding: 0 26px;
+    border-radius: 25px;
+
+    font-size: 40px;
+    letter-spacing: 0.04em;
+}
+
+.form-login-btn {
+    padding: 10px 50px;
+    border: solid 3px #000000;
+    border-radius: 16px;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    color: #000000;
+    background-color: #ffffff;
+    cursor: pointer;
+
+    transition: color linear 0.15s,
+                background-color linear 0.15s,
+                border linear 0.15s;
+}
+
+.form-login-btn:hover {
+    color: #ffffff;
+    background-color: #000000;
+    border: dashed 3px #ffffff;
+}
+
+.registration-block {
+    margin-top: -20px;
+
+    font-size: 20px;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+
+    opacity: 50%;
+}
+
+.registration-block:hover {
+    opacity: 100%;
+}
+
+.registration-link-text {
+    margin-right: 4px;
+}
+
+.registration-link {
+    color: #ffffff;
+}
+
+.login-error {
+    display: none;
+    text-align: center;
+
+    width: 100%;
+}
+
+.login-error-message {
+    width: 85%;
+    margin: 0 auto;
+
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+
+    color: #f93f3f;
+}
+
+

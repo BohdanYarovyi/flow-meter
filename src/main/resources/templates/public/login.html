@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+		<meta charset="UTF-8">
+		<title>Login</title>
+		<link rel="stylesheet" href="/public/style/login.css">
+</head>
+<body>
+		<div th:insert="~{parts/header}"></div>
+
+		<div class="login">
+				<div class="container">
+						<div class="login-form-holder">
+								<form class="login-form" id="login-form">
+										<label class="login-form-input-item">
+												<span class="form-label">Login</span>
+												<input class="form-input" type="text" name="username" id="username">
+										</label>
+										<label class="login-form-input-item">
+												<span class="form-label">Password</span>
+												<input class="form-input" type="password" name="password" id="password">
+										</label>
+
+										<button class="form-login-btn" id="login-btn" type="submit">Login</button>
+
+										<div class="login-error">
+												<p class="login-error-message" id="login-error-holder">Default error message</p>
+										</div>
+
+										<div class="registration-block">
+												<span class="registration-link-text">Don't have account?</span>
+												<a class="registration-link" href="/registration">Sign up</a>
+										</div>
+								</form>
+						</div>
+				</div>
+		</div>
+
+		<script src="/public/js/login.js"></script>
+</body>
+</html>

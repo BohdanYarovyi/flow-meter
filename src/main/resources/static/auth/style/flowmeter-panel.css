@@ -1,0 +1,373 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+.panel {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: calc(100% - 80px);
+}
+
+.flow-panel {
+    width: 20%;
+    border: 2px solid #ffffff;
+
+    background-color: rgba(32, 32, 32, 95%);
+
+    padding: 35px;
+}
+
+.flows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.flows-is-empty {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: rgb(170, 170, 170);
+}
+
+.flow-item {
+    padding: 15px;
+    border: solid 2px #ffffff;
+    border-radius: 10px;
+
+    font-size: 30px;
+    letter-spacing: 0.04em;
+
+    color: #ffffff;
+    cursor: pointer;
+
+    opacity: 50%;
+    transition: opacity linear 0.05s;
+}
+
+.flow-item:hover {
+    opacity: 100%;
+}
+
+.flow-item.selected {
+    opacity: 100%;
+}
+
+.create-flow {
+    margin-top: 20px;
+    border-top: solid 1px #ffffff;
+
+    width: 100%;
+    text-align: center;
+}
+
+#create-flow-btn {
+    margin: 20px auto;
+    padding: 4px 50px;
+    border: solid 3px #ffffff;
+    border-radius: 18px;
+
+    font-size: 48px;
+
+    color: #ffffff;
+    background-color: #202020;
+    cursor: pointer;
+
+    transition: color linear 0.15s,
+                background-color linear 0.15s,
+                border linear 0.15s,
+                box-shadow linear 0.15s;
+}
+
+#create-flow-btn:hover {
+    border: solid 3px #202020;
+    color: #202020;
+    background-color: #ffffff;
+    box-shadow: 0 0 14px rgba(255, 255, 255, 60%);
+}
+
+.management-panel {
+    display: flex;
+    flex-direction: column;
+
+    width: 80%;
+}
+
+.timeline-panel {
+    border: 2px solid #ffffff;
+    padding: 20px;
+
+    background-color: rgba(32, 32, 32, 95%);
+    height: 15%;
+}
+
+.timeline-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.timeline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    min-height: 85px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+
+    border: solid 3px #ffffff;
+    border-radius: 18px ;
+
+    overflow-x: auto;
+}
+
+.step-item {
+    color: #202020;
+    border: solid 3px #202020;
+    border-radius: 18px;
+    padding: 10px 20px;
+    font-size: 25px;
+    font-weight: 800;
+    background-color: #ffffff;
+
+    cursor: pointer;
+
+    transition: color linear 0.1s,
+                background-color linear 0.1s,
+                border linear 0.1s;
+}
+
+.step-item:hover {
+    color: #ffffff;
+    background-color: #202020;
+    border: solid 3px #ffffff;
+}
+
+.step-item.selected {
+    color: #ffffff;
+    background-color: #202020;
+    border: solid 3px #ffffff;
+
+    font-size: 28px;
+}
+
+.create-step-btn-holder {
+    margin: 20px;
+}
+
+#create-step-btn {
+    padding: 15px 20px;
+    border: solid 3px #ffffff;
+    border-radius: 18px;
+
+    color: #ffffff;
+    background-color: #202020;
+    font-size: 24px;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition: color linear 0.15s,
+                background-color linear 0.15s,
+                border linear 0.15s,
+                box-shadow linear 0.15s;
+}
+
+#create-step-btn:hover {
+    color: #202020;
+    background-color: #ffffff;
+    border: solid 3px #202020;
+    box-shadow: 0 0 14px rgba(255, 255, 255, 60%);
+}
+
+.case-block {
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px 60px;
+
+    border: solid 1px #ffffff;
+    background-color: rgba(32, 32, 32, 90%);
+    height: 85%;
+    overflow-y: auto;
+}
+
+.cases {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.case {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    padding: 20px 40px;
+
+    font-size: 38px;
+
+    color: #ffffff;
+    background-color: rgba(32, 32, 32, 100%);
+    border: solid 3px #ffffff;
+    border-radius: 15px;
+}
+
+.create-case-btn-holder {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#create-case-btn {
+    width: 30%;
+    padding: 10px 0;
+    border: solid 3px #ffffff;
+    border-radius: 18px;
+
+    font-size: 32px;
+
+    color: #ffffff;
+    background-color: #202020;
+    cursor: pointer;
+
+    transition: color linear 0.1s,
+                background-color linear 0.1s,
+                border linear 0.1s,
+                box-shadow linear 0.1s;
+}
+
+#create-case-btn:hover {
+    color: #202020;
+    background-color: #ffffff;
+    border-color: #000000;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 60%);
+}
+
+.hidden {
+    display: none;
+}
+
+/* modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 50%);
+}
+
+.modal-content {
+    width: 60%;
+    min-height: 10%;
+    padding: 50px;
+
+    border: solid 3px #ffffff;
+    border-radius: 30px;
+
+    background-color: rgba(32, 32, 32, 100%);
+}
+
+.modal-title {
+    margin-bottom: 35px;
+
+    text-align: center;
+    font-size: 36px;
+    letter-spacing: 0.075em;
+
+    color: #ffffff;
+}
+
+.form-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    width: 100%;
+    padding: 20px;
+}
+
+.form-input-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-input-item h3 {
+    font-size: 45px;
+
+    letter-spacing: 0.025em;
+    color: #ffffff;
+}
+
+.form-input-item input[type="text"] {
+    width: 55%;
+    border-radius: 18px;
+    padding: 10px;
+
+    font-size: 40px;
+}
+
+.form-input-item textarea {
+    resize: none;
+    overflow-y: hidden;
+
+    width: 55%;
+    padding: 10px;
+    border-radius: 18px;
+
+    font-size: 40px;
+}
+
+.form-input-item input[type="number"] {
+    width: 15%;
+    border-radius: 18px;
+    padding: 10px;
+
+    font-size: 40px;
+}
+
+#submit-create-flow-btn-holder {
+    margin-top: 30px;
+    width: 100%;
+    text-align: center;
+}
+
+#submit-create-flow-btn {
+    padding: 15px 60px;
+    border-radius: 18px;
+    border: solid 3px #202020;
+
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+
+    color: #202020;
+    background-color: #ffffff;
+}
+
+#submit-create-flow-btn:hover {
+    border: dashed 3px #ffffff;
+    color: #ffffff;
+    background-color: #202020;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 60%);
+}

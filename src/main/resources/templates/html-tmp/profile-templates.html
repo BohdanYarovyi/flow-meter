@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+		<template id="profile-template">
+				<h1 class="profile-title" id="account-login">
+						{defaultLogin}
+				</h1>
+				<div class="profile-content">
+						<div class="profile-content-item">
+								<div class="content-item-name">Name:</div>
+								<div class="content-item-value" id="fullname-field">Full Name Fulnameovich</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Date of birth:</div>
+								<div class="content-item-value" id="date-of-birth-field">10-10-2010</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Email:</div>
+								<div class="content-item-value" id="email-field">email.23@gamil.com</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Phone:</div>
+								<div class="content-item-value" id="phone-field">+380981234567</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Created at:</div>
+								<div class="content-item-value" id="created-at-field">N/A</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Updated at:</div>
+								<div class="content-item-value" id="updated-at-field">N/A</div>
+						</div>
+						<div class="profile-content-item">
+								<div class="content-item-name">Roles:</div>
+								<div class="content-item-value" id="role-holder">
+										<!--ROLES inserting here from js-->
+								</div>
+						</div>
+				</div>
+		</template>
+
+		<template id="role-template">
+				<p class="role marker">
+						<span id="role-field">USER</span>
+				</p>
+		</template>
+</body>
+</html>
