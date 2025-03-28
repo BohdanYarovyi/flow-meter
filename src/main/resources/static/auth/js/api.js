@@ -1,15 +1,16 @@
-const GET_CURRENT_ACCOUNT_ID_URL = `/api/accounts/current`;
-const GET_ACCOUNT_BY_ID_URL = (id) => `/api/accounts/${id}`;
-const CREATE_FLOW_FOR_ACCOUNT_BY_ID = (id) => `/api/accounts/${id}/flows`;
+const GET_CURRENT_ACCOUNT_ID__URL = `/api/accounts/current`;
+const GET_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}`;
+const GET_FLOWS_BY_ACCOUNT_ID__URL = (id) => `/api/accounts/${id}/flows`;
+const CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}/flows`;
 
-const GET_ALL_FLOWS_URL = `/api/flows`;
-const GET_FLOW_BY_ID_URL = (id) => `/api/flows/${id}`;
-const GET_FLOWS_BY_ACCOUNT_ID_URL = (id) => `/api/accounts/${id}/flows`;
+const GET_ALL_FLOWS__URL = `/api/flows`;
+const GET_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
+const CREATE_STEP_FOR_FLOW_BY_ID__URL = (flowId) => `/api/flows/${flowId}/steps`;
 
 
 export async function fetchCurrentAccountId() {
     try {
-        const response = await fetch(GET_CURRENT_ACCOUNT_ID_URL, {
+        const response = await fetch(GET_CURRENT_ACCOUNT_ID__URL, {
             method: "GET",
             headers: {"Content-Type": "application/json"},
         });
@@ -28,9 +29,9 @@ export async function fetchCurrentAccountId() {
     }
 }
 
-export async function fetchAccountById(id){
+export async function fetchAccountById(id) {
     try {
-        const response = await fetch(GET_ACCOUNT_BY_ID_URL(id), {
+        const response = await fetch(GET_ACCOUNT_BY_ID__URL(id), {
             method: "GET",
             headers: {"Content-Type": "application/json"},
         });
@@ -50,7 +51,7 @@ export async function fetchAccountById(id){
 
 export async function fetchFlowsByAccountId(accountId) {
     try {
-        const response = await fetch(GET_FLOWS_BY_ACCOUNT_ID_URL(accountId), {
+        const response = await fetch(GET_FLOWS_BY_ACCOUNT_ID__URL(accountId), {
             method: "GET",
             headers: {"Content-Type": "application/json"}
         });
@@ -69,15 +70,36 @@ export async function fetchFlowsByAccountId(accountId) {
 
 export async function createFlowForAccountById(flow, accountId) {
     try {
-        const response = await fetch(CREATE_FLOW_FOR_ACCOUNT_BY_ID(accountId), {
+        const response = await fetch(CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL(accountId), {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(flow)
+            });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to create flow for account`);
+        }
+
+        return response.headers.get("location");
+    } catch (error) {
+        console.log("Error: ", error);
+        throw error;
+    }
+}
+
+export async function createStepForFlowById(step, flowId) {
+    try {
+
+        const response = await fetch(CREATE_STEP_FOR_FLOW_BY_ID__URL(flowId), {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(flow)
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify(step)
         });
 
         if (!response.ok) {
             const errorResponse = await response.json();
-            throw new Error(errorResponse.detail || `Failed to create flow for account ${accountId}`);
+            throw new Error(errorResponse.detail || `Failed to create step for flow`);
         }
 
         return response.headers.get("location");

@@ -260,7 +260,9 @@ body {
     display: none;
 }
 
+
 /* modal */
+/* create flow */
 .modal {
     position: fixed;
     top: 0;
@@ -346,13 +348,32 @@ body {
     font-size: 40px;
 }
 
-#submit-create-flow-btn-holder {
+#create-flow-error-block,
+#create-step-error-block {
+    display: none;
+    width: 100%;
+}
+
+#create-flow-error-message,
+#create-step-error-message {
+    width: 85%;
+    margin: 20px auto;
+
+    text-align: center;
+    color: #f93f3f;
+    font-size: 30px;
+    letter-spacing: 0.09em;
+    line-height: 1.3;
+}
+
+.btn-holder {
     margin-top: 30px;
     width: 100%;
     text-align: center;
 }
 
-#submit-create-flow-btn {
+#submit-create-flow-btn,
+#submit-create-step-btn {
     padding: 15px 60px;
     border-radius: 18px;
     border: solid 3px #202020;
@@ -365,9 +386,21 @@ body {
     background-color: #ffffff;
 }
 
-#submit-create-flow-btn:hover {
+#submit-create-flow-btn:hover,
+#submit-create-step-btn:hover {
     border: dashed 3px #ffffff;
     color: #ffffff;
     background-color: #202020;
     box-shadow: 0 0 15px rgba(255, 255, 255, 60%);
+}
+
+
+/* create step */
+#create-step-date {
+    padding: 10px 30px;
+    border: solid 3px #202020;
+    border-radius: 20px;
+    background-color: #fff;
+
+    font-size: 35px;
 }

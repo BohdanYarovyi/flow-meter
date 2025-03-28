@@ -2,10 +2,12 @@ package com.yarovyi.flowmeter.service;
 
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Flow;
+import com.yarovyi.flowmeter.domain.flow.Step;
 import com.yarovyi.flowmeter.repository.FlowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +27,10 @@ public class FlowServiceImpl implements FlowService {
         if (Objects.isNull(accountId))
             throw new NullPointerException("accountId is required");
 
-        return this.flowRepository.findAllByAccount_Id(accountId);
+        var flowsByAccountId = this.flowRepository.findAllByAccount_Id(accountId);
+        flowsByAccountId.forEach(flow -> flow.getSteps().sort(Comparator.comparing(Step::getDay)));
+
+        return flowsByAccountId;
     }
 
     @Override

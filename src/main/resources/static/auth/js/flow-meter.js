@@ -1,5 +1,5 @@
 import {
-    createFlowForAccountById,
+    createFlowForAccountById, createStepForFlowById,
     fetchCurrentAccountId,
     fetchFlowsByAccountId
 } from "./api.js";
@@ -13,7 +13,14 @@ import {
     cloneCreateStepBtnTemplate
 } from "../../template-loader.js";
 
-import {selectItem, clearContainers} from "../../util.js";
+import {
+    selectItem,
+    clearContainers,
+    openModalWindow,
+    closeModalWindow,
+    showError
+} from "../../util.js";
+
 import {validateCreatedFlow} from "../../validation.js";
 
 // components
@@ -31,6 +38,16 @@ const DOM = {
             inputDescription: document.getElementById("create-flow-description"),
             inputTargetPercentage: document.getElementById("create-flow-percentage"),
             submitButton: document.getElementById("submit-create-flow-btn"),
+            errorBlock: document.getElementById("create-flow-error-block"),
+            errorMessage: document.getElementById("create-flow-error-message"),
+        },
+        createStep: {
+            window: document.getElementById("create-step-modal-window"),
+            inputFlowId: document.getElementById("create-step-flowId"),
+            inputDate: document.getElementById("create-step-date"),
+            submitButton: document.getElementById("submit-create-step-btn"),
+            errorBlock: document.getElementById("create-step-error-block"),
+            errorMessage: document.getElementById("create-step-error-message")
         }
     }
 };
@@ -40,6 +57,7 @@ window.onload = loadPage;
 DOM.buttonCreateFlow.addEventListener("click", openCreateFlowModalWindow);
 DOM.modal.createFlow.inputDescription.addEventListener("input", adjustTextarea);
 DOM.modal.createFlow.submitButton.addEventListener("click", event=> createNewFlow(event));
+DOM.modal.createStep.submitButton.addEventListener("click", event => createNewStep(event));
 
 async function loadPage() {
     try {
@@ -92,7 +110,10 @@ function loadSteps(flow) {
         DOM.stepsContainer.appendChild(clone);
     }
 
-    DOM.buttonHolderCreateStep.appendChild(cloneCreateStepBtnTemplate());
+    const createStepBtn = cloneCreateStepBtnTemplate();
+    createStepBtn.querySelector("#create-step-btn")
+        .addEventListener("click", () => openCreateStepModalWindow(flow.id));
+    DOM.buttonHolderCreateStep.appendChild(createStepBtn);
 }
 
 function loadCases(step) {
@@ -116,18 +137,8 @@ function loadCases(step) {
 
 // modal - create flow
 function openCreateFlowModalWindow() {
-    const window = DOM.modal.createFlow.window;
-
-    window.classList.remove("hidden");
-    window.addEventListener('click', event => {
-        if (event.target === window) {
-            window.classList.add("hidden");
-        }
-    });
-}
-
-function closeCreateFlowModalWindow() {
-    DOM.modal.createFlow.window.classList.add("hidden");
+    DOM.modal.createFlow.errorBlock.style.display = "none";
+    openModalWindow(DOM.modal.createFlow.window);
 }
 
 function adjustTextarea() {
@@ -139,9 +150,10 @@ function adjustTextarea() {
 
 async function createNewFlow(event) {
     event.preventDefault();
+    DOM.modal.createFlow.submitButton.disabled = true;
 
     const currentAccountId = await fetchCurrentAccountId();
-    const createdFLow = Flow.createSimpleFlow(
+    const createdFLow = Flow.simpleFlow(
         DOM.modal.createFlow.inputTitle.value,
         DOM.modal.createFlow.inputDescription.value,
         DOM.modal.createFlow.inputTargetPercentage.value
@@ -150,15 +162,55 @@ async function createNewFlow(event) {
     try {
         validateCreatedFlow(createdFLow);
         await createFlowForAccountById(createdFLow, currentAccountId);
-        closeCreateFlowModalWindow();
+        closeModalWindow(DOM.modal.createFlow.window);
 
         window.location.reload();
     } catch (error) {
-        // todo:
         console.log("Error: ", error);
+        showError(
+            error,
+            DOM.modal.createFlow.errorBlock,
+            DOM.modal.createFlow.errorMessage
+        );
+    } finally {
+        DOM.modal.createFlow.submitButton.disabled = false;
     }
 }
 
+
+// modal - create step
+function openCreateStepModalWindow(flowId) {
+    DOM.modal.createStep.errorBlock.style.display = "none";
+    DOM.modal.createStep.inputFlowId.value = flowId;
+    openModalWindow(DOM.modal.createStep.window);
+}
+
+async function createNewStep(event) {
+    event.preventDefault();
+    DOM.modal.createStep.submitButton.disabled = true;
+
+    const flowId = DOM.modal.createStep.inputFlowId.value;
+    const step = Step.simpleStep(
+        DOM.modal.createStep.inputDate.value
+    );
+
+    try {
+        // todo: here can be some validation for duplicates
+        await createStepForFlowById(step, flowId);
+        closeModalWindow(DOM.modal.createStep.window);
+
+        window.location.reload();
+    } catch (error) {
+        console.log(error)
+        showError(
+            error,
+            DOM.modal.createStep.errorBlock,
+            DOM.modal.createStep.errorMessage
+        );
+    } finally {
+        DOM.modal.createStep.submitButton.disabled = false;
+    }
+}
 
 // classes
 class Flow {
@@ -172,7 +224,7 @@ class Flow {
         this.steps = steps;
     }
 
-    static createSimpleFlow(title, description, targetPercentage) {
+    static simpleFlow(title, description, targetPercentage) {
         return new Flow(
             null,
             null,
@@ -200,18 +252,18 @@ class Flow {
 }
 
 class Step {
-    constructor(id, createdAt, updatedAt, date, cases) {
+    constructor(id, createdAt, updatedAt, day, cases) {
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt
-        this.date = new Date(date);
+        this.day = new Date(day);
         this.cases = cases;
     }
 
     getFormatDate() {
-        let day = this.date.getDate();
-        let month = this.date.getMonth() + 1;
-        let year = this.date.getFullYear() + "";
+        let day = this.day.getDate();
+        let month = this.day.getMonth() + 1;
+        let year = this.day.getFullYear() + "";
 
         day = day > 9 ? day : `0${day}`;
         month = month > 9 ? month : `0${month}`;
@@ -229,6 +281,16 @@ class Step {
             jsonObject.updatedAt,
             jsonObject.day,
             cases
+        );
+    }
+
+    static simpleStep(day) {
+        return new Step(
+            null,
+            null,
+            null,
+            day,
+            null
         );
     }
 }

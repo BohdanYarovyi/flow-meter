@@ -44,7 +44,7 @@
 						<div class="modal-title">
 								<h1>Create flow</h1>
 						</div>
-						<form id="create-flow-form">
+						<form>
 								<div class="form-inputs">
 										<div class="form-input-item">
 												<h3>Title:</h3>
@@ -59,8 +59,34 @@
 												<input type="number" min="0" max="100" id="create-flow-percentage">
 										</div>
 								</div>
-								<div id="submit-create-flow-btn-holder">
+								<div id="create-flow-error-block">
+										<div id="create-flow-error-message"></div>
+								</div>
+								<div class="btn-holder">
 										<button id="submit-create-flow-btn">Create</button>
+								</div>
+						</form>
+				</div>
+		</div>
+
+		<div class="modal hidden" id="create-step-modal-window">
+				<div class="modal-content">
+						<div class="modal-title">
+								<h1>Create step</h1>
+						</div>
+						<form>
+								<div class="form-inputs">
+										<input type="hidden" id="create-step-flowId">
+										<div class="form-input-item">
+												<h3>Date:</h3>
+												<input type="date" id="create-step-date">
+										</div>
+								</div>
+								<div id="create-step-error-block">
+										<div id="create-step-error-message"></div>
+								</div>
+								<div class="btn-holder">
+										<button id="submit-create-step-btn">Create</button>
 								</div>
 						</form>
 				</div>
