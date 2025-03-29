@@ -19,7 +19,8 @@ public class CaseMapper {
                 aCase.getCreatedAt(),
                 aCase.getUpdatedAt(),
                 aCase.getText(),
-                aCase.getPercent()
+                aCase.getPercent(),
+                aCase.isCounting()
         );
     };
 
@@ -43,6 +44,7 @@ public class CaseMapper {
         c.setUpdatedAt(dto.updatedAt());
         c.setText(dto.text());
         c.setPercent(dto.percent());
+        c.setCounting(dto.counting());
 
         return c;
     };

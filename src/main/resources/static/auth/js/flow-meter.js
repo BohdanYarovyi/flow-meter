@@ -1,4 +1,5 @@
 import {
+    createCaseForStepById,
     createFlowForAccountById, createStepForFlowById,
     fetchCurrentAccountId,
     fetchFlowsByAccountId
@@ -21,7 +22,7 @@ import {
     showError
 } from "../../util.js";
 
-import {validateCreatedFlow} from "../../validation.js";
+import {validateCreatedCase, validateCreatedFlow} from "../../validation.js";
 
 // components
 const DOM = {
@@ -48,25 +49,40 @@ const DOM = {
             submitButton: document.getElementById("submit-create-step-btn"),
             errorBlock: document.getElementById("create-step-error-block"),
             errorMessage: document.getElementById("create-step-error-message")
+        },
+        createCase: {
+            window: document.getElementById("create-case-modal-window"),
+            inputStepId: document.getElementById("create-case-stepId"),
+            inputDescription: document.getElementById("create-case-description"),
+            inputCounting: document.getElementById("create-case-counting"),
+            inputPercent: document.getElementById("create-case-percent"),
+            errorBlock: document.getElementById("create-case-error-block"),
+            errorMessage: document.getElementById("create-case-error-message"),
+            submitButton: document.getElementById("submit-create-case-btn"),
         }
     }
 };
 
 // initialization
+const currentAccount = await fetchCurrentAccountId();
+let flowCash = (await fetchFlowsByAccountId(currentAccount)).map(Flow.flowFromJSON);
+
 window.onload = loadPage;
 DOM.buttonCreateFlow.addEventListener("click", openCreateFlowModalWindow);
-DOM.modal.createFlow.inputDescription.addEventListener("input", adjustTextarea);
-DOM.modal.createFlow.submitButton.addEventListener("click", event=> createNewFlow(event));
+DOM.modal.createFlow.submitButton.addEventListener("click", event => createNewFlow(event));
 DOM.modal.createStep.submitButton.addEventListener("click", event => createNewStep(event));
+DOM.modal.createCase.submitButton.addEventListener("click", event => createNewCase(event));
+DOM.modal.createCase.inputCounting.addEventListener("change", event => handlePercentInputAvailable(event));
+document.querySelectorAll(".flexible").forEach(item => item.addEventListener("input", adjustTextarea));
 
 async function loadPage() {
-    try {
-        const currentAccount = await fetchCurrentAccountId();
-        await loadFlows(currentAccount);
-    } catch (error) {
-        console.log("Error: ", error.message);
-    }
+    await loadFlows(flowCash);
 }
+
+
+
+
+
 
 async function loadFlows(accountId) {
     const flows = (await fetchFlowsByAccountId(accountId)).map(Flow.flowFromJSON);
@@ -131,7 +147,10 @@ function loadCases(step) {
         DOM.caseContainer.appendChild(clone);
     }
 
-    DOM.buttonHolderCreateCase.appendChild(cloneCreateCaseBtnTemplate());
+    const createCaseTmp = cloneCreateCaseBtnTemplate();
+    createCaseTmp.querySelector("#create-case-btn")
+        .addEventListener("click", () => openCreateCaseModalWindow(step.id));
+    DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
 }
 
 
@@ -153,15 +172,15 @@ async function createNewFlow(event) {
     DOM.modal.createFlow.submitButton.disabled = true;
 
     const currentAccountId = await fetchCurrentAccountId();
-    const createdFLow = Flow.simpleFlow(
+    const createdFlow = Flow.simpleFlow(
         DOM.modal.createFlow.inputTitle.value,
         DOM.modal.createFlow.inputDescription.value,
         DOM.modal.createFlow.inputTargetPercentage.value
     );
 
     try {
-        validateCreatedFlow(createdFLow);
-        await createFlowForAccountById(createdFLow, currentAccountId);
+        validateCreatedFlow(createdFlow);
+        await createFlowForAccountById(createdFlow, currentAccountId);
         closeModalWindow(DOM.modal.createFlow.window);
 
         window.location.reload();
@@ -209,6 +228,53 @@ async function createNewStep(event) {
         );
     } finally {
         DOM.modal.createStep.submitButton.disabled = false;
+    }
+}
+
+
+//modal - create case
+function openCreateCaseModalWindow(stepId) {
+    DOM.modal.createCase.errorBlock.style.display = "none";
+    DOM.modal.createCase.inputStepId.value = stepId;
+    openModalWindow(DOM.modal.createCase.window);
+}
+
+function handlePercentInputAvailable(event) {
+    const inputPercent = DOM.modal.createCase.inputPercent;
+
+    if (event.target.checked) {
+        inputPercent.removeAttribute("disabled");
+    } else {
+        inputPercent.setAttribute("disabled", "true");
+    }
+}
+
+async function createNewCase(event) {
+    event.preventDefault();
+    DOM.modal.createCase.submitButton.disabled = true;
+
+    const stepId = DOM.modal.createCase.inputStepId.value;
+    const newCase = Case.simpleCase(
+        DOM.modal.createCase.inputDescription.value,
+        DOM.modal.createCase.inputPercent.value,
+        DOM.modal.createCase.inputCounting.checked
+    );
+
+    try {
+        validateCreatedCase(newCase);
+        await createCaseForStepById(newCase, stepId);
+        closeModalWindow(DOM.modal.createCase.window);
+
+        window.location.reload();
+    } catch (error) {
+        console.log(error);
+        showError(
+            error,
+            DOM.modal.createCase.errorBlock,
+            DOM.modal.createCase.errorMessage
+        );
+    } finally {
+        DOM.modal.createCase.submitButton.disabled = false;
     }
 }
 
@@ -296,17 +362,37 @@ class Step {
 }
 
 class Case {
-    constructor(text, percent) {
+    constructor(id, createdAt, updatedAt, text, percent, counting) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.text = text;
         this.percent = percent;
+        this.counting = counting;
     }
 
     static caseFromJSON(jsonObject) {
         return new Case(
+            jsonObject.id,
+            jsonObject.createdAt,
+            jsonObject.updatedAt,
             jsonObject.text,
-            jsonObject.percent
+            jsonObject.percent,
+            jsonObject.counting
         );
     }
+
+    static simpleCase(text, percent, counting) {
+        return new Case(
+            null,
+            null,
+            null,
+            text,
+            percent,
+            counting
+        );
+    }
+
 }
 
 

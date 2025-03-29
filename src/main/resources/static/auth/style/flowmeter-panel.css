@@ -276,7 +276,7 @@ body {
     align-items: center;
     justify-content: center;
 
-    background-color: rgba(0, 0, 0, 50%);
+    background-color: rgba(0, 0, 0, 60%);
 }
 
 .modal-content {
@@ -349,13 +349,15 @@ body {
 }
 
 #create-flow-error-block,
-#create-step-error-block {
+#create-step-error-block,
+#create-case-error-block {
     display: none;
     width: 100%;
 }
 
 #create-flow-error-message,
-#create-step-error-message {
+#create-step-error-message,
+#create-case-error-message {
     width: 85%;
     margin: 20px auto;
 
@@ -373,7 +375,8 @@ body {
 }
 
 #submit-create-flow-btn,
-#submit-create-step-btn {
+#submit-create-step-btn,
+#submit-create-case-btn {
     padding: 15px 60px;
     border-radius: 18px;
     border: solid 3px #202020;
@@ -403,4 +406,9 @@ body {
     background-color: #fff;
 
     font-size: 35px;
+}
+
+/* create case */
+#create-case-counting {
+    width: 50px;
 }

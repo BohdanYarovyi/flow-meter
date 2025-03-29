@@ -7,6 +7,7 @@ public record CaseDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         String text,
-        int percent
+        int percent,
+        boolean counting
 ) {
 }

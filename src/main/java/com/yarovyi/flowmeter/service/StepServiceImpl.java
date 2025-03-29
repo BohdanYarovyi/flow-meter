@@ -8,11 +8,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class StepServiceImpl implements StepService {
     private final StepRepository stepRepository;
+
+
+    @Override
+    public Optional<Step> getStepById(Long stepId) {
+        return this.stepRepository.findById(stepId);
+    }
+
 
     @Override
     public Long createStepForFlow(Step step, Flow flow) {
@@ -31,5 +39,6 @@ public class StepServiceImpl implements StepService {
         return this.stepRepository.save(step).getId();
 
     }
+
 
 }

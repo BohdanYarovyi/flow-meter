@@ -7,3 +7,14 @@ export function validateCreatedFlow(flow) {
         throw new Error(`Target percentage must be between 0 and 100`);
     }
 }
+
+export function validateCreatedCase(case1) {
+    if (!case1.text || case1.text.length <= 3) {
+        throw new Error("Case description length must be greater than 3 symbols");
+    }
+
+    if (case1.percent > 100 || case1.percent < 0) {
+        throw new Error("Case percent must be between 0 and 100")
+    }
+
+}

@@ -20,10 +20,12 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final Role defaultRole;
 
+
     @Override
     public List<Account> getAccounts() {
         return this.accountRepository.findAll();
     }
+
 
     @Override
     public Optional<Account> getAccountById(Long accountId) {
@@ -34,6 +36,7 @@ public class AccountServiceImpl implements AccountService {
         return this.accountRepository.findById(accountId);
     }
 
+
     @Override
     public Optional<Account> getAccountByLogin(String login) {
         if (Objects.isNull(login)) {
@@ -43,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
         return this.accountRepository.findAccountByCredentialsLogin(login);
     }
 
+
     @Override
     public Optional<Account> getAccountByEmail(String email) {
         if (Objects.isNull(email)) {
@@ -51,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
 
         return this.accountRepository.findAccountByCredentialsEmail(email);
     }
+
 
     @Override
     public Long createAccount(Account account) {
@@ -67,10 +72,12 @@ public class AccountServiceImpl implements AccountService {
         return this.accountRepository.save(account).getId();
     }
 
+
     @Override
     public void updateAccount(Account account) {
         this.accountRepository.save(account);
     }
+
 
     @Override
     public void deleteAccountById(Long id) {
@@ -84,5 +91,6 @@ public class AccountServiceImpl implements AccountService {
         account.setDeleted(true);
         this.accountRepository.save(account);
     }
+
 
 }

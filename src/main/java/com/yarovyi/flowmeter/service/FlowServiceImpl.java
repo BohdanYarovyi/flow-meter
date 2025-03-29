@@ -17,10 +17,12 @@ import java.util.Optional;
 public class FlowServiceImpl implements FlowService {
     private final FlowRepository flowRepository;
 
+
     @Override
     public List<Flow> getAll() {
         return this.flowRepository.findAll();
     }
+
 
     @Override
     public List<Flow> getAllByAccountId(Long accountId) {
@@ -33,6 +35,7 @@ public class FlowServiceImpl implements FlowService {
         return flowsByAccountId;
     }
 
+
     @Override
     public Optional<Flow> getById(Long id) {
         if (Objects.isNull(id))
@@ -41,20 +44,24 @@ public class FlowServiceImpl implements FlowService {
         return this.flowRepository.findById(id);
     }
 
+
     @Override
     public void create(Flow flow) {
         throw new UnsupportedOperationException();
     }
+
 
     @Override
     public void update(Flow flow) {
         throw new UnsupportedOperationException();
     }
 
+
     @Override
     public void delete(Long id) {
         throw new UnsupportedOperationException();
     }
+
 
     @Override
     public Long createFlowForAccount(Flow flow, Account account) {
@@ -66,4 +73,6 @@ public class FlowServiceImpl implements FlowService {
 
         return this.flowRepository.save(flow).getId();
     }
+
+
 }

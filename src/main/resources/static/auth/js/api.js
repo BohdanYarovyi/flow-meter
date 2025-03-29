@@ -7,6 +7,8 @@ const GET_ALL_FLOWS__URL = `/api/flows`;
 const GET_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
 const CREATE_STEP_FOR_FLOW_BY_ID__URL = (flowId) => `/api/flows/${flowId}/steps`;
 
+const CREATE_CASE_FOR_STEP_BY_ID__URL = (stepId) => `/api/steps/${stepId}/cases`;
+
 
 export async function fetchCurrentAccountId() {
     try {
@@ -29,6 +31,7 @@ export async function fetchCurrentAccountId() {
     }
 }
 
+
 export async function fetchAccountById(id) {
     try {
         const response = await fetch(GET_ACCOUNT_BY_ID__URL(id), {
@@ -49,6 +52,7 @@ export async function fetchAccountById(id) {
     }
 }
 
+
 export async function fetchFlowsByAccountId(accountId) {
     try {
         const response = await fetch(GET_FLOWS_BY_ACCOUNT_ID__URL(accountId), {
@@ -67,6 +71,7 @@ export async function fetchFlowsByAccountId(accountId) {
         throw error;
     }
 }
+
 
 export async function createFlowForAccountById(flow, accountId) {
     try {
@@ -88,9 +93,9 @@ export async function createFlowForAccountById(flow, accountId) {
     }
 }
 
+
 export async function createStepForFlowById(step, flowId) {
     try {
-
         const response = await fetch(CREATE_STEP_FOR_FLOW_BY_ID__URL(flowId), {
             method: "POST",
             headers: {"Content-Type" : "application/json"},
@@ -100,6 +105,27 @@ export async function createStepForFlowById(step, flowId) {
         if (!response.ok) {
             const errorResponse = await response.json();
             throw new Error(errorResponse.detail || `Failed to create step for flow`);
+        }
+
+        return response.headers.get("location");
+    } catch (error) {
+        console.log("Error: ", error);
+        throw error;
+    }
+}
+
+
+export async function createCaseForStepById(case1, stepId) {
+    try {
+        const response = await fetch(CREATE_CASE_FOR_STEP_BY_ID__URL(stepId), {
+            method: "POST",
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify(case1)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to create case for step`);
         }
 
         return response.headers.get("location");

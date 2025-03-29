@@ -20,6 +20,8 @@ public class Case extends BaseEntity {
     private String text;
     @Column(name = "c_percent")
     private int percent;
+    @Column(name = "c_counting")
+    private boolean counting;
     @JsonIgnore
     @ManyToOne
     private Step step;

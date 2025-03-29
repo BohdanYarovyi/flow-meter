@@ -52,7 +52,7 @@
 										</div>
 										<div class="form-input-item">
 												<h3>Description:</h3>
-												<textarea rows="1" id="create-flow-description"></textarea>
+												<textarea class="flexible" rows="1" id="create-flow-description"></textarea>
 										</div>
 										<div class="form-input-item">
 												<h3>Target percentage:</h3>
@@ -87,6 +87,37 @@
 								</div>
 								<div class="btn-holder">
 										<button id="submit-create-step-btn">Create</button>
+								</div>
+						</form>
+				</div>
+		</div>
+
+		<div class="modal hidden" id="create-case-modal-window">
+				<div class="modal-content">
+						<div class="modal-title">
+								<h1>Create case</h1>
+						</div>
+						<form>
+								<div class="form-inputs">
+										<input type="hidden" id="create-case-stepId">
+										<div class="form-input-item">
+												<h3>Description:</h3>
+												<textarea class="flexible" rows="1" id="create-case-description"></textarea>
+										</div>
+										<div class="form-input-item">
+												<h3>For counting: </h3>
+												<input type="checkbox" id="create-case-counting">
+										</div>
+										<div class="form-input-item">
+												<h3>Percent:</h3>
+												<input type="number" max="100" min="0" id="create-case-percent" disabled>
+										</div>
+								</div>
+								<div id="create-case-error-block">
+										<div id="create-case-error-message"></div>
+								</div>
+								<div class="btn-holder">
+										<button id="submit-create-case-btn">Create</button>
 								</div>
 						</form>
 				</div>

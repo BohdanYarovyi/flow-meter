@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS t_cases
     step_id      bigint       not null,
     c_text       varchar(255) not null,
     c_percent    int,
+    c_counting   boolean      not null,
     c_created_at timestamp    not null,
     c_updated_at timestamp    not null,
     c_deleted    boolean      not null,

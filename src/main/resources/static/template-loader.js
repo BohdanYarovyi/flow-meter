@@ -32,10 +32,10 @@ export function cloneCaseTemplate() {
     return loadTemplateById("case-template");
 }
 
-export function cloneCreateCaseBtnTemplate() {
-    return loadTemplateById("create-case-btn-template");
-}
-
 export function cloneCreateStepBtnTemplate() {
     return loadTemplateById("create-step-btn-template");
+}
+
+export function cloneCreateCaseBtnTemplate() {
+    return loadTemplateById("create-case-btn-template");
 }
