@@ -23,6 +23,7 @@ import {
 } from "../../util.js";
 
 import {validateCreatedCase, validateCreatedFlow} from "../../validation.js";
+import {Flow, Step, Case} from "./classes.js";
 
 // components
 const DOM = {
@@ -64,8 +65,8 @@ const DOM = {
 };
 
 // initialization
-const currentAccount = await fetchCurrentAccountId();
-let flowCash = (await fetchFlowsByAccountId(currentAccount)).map(Flow.flowFromJSON);
+let currentAccount = null;
+let flowsCache = [];
 
 window.onload = loadPage;
 DOM.buttonCreateFlow.addEventListener("click", openCreateFlowModalWindow);
@@ -73,19 +74,25 @@ DOM.modal.createFlow.submitButton.addEventListener("click", event => createNewFl
 DOM.modal.createStep.submitButton.addEventListener("click", event => createNewStep(event));
 DOM.modal.createCase.submitButton.addEventListener("click", event => createNewCase(event));
 DOM.modal.createCase.inputCounting.addEventListener("change", event => handlePercentInputAvailable(event));
-document.querySelectorAll(".flexible").forEach(item => item.addEventListener("input", adjustTextarea));
+document.querySelectorAll(".flexible").forEach(item =>
+    item.addEventListener("input", () => adjustTextarea(item))
+);
 
 async function loadPage() {
-    await loadFlows(flowCash);
+    try {
+        currentAccount = await fetchCurrentAccountId();
+        flowsCache = (await fetchFlowsByAccountId(currentAccount)).map(Flow.flowFromJSON);
+
+        loadFlows(flowsCache);
+    } catch (error) {
+        console.log("Error", error.detail);
+    }
 }
 
-
-
-
-
-
-async function loadFlows(accountId) {
-    const flows = (await fetchFlowsByAccountId(accountId)).map(Flow.flowFromJSON);
+function loadFlows(flows) {
+    clearContainers(
+        DOM.flowContainer
+    );
 
     if (flows.length > 0) {
         for (const flow of flows) {
@@ -95,7 +102,7 @@ async function loadFlows(accountId) {
             flowItem.textContent = flow.title;
             flowItem.addEventListener("click", () => {
                 selectItem(flowItem, "#flow-item")
-                loadSteps(flow);
+                loadSteps(flow.steps, flow.id);
             });
 
             DOM.flowContainer.appendChild(clone);
@@ -105,7 +112,7 @@ async function loadFlows(accountId) {
     }
 }
 
-function loadSteps(flow) {
+function loadSteps(steps, flowId) {
     clearContainers(
         DOM.stepsContainer,
         DOM.caseContainer,
@@ -113,14 +120,15 @@ function loadSteps(flow) {
         DOM.buttonHolderCreateCase
     );
 
-    for (const step of flow.steps) {
+    steps.sort((a, b) => a.day.getTime() - b.day.getTime());
+    for (const step of steps) {
         const clone = cloneStepItemTemplate();
         const stepItem = clone.querySelector("#step");
 
         stepItem.textContent = step.getFormatDate();
         stepItem.addEventListener("click", () => {
             selectItem(stepItem, "#step");
-            loadCases(step);
+            loadCases(step.cases, step.id);
         });
 
         DOM.stepsContainer.appendChild(clone);
@@ -128,28 +136,28 @@ function loadSteps(flow) {
 
     const createStepBtn = cloneCreateStepBtnTemplate();
     createStepBtn.querySelector("#create-step-btn")
-        .addEventListener("click", () => openCreateStepModalWindow(flow.id));
+        .addEventListener("click", () => openCreateStepModalWindow(flowId));
     DOM.buttonHolderCreateStep.appendChild(createStepBtn);
 }
 
-function loadCases(step) {
+function loadCases(cases, stepId) {
     clearContainers(
         DOM.caseContainer,
         DOM.buttonHolderCreateCase
     );
 
-    for (const caseEntity of step.cases) {
+    for (const case1 of cases) {
         const clone = cloneCaseTemplate();
 
-        clone.querySelector("#case-text").textContent = caseEntity.text;
-        clone.querySelector("#case-percent").textContent = caseEntity.percent;
+        clone.querySelector("#case-text").textContent = case1.text;
+        clone.querySelector("#case-percent").textContent = case1.counting ? case1.percent : "";
 
         DOM.caseContainer.appendChild(clone);
     }
 
     const createCaseTmp = cloneCreateCaseBtnTemplate();
     createCaseTmp.querySelector("#create-case-btn")
-        .addEventListener("click", () => openCreateCaseModalWindow(step.id));
+        .addEventListener("click", () => openCreateCaseModalWindow(stepId));
     DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
 }
 
@@ -160,18 +168,15 @@ function openCreateFlowModalWindow() {
     openModalWindow(DOM.modal.createFlow.window);
 }
 
-function adjustTextarea() {
-    const description = DOM.modal.createFlow.inputDescription;
-
-    description.style.height = "auto";
-    description.style.height = description.scrollHeight + "px";
+function adjustTextarea(item) {
+    item.style.height = "auto";
+    item.style.height = item.scrollHeight + "px";
 }
 
 async function createNewFlow(event) {
     event.preventDefault();
     DOM.modal.createFlow.submitButton.disabled = true;
 
-    const currentAccountId = await fetchCurrentAccountId();
     const createdFlow = Flow.simpleFlow(
         DOM.modal.createFlow.inputTitle.value,
         DOM.modal.createFlow.inputDescription.value,
@@ -180,10 +185,13 @@ async function createNewFlow(event) {
 
     try {
         validateCreatedFlow(createdFlow);
-        await createFlowForAccountById(createdFlow, currentAccountId);
-        closeModalWindow(DOM.modal.createFlow.window);
+        let responseFlow = await createFlowForAccountById(createdFlow, currentAccount);
+        responseFlow = Flow.flowFromJSON(responseFlow);
 
-        window.location.reload();
+        flowsCache.push(responseFlow);
+        loadFlows(flowsCache);
+        closeModalWindow(DOM.modal.createFlow.window);
+        clearFlowModalWindow();
     } catch (error) {
         console.log("Error: ", error);
         showError(
@@ -194,6 +202,12 @@ async function createNewFlow(event) {
     } finally {
         DOM.modal.createFlow.submitButton.disabled = false;
     }
+}
+
+function clearFlowModalWindow() {
+    DOM.modal.createFlow.inputTitle.value = "";
+    DOM.modal.createFlow.inputDescription.value = "";
+    DOM.modal.createFlow.inputTargetPercentage.value = "";
 }
 
 
@@ -209,18 +223,25 @@ async function createNewStep(event) {
     DOM.modal.createStep.submitButton.disabled = true;
 
     const flowId = DOM.modal.createStep.inputFlowId.value;
+    const currentFlow = flowsCache.find(flow => flow.id === Number(flowId));
     const step = Step.simpleStep(
         DOM.modal.createStep.inputDate.value
     );
 
-    try {
-        // todo: here can be some validation for duplicates
-        await createStepForFlowById(step, flowId);
-        closeModalWindow(DOM.modal.createStep.window);
+    if (!currentFlow) {
+        throw new Error(`Flow with id ${flowId} not found`);    // never happen
+    }
 
-        window.location.reload();
+    try {
+        let responseStep = await createStepForFlowById(step, flowId);
+        responseStep = Step.stepFromJSON(responseStep);
+
+        currentFlow.steps.push(responseStep);
+        loadSteps(currentFlow.steps, flowId);
+        closeModalWindow(DOM.modal.createStep.window);
+        clearStepModalWindow();
     } catch (error) {
-        console.log(error)
+        console.log(error);
         showError(
             error,
             DOM.modal.createStep.errorBlock,
@@ -229,6 +250,11 @@ async function createNewStep(event) {
     } finally {
         DOM.modal.createStep.submitButton.disabled = false;
     }
+}
+
+function clearStepModalWindow() {
+    DOM.modal.createStep.inputFlowId.value = "";
+    DOM.modal.createStep.inputDate.value = "";
 }
 
 
@@ -254,18 +280,28 @@ async function createNewCase(event) {
     DOM.modal.createCase.submitButton.disabled = true;
 
     const stepId = DOM.modal.createCase.inputStepId.value;
+    const currentStep = flowsCache
+        .flatMap(flow => flow.steps)
+        .find(step => step.id === Number(stepId));
     const newCase = Case.simpleCase(
         DOM.modal.createCase.inputDescription.value,
         DOM.modal.createCase.inputPercent.value,
         DOM.modal.createCase.inputCounting.checked
     );
 
+    if (!currentStep) {
+        throw new Error(`Step with id ${stepId} not found`);    // never happen
+    }
+
     try {
         validateCreatedCase(newCase);
-        await createCaseForStepById(newCase, stepId);
-        closeModalWindow(DOM.modal.createCase.window);
+        let responseCase = await createCaseForStepById(newCase, stepId);
+        responseCase = Case.caseFromJSON(responseCase);
 
-        window.location.reload();
+        currentStep.cases.push(responseCase);
+        loadCases(currentStep.cases, stepId);
+        closeModalWindow(DOM.modal.createCase.window);
+        clearCaseModalWindow();
     } catch (error) {
         console.log(error);
         showError(
@@ -278,121 +314,11 @@ async function createNewCase(event) {
     }
 }
 
-// classes
-class Flow {
-    constructor(id, createdAt, updatedAt, title, description, targetPercentage, steps) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.title = title;
-        this.description = description;
-        this.targetPercentage = targetPercentage;
-        this.steps = steps;
-    }
-
-    static simpleFlow(title, description, targetPercentage) {
-        return new Flow(
-            null,
-            null,
-            null,
-            title,
-            description,
-            targetPercentage,
-            null
-        );
-    }
-
-    static flowFromJSON(jsonObject) {
-        const steps = jsonObject.steps.map(Step.stepFromJSON);
-
-        return new Flow(
-            jsonObject.id,
-            jsonObject.createdAt,
-            jsonObject.updatedAt,
-            jsonObject.title,
-            jsonObject.description,
-            jsonObject.targetPercentage,
-            steps
-        );
-    }
-}
-
-class Step {
-    constructor(id, createdAt, updatedAt, day, cases) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt
-        this.day = new Date(day);
-        this.cases = cases;
-    }
-
-    getFormatDate() {
-        let day = this.day.getDate();
-        let month = this.day.getMonth() + 1;
-        let year = this.day.getFullYear() + "";
-
-        day = day > 9 ? day : `0${day}`;
-        month = month > 9 ? month : `0${month}`;
-        year = year.substring(2, 4);
-
-        return `${day}.${month}.${year}`;
-    }
-
-    static stepFromJSON(jsonObject) {
-        const cases = jsonObject.cases.map(Case.caseFromJSON);
-
-        return new Step(
-            jsonObject.id,
-            jsonObject.createdAt,
-            jsonObject.updatedAt,
-            jsonObject.day,
-            cases
-        );
-    }
-
-    static simpleStep(day) {
-        return new Step(
-            null,
-            null,
-            null,
-            day,
-            null
-        );
-    }
-}
-
-class Case {
-    constructor(id, createdAt, updatedAt, text, percent, counting) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.text = text;
-        this.percent = percent;
-        this.counting = counting;
-    }
-
-    static caseFromJSON(jsonObject) {
-        return new Case(
-            jsonObject.id,
-            jsonObject.createdAt,
-            jsonObject.updatedAt,
-            jsonObject.text,
-            jsonObject.percent,
-            jsonObject.counting
-        );
-    }
-
-    static simpleCase(text, percent, counting) {
-        return new Case(
-            null,
-            null,
-            null,
-            text,
-            percent,
-            counting
-        );
-    }
-
+function clearCaseModalWindow() {
+    DOM.modal.createCase.inputStepId.value = "";
+    DOM.modal.createCase.inputDescription.value = "";
+    DOM.modal.createCase.inputPercent.value = "";
+    DOM.modal.createCase.inputCounting.checked = false;
 }
 
 

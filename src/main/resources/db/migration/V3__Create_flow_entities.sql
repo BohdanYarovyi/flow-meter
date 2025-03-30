@@ -35,5 +35,5 @@ CREATE TABLE IF NOT EXISTS t_cases
     c_updated_at timestamp    not null,
     c_deleted    boolean      not null,
     PRIMARY KEY (id),
-    FOREIGN KEY (step_id) REFERENCES t_cases(id)
+    FOREIGN KEY (step_id) REFERENCES t_steps(id)
 );

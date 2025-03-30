@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface StepService {
     Optional<Step> getStepById(Long stepId);
-    Long createStepForFlow(Step step, Flow flow);
+    Step createStepForFlow(Step step, Flow flow);
 }

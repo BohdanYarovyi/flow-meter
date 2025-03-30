@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.yarovyi.flowmeter.util.CaseMapper.CASE_TO_DTO;
 import static com.yarovyi.flowmeter.util.CaseMapper.DTO_TO_CASE;
 
 @RequiredArgsConstructor
@@ -30,11 +31,10 @@ public class StepController {
     private final AccountService accountService;
     private final StepService stepService;
     private final CaseService caseService;
-    private final UriComponentsBuilder uriBuilder;
 
 
     @PostMapping("/{stepId:\\d+}/cases")
-    public ResponseEntity<Void> createCaseForStep(@PathVariable(name = "stepId") Long stepId,
+    public ResponseEntity<CaseDto> createCaseForStep(@PathVariable(name = "stepId") Long stepId,
                                                   @RequestBody CaseDto caseDto,
                                                   Principal principal) {
         Step step = this.stepService.getStepById(stepId)
@@ -46,13 +46,15 @@ public class StepController {
             throw new ForbiddenRequestException("Creating case forbidden", "Account cannot create case for other steps");
 
         Case case1 = DTO_TO_CASE.apply(caseDto);
-        Long caseId = this.caseService.createCaseForStepById(step, case1);
+        Case savedCase = this.caseService.createCaseForStepById(step, case1);
 
-        URI location = uriBuilder
-                .path("api/cases/{caseId}")
-                .build(Map.of("caseId", caseId));
+        URI location = UriComponentsBuilder
+                .fromPath("api/cases/{caseId}")
+                .buildAndExpand(Map.of("caseId", savedCase.getId()))
+                .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location)
+                .body(CASE_TO_DTO.apply(savedCase));
     }
 
 

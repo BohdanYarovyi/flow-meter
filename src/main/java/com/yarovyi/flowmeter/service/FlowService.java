@@ -14,5 +14,5 @@ public interface FlowService {
     void update(Flow flow);
     void delete(Long id);
 
-    Long createFlowForAccount(Flow flow, Account account);
+    Flow createFlowForAccount(Flow flow, Account account);
 }

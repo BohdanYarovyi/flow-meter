@@ -23,7 +23,7 @@ public class StepServiceImpl implements StepService {
 
 
     @Override
-    public Long createStepForFlow(Step step, Flow flow) {
+    public Step createStepForFlow(Step step, Flow flow) {
         if (Objects.isNull(step) || Objects.isNull(flow))
             throw new NullPointerException("step or flow is null");
 
@@ -36,7 +36,7 @@ public class StepServiceImpl implements StepService {
         flow.getSteps().add(step);
         step.setFlow(flow);
 
-        return this.stepRepository.save(step).getId();
+        return this.stepRepository.save(step);
 
     }
 

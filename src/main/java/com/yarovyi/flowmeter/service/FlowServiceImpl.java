@@ -64,14 +64,14 @@ public class FlowServiceImpl implements FlowService {
 
 
     @Override
-    public Long createFlowForAccount(Flow flow, Account account) {
+    public Flow createFlowForAccount(Flow flow, Account account) {
         if (Objects.isNull(flow) || Objects.isNull(account))
             throw new NullPointerException("flow or account is null");
 
         account.getFlows().add(flow);
         flow.setAccount(account);
 
-        return this.flowRepository.save(flow).getId();
+        return this.flowRepository.save(flow);
     }
 
 

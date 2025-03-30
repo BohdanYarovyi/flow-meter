@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import static com.yarovyi.flowmeter.util.FlowMapper.FLOW_TO_DTO;
 import static com.yarovyi.flowmeter.util.FlowMapper.FLOWs_TO_DTOs;
+import static com.yarovyi.flowmeter.util.StepMapper.STEP_TO_DTO;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,7 +34,6 @@ public class FlowController {
     private final AccountService accountService;
     private final FlowService flowService;
     private final StepService stepService;
-    private final UriComponentsBuilder uriBuilder;
 
 
     @GetMapping
@@ -58,7 +58,7 @@ public class FlowController {
 
 
     @PostMapping("/{flowId:\\d+}/steps")
-    public ResponseEntity<Void> createStepForFlow(@PathVariable(name = "flowId") Long flowId,
+    public ResponseEntity<StepDto> createStepForFlow(@PathVariable(name = "flowId") Long flowId,
                                                   @RequestBody StepDto stepDto,
                                                   Principal principal) {
         Flow flow = this.flowService.getById(flowId).orElseThrow(() -> new SubentityNotFoundException(Flow.class));
@@ -69,13 +69,14 @@ public class FlowController {
             throw new ForbiddenRequestException("Creating step forbidden", "Account cannot create step for other flows");
 
         Step step = StepMapper.DTO_TO_STEP.apply(stepDto);
-        Long stepId = this.stepService.createStepForFlow(step, flow);
+        Step savedStep = this.stepService.createStepForFlow(step, flow);
 
-        URI location = uriBuilder
-                .path("/api/steps/{stepId}")
-                .build(Map.of("stepId", stepId));
+        URI location = UriComponentsBuilder
+                .fromPath("/api/steps/{stepId}")
+                .buildAndExpand(Map.of("stepId", savedStep.getId()))
+                .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(STEP_TO_DTO.apply(savedStep));
     }
 
 

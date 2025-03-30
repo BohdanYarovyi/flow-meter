@@ -15,14 +15,14 @@ public class CaseServiceImpl implements CaseService {
 
 
     @Override
-    public Long createCaseForStepById(Step step,Case case1) {
+    public Case createCaseForStepById(Step step,Case case1) {
         if (Objects.isNull(case1) || Objects.isNull(step))
             throw new NullPointerException("case or step are null");
 
         step.getCases().add(case1);
         case1.setStep(step);
 
-        return this.caseRepository.save(case1).getId();
+        return this.caseRepository.save(case1);
     }
 
 

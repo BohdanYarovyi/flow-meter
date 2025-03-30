@@ -24,6 +24,7 @@ body {
     background-color: rgba(32, 32, 32, 95%);
 
     padding: 35px;
+    overflow-y: auto;
 }
 
 .flows-container {
@@ -277,6 +278,7 @@ body {
     justify-content: center;
 
     background-color: rgba(0, 0, 0, 60%);
+
 }
 
 .modal-content {

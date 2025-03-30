@@ -36,7 +36,6 @@ import static com.yarovyi.flowmeter.util.AccountMapper.ACCOUNT_CREATED_DTO_TO_AC
 public class AuthController {
     private final AuthenticationProvider authenticationProvider;
     private final AccountService accountService;
-    private final UriComponentsBuilder uriBuilder;
 
 
     @GetMapping("/login")
@@ -86,9 +85,10 @@ public class AuthController {
         Account newAccount = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(registerDto);
         Long accountId = this.accountService.createAccount(newAccount);
 
-        URI location = uriBuilder
-                .path("/api/accounts/{id}")
-                .build(Map.of("id", accountId));
+        URI location = UriComponentsBuilder
+                .fromPath("/api/accounts/{id}")
+                .buildAndExpand(Map.of("id", accountId))
+                .toUri();
 
         return ResponseEntity.created(location).build();
     }

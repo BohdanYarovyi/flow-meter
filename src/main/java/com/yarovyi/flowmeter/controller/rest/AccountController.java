@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.yarovyi.flowmeter.util.AccountMapper.*;
-import static com.yarovyi.flowmeter.util.FlowMapper.FLOWs_TO_DTOs;
+import static com.yarovyi.flowmeter.util.FlowMapper.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,7 +33,6 @@ import static com.yarovyi.flowmeter.util.FlowMapper.FLOWs_TO_DTOs;
 public class AccountController {
     private final AccountService accountService;
     private final FlowService flowService;
-    private final UriComponentsBuilder uriBuilder;
 
 
     @GetMapping
@@ -101,7 +100,7 @@ public class AccountController {
 
 
     @PostMapping("/{accountId:\\d+}/flows")
-    public ResponseEntity<Void> createFlowForAccount(@PathVariable(name = "accountId") Long accountId,
+    public ResponseEntity<FlowDto> createFlowForAccount(@PathVariable(name = "accountId") Long accountId,
                                                      @RequestBody FlowDto flowDto,
                                                      Principal principal) {
         Account currentAccount = this.accountService.getAccountByLogin(principal.getName())
@@ -110,14 +109,16 @@ public class AccountController {
         if (!Objects.equals(currentAccount.getId(), accountId))
             throw new ForbiddenRequestException("Creating flow forbidden", "Account cannot create flow for other accounts");
 
-        Flow flow = FlowMapper.DTO_TO_FLOW.apply(flowDto);
-        Long flowId = this.flowService.createFlowForAccount(flow, currentAccount);
+        Flow flow = DTO_TO_FLOW.apply(flowDto);
+        Flow savedFlow = this.flowService.createFlowForAccount(flow, currentAccount);
 
-        URI location = uriBuilder
-                .path("/api/flows/{flowId}")
-                .build(Map.of("flowId", flowId));
+        URI location = UriComponentsBuilder
+                .fromPath("/api/flows/{flowId}")
+                .buildAndExpand(Map.of("flowId", savedFlow.getId()))
+                .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location)
+                .body(FLOW_TO_DTO.apply(savedFlow));
     }
 
 

@@ -86,7 +86,7 @@ export async function createFlowForAccountById(flow, accountId) {
             throw new Error(errorResponse.detail || `Failed to create flow for account`);
         }
 
-        return response.headers.get("location");
+        return response.json();
     } catch (error) {
         console.log("Error: ", error);
         throw error;
@@ -107,7 +107,7 @@ export async function createStepForFlowById(step, flowId) {
             throw new Error(errorResponse.detail || `Failed to create step for flow`);
         }
 
-        return response.headers.get("location");
+        return response.json();
     } catch (error) {
         console.log("Error: ", error);
         throw error;
@@ -128,7 +128,7 @@ export async function createCaseForStepById(case1, stepId) {
             throw new Error(errorResponse.detail || `Failed to create case for step`);
         }
 
-        return response.headers.get("location");
+        return response.json();
     } catch (error) {
         console.log("Error: ", error);
         throw error;
