@@ -13,6 +13,7 @@ import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.StepService;
 import com.yarovyi.flowmeter.util.StepMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.yarovyi.flowmeter.util.FlowMapper.FLOW_TO_DTO;
-import static com.yarovyi.flowmeter.util.FlowMapper.FLOWs_TO_DTOs;
+import static com.yarovyi.flowmeter.util.FlowMapper.*;
 import static com.yarovyi.flowmeter.util.StepMapper.STEP_TO_DTO;
 
 @RequiredArgsConstructor
@@ -56,18 +56,29 @@ public class FlowController {
         return ResponseEntity.ok(dto);
     }
 
+    @PutMapping
+    public ResponseEntity<FlowDto> editFLow(@RequestBody FlowDto flowDto,
+                                            Principal principal) {
+        Account account = this.accountService
+                .getAccountByLogin(principal.getName())
+                .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
+        // for checking
+        this.flowService.getFlowByIdAndAccountId(flowDto.id(), account.getId());
+
+        Flow flow = this.flowService.update(DTO_TO_FLOW.apply(flowDto));
+
+        return ResponseEntity.ok(FLOW_TO_DTO.apply(flow));
+    }
+
 
     @PostMapping("/{flowId:\\d+}/steps")
     public ResponseEntity<StepDto> createStepForFlow(@PathVariable(name = "flowId") Long flowId,
                                                   @RequestBody StepDto stepDto,
                                                   Principal principal) {
-        Flow flow = this.flowService.getById(flowId).orElseThrow(() -> new SubentityNotFoundException(Flow.class));
         Account currentAccount = this.accountService.getAccountByLogin(principal.getName())
                 .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
 
-        if (!Objects.equals(currentAccount.getId(), flow.getAccount().getId()))
-            throw new ForbiddenRequestException("Creating step forbidden", "Account cannot create step for other flows");
-
+        Flow flow = this.flowService.getFlowByIdAndAccountId(flowId, currentAccount.getId());
         Step step = StepMapper.DTO_TO_STEP.apply(stepDto);
         Step savedStep = this.stepService.createStepForFlow(step, flow);
 

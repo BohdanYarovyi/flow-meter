@@ -34,5 +34,43 @@
 				<button id="create-case-btn">Add new case</button>
 		</template>
 
+		<template id="flow-details-template">
+				<div class="flow-details">
+						<div class="flow-details-content">
+								<h3 id="flow-details__title"></h3>
+								<p  id="flow-details__description"></p>
+								<p id="flow-details__percentage">
+										Target percentage:
+										<span id="flow-details__percentage-value">0</span>
+										%
+								</p>
+						</div>
+						<div class="flow-details-controls">
+								<button id="flow-details__edit-btn">Edit</button>
+						</div>
+				</div>
+		</template>
+
+		<template id="flow-details-edit-template">
+				<div class="flow-details">
+						<form id="flow-details-edit__form">
+								<input id="flow-details-edit__title" value="fdsaf">
+								<textarea id="flow-details-edit__description" rows="1"></textarea>
+								<p id="flow-details-edit__percentage">
+										Percentage:
+										<input id="flow-details-edit__percentage-value" type="number">
+								</p>
+								<div class="flow-details-edit__error">
+										<p id="flow-details-edit__error-message">Default error message</p>
+								</div>
+								<div class="flow-details-edit__buttons">
+										<button id="flow-details-edit__save-btn">Save</button>
+										<button id="flow-details-edit__cancel-btn">Cancel</button>
+								</div>
+						</form>
+				</div>
+		</template>
+
+
 </body>
 </html>

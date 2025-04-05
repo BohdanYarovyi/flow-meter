@@ -39,3 +39,11 @@ export function cloneCreateStepBtnTemplate() {
 export function cloneCreateCaseBtnTemplate() {
     return loadTemplateById("create-case-btn-template");
 }
+
+export function cloneFlowDetailsTemplate() {
+    return loadTemplateById("flow-details-template");
+}
+
+export function cloneFlowDetailsEditTemplate() {
+    return loadTemplateById("flow-details-edit-template");
+}

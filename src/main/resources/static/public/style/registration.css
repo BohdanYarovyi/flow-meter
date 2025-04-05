@@ -4,6 +4,14 @@
     box-sizing: border-box;
 }
 
+/* fonts */
+.kanit-regular {
+    font-family: "Kanit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
 body {
     background-color: #202020;
 }
@@ -35,7 +43,7 @@ body {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.registration-title {
+.registration__title {
     display: flex;
     justify-content: center;
 
@@ -44,7 +52,7 @@ body {
     font-size: 36px;
 }
 
-.registration-form {
+#registration-form {
     display: flex;
     flex-direction: column;
     gap: 28px;
@@ -58,11 +66,11 @@ body {
     text-align: end;
 }
 
-.field-label {
+.field__label {
     font-size: 36px;
 }
 
-.field-input {
+.field__input {
     width: 95%;
     padding: 0 20px;
     border-radius: 25px;
@@ -116,7 +124,7 @@ body {
     opacity: 100%;
 }
 
-.login-link-text {
+.login-link__text {
     margin-right: 4px;
 }
 
@@ -129,12 +137,11 @@ body {
     text-align: center;
 }
 
-.registration-error-message {
+#registration-error-message {
     width: 85%;
     margin: 0 auto;
 
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 24px;
     letter-spacing: 0.06em;
     line-height: 1.5;
 

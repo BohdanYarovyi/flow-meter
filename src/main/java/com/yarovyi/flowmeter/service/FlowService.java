@@ -10,8 +10,9 @@ public interface FlowService {
     List<Flow> getAll();
     List<Flow> getAllByAccountId(Long accountId);
     Optional<Flow> getById(Long id);
-    void create(Flow flow);
-    void update(Flow flow);
+    Flow getFlowByIdAndAccountId(Long flowId, Long accountId);
+    Flow create(Flow flow);
+    Flow update(Flow flow);
     void delete(Long id);
 
     Flow createFlowForAccount(Flow flow, Account account);

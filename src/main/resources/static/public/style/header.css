@@ -4,6 +4,14 @@
     box-sizing: border-box;
 }
 
+/* fonts */
+.archivo-black-regular {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
 header {
     display: flex;
     flex-direction: row;
@@ -36,13 +44,15 @@ header {
     justify-content: center;
 }
 
-.header-nav-item {
+.header-nav__item {
     width: 180px;
     text-align: center;
+    font-family: "Kanit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
-.header-nav-button {
-
+.header-nav__button {
     padding: 3px 22px;
 
     font-size: 27px;
@@ -59,7 +69,7 @@ header {
                 color linear 0.15s,
                 background-color linear 0.15s;
 }
-.header-nav-button:hover {
+.header-nav__button:hover {
     font-weight: 800;
     border: dashed 3px #ffffff;
     box-shadow: 0 0 15px rgba(255,255,255, 80%);

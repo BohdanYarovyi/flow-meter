@@ -5,6 +5,7 @@ const CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}/flows`;
 
 const GET_ALL_FLOWS__URL = `/api/flows`;
 const GET_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
+const EDIT_FLOW__URL = `/api/flows`;
 const CREATE_STEP_FOR_FLOW_BY_ID__URL = (flowId) => `/api/flows/${flowId}/steps`;
 
 const CREATE_CASE_FOR_STEP_BY_ID__URL = (stepId) => `/api/steps/${stepId}/cases`;
@@ -126,6 +127,26 @@ export async function createCaseForStepById(case1, stepId) {
         if (!response.ok) {
             const errorResponse = await response.json();
             throw new Error(errorResponse.detail || `Failed to create case for step`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.log("Error: ", error);
+        throw error;
+    }
+}
+
+export async function fetchToEditFlow(flow) {
+    try {
+        const response = await fetch(EDIT_FLOW__URL,{
+            method: "PUT",
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify(flow)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await  response.json();
+            throw new Error(errorResponse.detail || `Failed to edit flow`);
         }
 
         return response.json();

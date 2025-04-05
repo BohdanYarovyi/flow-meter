@@ -1,4 +1,4 @@
-export function validateCreatedFlow(flow) {
+export function validateFlow(flow) {
     if (!flow.title || flow.title.trim().length < 3) {
         throw new Error(`Title length must be at least 3 symbols`);
     }

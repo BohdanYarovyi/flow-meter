@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS t_flows
     account_id          bigint       not null,
     c_title             varchar(100) not null,
     c_description       varchar(1000),
-    c_target_percentage int          not null CHECK (c_target_percentage <= 100 AND t_flows.c_target_percentage > 0),
+    c_target_percentage int          not null CHECK (c_target_percentage <= 100 AND t_flows.c_target_percentage >= 0),
     c_created_at        timestamp    not null,
     c_updated_at        timestamp    not null,
     c_deleted           boolean      not null,

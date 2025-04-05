@@ -2,7 +2,7 @@ import {
     createCaseForStepById,
     createFlowForAccountById, createStepForFlowById,
     fetchCurrentAccountId,
-    fetchFlowsByAccountId
+    fetchFlowsByAccountId, fetchToEditFlow
 } from "./api.js";
 
 import {
@@ -11,7 +11,7 @@ import {
     cloneStepItemTemplate,
     cloneCaseTemplate,
     cloneCreateCaseBtnTemplate,
-    cloneCreateStepBtnTemplate
+    cloneCreateStepBtnTemplate, cloneFlowDetailsTemplate, cloneFlowDetailsEditTemplate
 } from "../../template-loader.js";
 
 import {
@@ -22,7 +22,7 @@ import {
     showError
 } from "../../util.js";
 
-import {validateCreatedCase, validateCreatedFlow} from "../../validation.js";
+import {validateCreatedCase, validateFlow} from "../../validation.js";
 import {Flow, Step, Case} from "./classes.js";
 
 // components
@@ -91,7 +91,8 @@ async function loadPage() {
 
 function loadFlows(flows) {
     clearContainers(
-        DOM.flowContainer
+        DOM.flowContainer,
+        DOM.caseContainer
     );
 
     if (flows.length > 0) {
@@ -99,10 +100,11 @@ function loadFlows(flows) {
             const clone = cloneFlowItemTemplate();
             const flowItem = clone.querySelector("#flow-item");
 
-            flowItem.textContent = flow.title;
+            flowItem.textContent = flow.title.length < 15 ? flow.title : flow.title.substring(0, 15) + "...";
             flowItem.addEventListener("click", () => {
                 selectItem(flowItem, "#flow-item")
                 loadSteps(flow.steps, flow.id);
+                showFlowDetails(flow);
             });
 
             DOM.flowContainer.appendChild(clone);
@@ -161,6 +163,71 @@ function loadCases(cases, stepId) {
     DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
 }
 
+// editing flow
+function showFlowDetails(flow) {
+    clearContainers(DOM.caseContainer);
+
+    const clone = cloneFlowDetailsTemplate();
+    clone.querySelector("#flow-details__title").textContent = flow.title;
+    clone.querySelector("#flow-details__description").textContent = flow.description;
+    clone.querySelector("#flow-details__percentage-value").textContent = flow.targetPercentage;
+    clone.querySelector("#flow-details__edit-btn")
+        .addEventListener("click", () => openFlowDetailsEditor(flow));
+
+    DOM.caseContainer.appendChild(clone);
+}
+
+function openFlowDetailsEditor(flow) {
+    clearContainers(DOM.caseContainer);
+
+    const clone = cloneFlowDetailsEditTemplate();
+
+    const title = clone.querySelector("#flow-details-edit__title");
+    const description = clone.querySelector("#flow-details-edit__description");
+    const percentage = clone.querySelector("#flow-details-edit__percentage-value");
+    const saveBtn = clone.querySelector("#flow-details-edit__save-btn");
+    const cancelBtn = clone.querySelector("#flow-details-edit__cancel-btn");
+
+    title.value = flow.title;
+    description.value = flow.description;
+    description.addEventListener("input", () => adjustTextarea(description));
+    percentage.value = flow.targetPercentage;
+    cancelBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        showFlowDetails(flow)
+    });
+    saveBtn.addEventListener("click", (event) => editFlow(event, flow));
+
+    DOM.caseContainer.appendChild(clone);
+}
+
+async function editFlow(event, flow) {
+    event.preventDefault();
+
+    const flowDetails = Flow.simpleFlow(
+        document.querySelector("#flow-details-edit__title").value,
+        document.querySelector("#flow-details-edit__description").value,
+        document.querySelector("#flow-details-edit__percentage-value").value
+    );
+
+    try {
+        validateFlow(flowDetails);
+        flow.title = flowDetails.title;
+        flow.description = flowDetails.description;
+        flow.targetPercentage = flowDetails.targetPercentage;
+
+        const editedFlow = await fetchToEditFlow(flow);
+        await loadPage();
+        showFlowDetails(editedFlow);
+    } catch (error) {
+        showError(
+            error,
+            document.querySelector(".flow-details-edit__error"),
+            document.querySelector("#flow-details-edit__error-message")
+        );
+    }
+}
+
 
 // modal - create flow
 function openCreateFlowModalWindow() {
@@ -184,7 +251,7 @@ async function createNewFlow(event) {
     );
 
     try {
-        validateCreatedFlow(createdFlow);
+        validateFlow(createdFlow);
         let responseFlow = await createFlowForAccountById(createdFlow, currentAccount);
         responseFlow = Flow.flowFromJSON(responseFlow);
 

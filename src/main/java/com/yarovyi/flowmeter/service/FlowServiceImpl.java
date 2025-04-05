@@ -3,7 +3,9 @@ package com.yarovyi.flowmeter.service;
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.domain.flow.Step;
+import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.FlowRepository;
+import com.yarovyi.flowmeter.util.FlowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.yarovyi.flowmeter.util.FlowMapper.COMMIT_FLOW_UPDATE;
 
 @RequiredArgsConstructor
 @Service
@@ -44,16 +48,32 @@ public class FlowServiceImpl implements FlowService {
         return this.flowRepository.findById(id);
     }
 
+    @Override
+    public Flow getFlowByIdAndAccountId(Long flowId, Long accountId) {
+        return this.flowRepository
+                .findFlowByIdAndAccount_Id(flowId, accountId)
+                .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
+    }
+
 
     @Override
-    public void create(Flow flow) {
+    public Flow create(Flow flow) {
         throw new UnsupportedOperationException();
     }
 
 
     @Override
-    public void update(Flow flow) {
-        throw new UnsupportedOperationException();
+    public Flow update(Flow flow) {
+        if (Objects.isNull(flow)) {
+            throw new NullPointerException("flow is null");
+        }
+
+        Flow existsFlow = this.flowRepository
+                .findById(flow.getId())
+                .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
+
+        existsFlow = COMMIT_FLOW_UPDATE.apply(existsFlow, flow);
+        return this.flowRepository.save(existsFlow);
     }
 
 

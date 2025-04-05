@@ -71,7 +71,7 @@ function validateRegistrationForm(data, passwordConfirmation) {
 
 function showError(error) {
     const registrationError = document.getElementsByClassName("registration-error");
-    const errorHolder = document.getElementById("registration-error-holder");
+    const errorHolder = document.getElementById("registration-error-message");
     errorHolder.textContent = `Error: ${error.message}`;
     registrationError.item(0).style.display = "block";
 }

@@ -50,7 +50,7 @@ function validateLoginFields(data) {
 
 function showError(error) {
     const loginError = document.querySelector(".login-error");
-    const errorHolder = document.querySelector("#login-error-holder");
+    const errorHolder = document.querySelector("#login-error-message");
     errorHolder.textContent = `Error: ${error.message}`;
     loginError.style.display = "block";
 }

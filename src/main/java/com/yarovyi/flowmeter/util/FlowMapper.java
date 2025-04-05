@@ -8,6 +8,7 @@ import com.yarovyi.flowmeter.entity.dto.StepDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.yarovyi.flowmeter.util.StepMapper.*;
@@ -66,6 +67,26 @@ public class FlowMapper {
         return dtos.stream()
                 .map(DTO_TO_FLOW)
                 .toList();
+    };
+
+    public static final BiFunction<Flow, Flow, Flow> COMMIT_FLOW_UPDATE = (exist, edited) -> {
+        if (Objects.isNull(exist) || Objects.isNull(edited)) {
+            throw new NullPointerException("Edited flow or exist flow is null");
+        }
+
+        if (!Objects.equals(exist.getTitle(), edited.getTitle())) {
+            exist.setTitle(edited.getTitle());
+        }
+
+        if (!Objects.equals(exist.getDescription(), edited.getDescription())) {
+            exist.setDescription(edited.getDescription());
+        }
+
+        if (!Objects.equals(exist.getTargetPercentage(), edited.getTargetPercentage())) {
+            exist.setTargetPercentage(edited.getTargetPercentage());
+        }
+
+        return exist;
     };
 
 }

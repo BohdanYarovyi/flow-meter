@@ -4,6 +4,20 @@
     box-sizing: border-box;
 }
 
+/* fonts */
+.archivo-black-regular {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.kanit-regular {
+    font-family: "Kanit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
 body {
     background-color: rgb(20, 20, 20);
 }
@@ -26,7 +40,7 @@ body {
     position: relative;
 }
 
-.title {
+.face__title {
     font-size: 76px;
     letter-spacing: 0.2em;
     text-align: center;
@@ -34,7 +48,7 @@ body {
     margin-top: -80px;
 }
 
-.suptitle {
+.face__suptitle {
     margin-top: 44px;
 
     font-size: 42px;
@@ -88,16 +102,17 @@ body {
     max-width: 80%;
     margin: 50px auto;
 
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-variation-settings: "wdth" 100;
     font-size: 30px;
     line-height: 1.5;
     letter-spacing: 0.04em;
     color: #ffffff;
 }
 
-.about-text {
+.about__title {
+    letter-spacing: 0.11em;
+}
+
+.about__text {
     margin-bottom: 15px;
 }
 
@@ -121,8 +136,4 @@ body {
 .about-idea:hover,
 .about-goal:hover {
     opacity: 100%;
-}
-
-.about-title {
-    letter-spacing: 0.11em;
 }

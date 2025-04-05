@@ -5,61 +5,64 @@
 		<title>Registration</title>
 		<link rel="icon" type="image/x-icon" href="/public/media/favicon.ico">
 		<link rel="stylesheet" href="/public/style/registration.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
 		<div th:insert="~{parts/header}"></div>
 
-		<div class="registration">
+		<div class="registration kanit-regular">
 				<div class="container">
 						<div class="registration-form-holder">
-								<div class="registration-title">
+								<div class="registration__title">
 										<h1>Registration</h1>
 								</div>
-								<form class="registration-form" id="registration-form">
+								<form id="registration-form">
 										<table class="registration-table">
 												<tr>
-														<td><span class="field-label">Login</span></td>
-														<td><input class="field-input" id="login" type="text" placeholder="Required" required></td>
+														<td><span class="field__label">Login</span></td>
+														<td><input class="field__input" id="login" type="text" placeholder="Required" required></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Email</span></td>
-														<td><input class="field-input" id="email" type="email" placeholder="Required" required></td>
+														<td><span class="field__label">Email</span></td>
+														<td><input class="field__input" id="email" type="email" placeholder="Required" required></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Password</span></td>
-														<td><input class="field-input" id="password" type="password" placeholder="Required" required></td>
+														<td><span class="field__label">Password</span></td>
+														<td><input class="field__input" id="password" type="password" placeholder="Required" required></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Confirm password</span></td>
-														<td><input class="field-input" id="password-confirmation" type="password" placeholder="Required" required></td>
+														<td><span class="field__label">Confirm password</span></td>
+														<td><input class="field__input" id="password-confirmation" type="password" placeholder="Required" required></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Firstname</span></td>
-														<td><input class="field-input" id="firstname" type="text"></td>
+														<td><span class="field__label">Firstname</span></td>
+														<td><input class="field__input" id="firstname" type="text"></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Lastname</span></td>
-														<td><input class="field-input" id="lastname" type="text"></td>
+														<td><span class="field__label">Lastname</span></td>
+														<td><input class="field__input" id="lastname" type="text"></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Patronymic</span></td>
-														<td><input class="field-input" id="patronymic" type="text"></td>
+														<td><span class="field__label">Patronymic</span></td>
+														<td><input class="field__input" id="patronymic" type="text"></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Phone</span></td>
-														<td><input class="field-input" id="phone" type="text"></td>
+														<td><span class="field__label">Phone</span></td>
+														<td><input class="field__input" id="phone" type="text"></td>
 												</tr>
 												<tr>
-														<td><span class="field-label">Date of birth</span></td>
-														<td><input class="field-input field-input-center" id="date-of-birth" type="date"></td>
+														<td><span class="field__label">Date of birth</span></td>
+														<td><input class="field__input field-input-center" id="date-of-birth" type="date"></td>
 												</tr>
 										</table>
 										<button class="registration-btn" id="registrationBtn" type="submit">Register</button>
 										<div class="registration-error">
-												<p class="registration-error-message" id="registration-error-holder">Default error message</p>
+												<p id="registration-error-message">Default error message</p>
 										</div>
 										<div class="login-block">
-												<span class="login-link-text">Already have an account?</span>
+												<span class="login-link__text">Already have an account?</span>
 												<a class="login-link" href="/login">Login</a>
 										</div>
 								</form>
