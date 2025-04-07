@@ -53,7 +53,8 @@ public class StepController {
                 .buildAndExpand(Map.of("caseId", savedCase.getId()))
                 .toUri();
 
-        return ResponseEntity.created(location)
+        return ResponseEntity
+                .created(location)
                 .body(CASE_TO_DTO.apply(savedCase));
     }
 

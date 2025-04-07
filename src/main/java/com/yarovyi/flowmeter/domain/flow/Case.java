@@ -5,6 +5,7 @@ import com.yarovyi.flowmeter.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "t_cases")
+@Entity
+@Table(name = "t_cases")
 public class Case extends BaseEntity {
     @Column(name = "c_text")
     private String text;

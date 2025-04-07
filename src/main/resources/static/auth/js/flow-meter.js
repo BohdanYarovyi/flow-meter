@@ -2,7 +2,7 @@ import {
     createCaseForStepById,
     createFlowForAccountById, createStepForFlowById,
     fetchCurrentAccountId,
-    fetchFlowsByAccountId, fetchToEditFlow
+    fetchFlowsByAccountId, fetchToEditCase, fetchToEditFlow
 } from "./api.js";
 
 import {
@@ -11,7 +11,11 @@ import {
     cloneStepItemTemplate,
     cloneCaseTemplate,
     cloneCreateCaseBtnTemplate,
-    cloneCreateStepBtnTemplate, cloneFlowDetailsTemplate, cloneFlowDetailsEditTemplate
+    cloneCreateStepBtnTemplate,
+    cloneFlowDetailsTemplate,
+    cloneFlowDetailsEditTemplate,
+    cloneCaseEditTemplate,
+    cloneCaseWrapperTemplate
 } from "../../template-loader.js";
 
 import {
@@ -19,10 +23,11 @@ import {
     clearContainers,
     openModalWindow,
     closeModalWindow,
-    showError
+    showError,
+    handleInputAvailableByCheckbox
 } from "../../util.js";
 
-import {validateCreatedCase, validateFlow} from "../../validation.js";
+import {validateCase, validateFlow} from "../../validation.js";
 import {Flow, Step, Case} from "./classes.js";
 
 // components
@@ -73,7 +78,7 @@ DOM.buttonCreateFlow.addEventListener("click", openCreateFlowModalWindow);
 DOM.modal.createFlow.submitButton.addEventListener("click", event => createNewFlow(event));
 DOM.modal.createStep.submitButton.addEventListener("click", event => createNewStep(event));
 DOM.modal.createCase.submitButton.addEventListener("click", event => createNewCase(event));
-DOM.modal.createCase.inputCounting.addEventListener("change", event => handlePercentInputAvailable(event));
+DOM.modal.createCase.inputCounting.addEventListener("change", event => handleInputAvailableByCheckbox(event, DOM.modal.createCase.inputPercent));
 document.querySelectorAll(".flexible").forEach(item =>
     item.addEventListener("input", () => adjustTextarea(item))
 );
@@ -89,6 +94,8 @@ async function loadPage() {
     }
 }
 
+
+// flow
 function loadFlows(flows) {
     clearContainers(
         DOM.flowContainer,
@@ -114,56 +121,6 @@ function loadFlows(flows) {
     }
 }
 
-function loadSteps(steps, flowId) {
-    clearContainers(
-        DOM.stepsContainer,
-        DOM.caseContainer,
-        DOM.buttonHolderCreateStep,
-        DOM.buttonHolderCreateCase
-    );
-
-    steps.sort((a, b) => a.day.getTime() - b.day.getTime());
-    for (const step of steps) {
-        const clone = cloneStepItemTemplate();
-        const stepItem = clone.querySelector("#step");
-
-        stepItem.textContent = step.getFormatDate();
-        stepItem.addEventListener("click", () => {
-            selectItem(stepItem, "#step");
-            loadCases(step.cases, step.id);
-        });
-
-        DOM.stepsContainer.appendChild(clone);
-    }
-
-    const createStepBtn = cloneCreateStepBtnTemplate();
-    createStepBtn.querySelector("#create-step-btn")
-        .addEventListener("click", () => openCreateStepModalWindow(flowId));
-    DOM.buttonHolderCreateStep.appendChild(createStepBtn);
-}
-
-function loadCases(cases, stepId) {
-    clearContainers(
-        DOM.caseContainer,
-        DOM.buttonHolderCreateCase
-    );
-
-    for (const case1 of cases) {
-        const clone = cloneCaseTemplate();
-
-        clone.querySelector("#case-text").textContent = case1.text;
-        clone.querySelector("#case-percent").textContent = case1.counting ? case1.percent : "";
-
-        DOM.caseContainer.appendChild(clone);
-    }
-
-    const createCaseTmp = cloneCreateCaseBtnTemplate();
-    createCaseTmp.querySelector("#create-case-btn")
-        .addEventListener("click", () => openCreateCaseModalWindow(stepId));
-    DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
-}
-
-// editing flow
 function showFlowDetails(flow) {
     clearContainers(DOM.caseContainer);
 
@@ -177,6 +134,8 @@ function showFlowDetails(flow) {
     DOM.caseContainer.appendChild(clone);
 }
 
+
+// editing flow
 function openFlowDetailsEditor(flow) {
     clearContainers(DOM.caseContainer);
 
@@ -226,6 +185,149 @@ async function editFlow(event, flow) {
             document.querySelector("#flow-details-edit__error-message")
         );
     }
+}
+
+
+// step
+function loadSteps(steps, flowId) {
+    clearContainers(
+        DOM.stepsContainer,
+        DOM.caseContainer,
+        DOM.buttonHolderCreateStep,
+        DOM.buttonHolderCreateCase
+    );
+
+    steps.sort((a, b) => a.day.getTime() - b.day.getTime());
+    for (const step of steps) {
+        const clone = cloneStepItemTemplate();
+        const stepItem = clone.querySelector("#step");
+
+        stepItem.textContent = step.getFormatDate();
+        stepItem.addEventListener("click", () => {
+            selectItem(stepItem, "#step");
+            loadCases(step.cases, step.id);
+        });
+
+        DOM.stepsContainer.appendChild(clone);
+    }
+
+    const createStepBtn = cloneCreateStepBtnTemplate();
+    createStepBtn.querySelector("#create-step-btn")
+        .addEventListener("click", () => openCreateStepModalWindow(flowId));
+    DOM.buttonHolderCreateStep.appendChild(createStepBtn);
+}
+
+
+// case
+function loadCases(cases, stepId) {
+    // clear case container
+    clearContainers(
+        DOM.caseContainer,
+        DOM.buttonHolderCreateCase
+    );
+
+    // fill container
+    cases.forEach(case1 => {
+        const clone = cloneCaseWrapperTemplate();
+        putCaseInWrapper(case1, clone.querySelector("#case"));
+        DOM.caseContainer.appendChild(clone);
+    });
+
+    // add btn for adding new cases
+    const createCaseTmp = cloneCreateCaseBtnTemplate();
+    createCaseTmp
+        .querySelector("#create-case-btn")
+        .addEventListener("click", () => openCreateCaseModalWindow(stepId));
+    DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
+}
+
+function putCaseInWrapper(case1, wrapper) {
+    clearContainers(wrapper);
+
+    const clone = cloneCaseTemplate();
+    const editBtn = clone.querySelector("#case__edit-btn");
+
+    fillCaseTemplate(case1, clone);
+    editBtn.addEventListener("click", () => openCaseEditor(case1, wrapper));
+
+    wrapper.appendChild(clone);
+}
+
+function fillCaseTemplate(case1, clone) {
+    clone.querySelector("#case__text").textContent = case1.text;
+    clone.querySelector("#case__percent").textContent = case1.counting ? case1.percent : "";
+}
+
+
+// editing case
+function openCaseEditor(case1, wrapper) {
+    clearContainers(wrapper);
+
+    const clone = cloneCaseEditTemplate();
+
+    const editForm = {
+        text: clone.querySelector("#case-edit__text"),
+        percent: clone.querySelector("#case-edit__percent"),
+        counting: clone.querySelector("#case-edit__counting"),
+        saveBtn: clone.querySelector("#case-edit__save-btn"),
+        cancelBtn: clone.querySelector("#case-edit__cancel-btn"),
+    }
+
+    editForm.text.value = case1.text;
+    editForm.percent.value = case1.counting ? case1.percent : "";
+    editForm.percent.disabled = !case1.counting;
+    editForm.counting.checked = case1.counting;
+
+    editForm.text.addEventListener("input", () => adjustTextarea(editForm.text));
+    editForm.counting.addEventListener("change", (event) => handleInputAvailableByCheckbox(event,  editForm.percent));
+    editForm.cancelBtn.addEventListener("click", () => putCaseInWrapper(case1, wrapper));
+    editForm.saveBtn.addEventListener("click", (event) => editCase(event, case1, wrapper));
+
+    wrapper.appendChild(clone);
+}
+
+async function editCase(event, case1, wrapper) {
+    event.preventDefault();
+
+
+    const edited = new Case(
+        case1.id,
+        case1.createdAt,
+        case1.updatedAt,
+        wrapper.querySelector("#case-edit__text").value,
+        wrapper.querySelector("#case-edit__percent").value,
+        wrapper.querySelector("#case-edit__counting").checked
+    );
+
+    try {
+        validateCase(edited);
+
+        const response = await fetchToEditCase(edited);
+        Object.assign(case1, Case.caseFromJSON(response));
+        updateCaseInCache(case1);
+
+        putCaseInWrapper(case1, wrapper);
+    } catch (error) {
+        console.log("Error", error);
+        showError(
+            error,
+            wrapper.querySelector(".case-edit__error"),
+            wrapper.querySelector("#case-edit__error-message")
+        );
+    }
+}
+
+function updateCaseInCache(updatedCase) {
+    for (const flow of flowsCache) {
+        for (const step of flow.steps) {
+            const caseIndex = step.cases.findIndex(c => c.id === updatedCase.id);
+            if (caseIndex !== -1) {
+                step.cases[caseIndex] = updatedCase;
+                return;
+            }
+        }
+    }
+    console.warn(`Case with id ${updatedCase.id} not found in flowsCache`);
 }
 
 
@@ -329,17 +431,9 @@ function clearStepModalWindow() {
 function openCreateCaseModalWindow(stepId) {
     DOM.modal.createCase.errorBlock.style.display = "none";
     DOM.modal.createCase.inputStepId.value = stepId;
+    DOM.modal.createCase.inputPercent.disabled = true;
+
     openModalWindow(DOM.modal.createCase.window);
-}
-
-function handlePercentInputAvailable(event) {
-    const inputPercent = DOM.modal.createCase.inputPercent;
-
-    if (event.target.checked) {
-        inputPercent.removeAttribute("disabled");
-    } else {
-        inputPercent.setAttribute("disabled", "true");
-    }
 }
 
 async function createNewCase(event) {
@@ -361,7 +455,7 @@ async function createNewCase(event) {
     }
 
     try {
-        validateCreatedCase(newCase);
+        validateCase(newCase);
         let responseCase = await createCaseForStepById(newCase, stepId);
         responseCase = Case.caseFromJSON(responseCase);
 
@@ -387,5 +481,3 @@ function clearCaseModalWindow() {
     DOM.modal.createCase.inputPercent.value = "";
     DOM.modal.createCase.inputCounting.checked = false;
 }
-
-

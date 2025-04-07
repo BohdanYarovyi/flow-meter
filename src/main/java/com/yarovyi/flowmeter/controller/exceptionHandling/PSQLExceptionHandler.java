@@ -19,7 +19,9 @@ public class PSQLExceptionHandler {
         problemDetail.setTitle(title);
         problemDetail.setDetail(detail);
 
-        return ErrorResponse.builder(e, problemDetail).build();
+        return ErrorResponse
+                .builder(e, problemDetail)
+                .build();
     }
 
 }

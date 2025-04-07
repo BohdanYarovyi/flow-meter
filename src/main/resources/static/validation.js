@@ -8,7 +8,7 @@ export function validateFlow(flow) {
     }
 }
 
-export function validateCreatedCase(case1) {
+export function validateCase(case1) {
     if (!case1.text || case1.text.length <= 3) {
         throw new Error("Case description length must be greater than 3 symbols");
     }

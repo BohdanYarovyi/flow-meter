@@ -1,5 +1,6 @@
 package com.yarovyi.flowmeter.controller.exceptionHandling;
 
+import com.yarovyi.flowmeter.entity.exception.EntityBadRequestException;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,9 @@ public class GeneralExceptionHandler {
         problemDetail.setTitle("Such %s not found".formatted(e.getEntityClass().getSimpleName()));
         problemDetail.setDetail(e.getMessage());
 
-        return ErrorResponse.builder(e,problemDetail).build();
+        return ErrorResponse
+                .builder(e,problemDetail)
+                .build();
     }
 
     @ExceptionHandler(ForbiddenRequestException.class)
@@ -26,7 +29,20 @@ public class GeneralExceptionHandler {
         problemDetail.setTitle(e.getTitle());
         problemDetail.setDetail(e.getDetails());
 
-        return ErrorResponse.builder(e, problemDetail).build();
+        return ErrorResponse
+                .builder(e, problemDetail)
+                .build();
+    }
+
+    @ExceptionHandler(EntityBadRequestException.class)
+    public ErrorResponse handleEntityBadRequestException(EntityBadRequestException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setDetail(e.getMessage());
+
+        return ErrorResponse
+                .builder(e, problemDetail)
+                .build();
     }
 
 }

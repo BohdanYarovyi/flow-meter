@@ -16,7 +16,9 @@ public class AccountExceptionHandler {
         problemDetail.setTitle("Security exception");
         problemDetail.setDetail(e.getDetail());
 
-        return ErrorResponse.builder(e, problemDetail).build();
+        return ErrorResponse
+                .builder(e, problemDetail)
+                .build();
     }
 
 

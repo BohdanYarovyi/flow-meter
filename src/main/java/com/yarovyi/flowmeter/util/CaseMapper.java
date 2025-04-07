@@ -6,6 +6,7 @@ import com.yarovyi.flowmeter.entity.dto.CaseDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class CaseMapper {
@@ -56,5 +57,25 @@ public class CaseMapper {
         return dtos.stream()
                 .map(DTO_TO_CASE)
                 .toList();
+    };
+
+    public static final BiFunction<Case,Case,Case> COMMIT_CASE_UPDATE = (existCase, editedCase) -> {
+        if (Objects.isNull(existCase) || Objects.isNull(editedCase)) {
+            throw new NullPointerException("Exist case or edited case is null");
+        }
+
+        if (!Objects.equals(existCase.getText(), editedCase.getText())) {
+            existCase.setText(editedCase.getText());
+        }
+
+        if (!Objects.equals(existCase.getPercent(), editedCase.getPercent())) {
+            existCase.setPercent(editedCase.getPercent());
+        }
+
+        if (!Objects.equals(existCase.isCounting(), editedCase.isCounting())) {
+            existCase.setCounting(editedCase.isCounting());
+        }
+
+        return existCase;
     };
 }

@@ -28,8 +28,16 @@ export function cloneStepItemTemplate() {
     return loadTemplateById("step-item-template");
 }
 
+export function cloneCaseWrapperTemplate() {
+    return loadTemplateById("case-wrapper-template");
+}
+
 export function cloneCaseTemplate() {
     return loadTemplateById("case-template");
+}
+
+export function cloneCaseEditTemplate() {
+    return loadTemplateById("case-edit-template");
 }
 
 export function cloneCreateStepBtnTemplate() {

@@ -19,14 +19,17 @@ public class ValidationExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
 
         MessageSourceResolvable firstError = bindingResult.getAllErrors().getFirst();
-        String errorMessage = Optional.ofNullable(firstError.getDefaultMessage())
+        String errorMessage = Optional
+                .ofNullable(firstError.getDefaultMessage())
                 .orElse("Unrecognized validation error");
 
         var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Validation error");
         problemDetail.setDetail(errorMessage);
 
-        return ErrorResponse.builder(e, problemDetail).build();
+        return ErrorResponse
+                .builder(e, problemDetail)
+                .build();
     }
 
 }

@@ -3,6 +3,7 @@ package com.yarovyi.flowmeter.service;
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.domain.flow.Step;
+import com.yarovyi.flowmeter.entity.exception.EntityBadRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.FlowRepository;
 import com.yarovyi.flowmeter.util.FlowMapper;
@@ -64,15 +65,17 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public Flow update(Flow flow) {
-        if (Objects.isNull(flow)) {
+        if (Objects.isNull(flow))
             throw new NullPointerException("flow is null");
-        }
+
+        if (Objects.isNull(flow.getId()))
+            throw new EntityBadRequestException("To edit flow flowID is required, but it is null");
 
         Flow existsFlow = this.flowRepository
                 .findById(flow.getId())
                 .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
-
         existsFlow = COMMIT_FLOW_UPDATE.apply(existsFlow, flow);
+
         return this.flowRepository.save(existsFlow);
     }
 

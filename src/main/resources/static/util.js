@@ -28,3 +28,11 @@ export function showError(error, errorBlock, errorMessage) {
     errorMessage.textContent = `Error: ${error.message}`;
     errorBlock.style.display = "block";
 }
+
+export function handleInputAvailableByCheckbox(event, targetInput) {
+    if (event.target.checked) {
+        targetInput.removeAttribute("disabled");
+    } else {
+        targetInput.setAttribute("disabled", "true");
+    }
+}

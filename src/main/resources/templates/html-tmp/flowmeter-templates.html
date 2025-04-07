@@ -10,6 +10,7 @@
 						<div class="flow-item" id="flow-item" >Flow inner</div>
 		</template>
 
+
 		<template id="flow-not-found-label-template">
 				<div class="flows-is-empty">Empty</div>
 		</template>
@@ -19,20 +20,46 @@
 				<div class="step-item" id="step">date</div>
 		</template>
 
+
 		<template id="create-step-btn-template">
 				<button id="create-step-btn">Add</button>
 		</template>
 
-		<template id="case-template">
-				<div class="case" id="case">
-						<div class="case-text" id="case-text">Зробив конспект для sql</div>
-						<div class="case-percent" id="case-percent">80</div>
-				</div>
+
+		<template id="case-wrapper-template">
+				<div class="case" id="case"></div>
 		</template>
+
+
+		<template id="case-template">
+				<div class="case-info">
+						<div id="case__text">case-text-here</div>
+						<div id="case__percent">case-percent-here</div>
+				</div>
+				<button id="case__edit-btn">Edit</button>
+		</template>
+
+
+		<template id="case-edit-template">
+				<div class="case-edit-input">
+						<textarea id="case-edit__text" rows="1"></textarea>
+						<div class="case-edit__percent-wrapper">
+								<input id="case-edit__counting" type="checkbox">
+								<input id="case-edit__percent" type="number">
+						</div>
+				</div>
+				<div class="case-edit__error">
+						<p id="case-edit__error-message">Default error message</p>
+				</div>
+				<button id="case-edit__save-btn">Save</button>
+				<button id="case-edit__cancel-btn">Cancel</button>
+		</template>
+
 
 		<template id="create-case-btn-template">
 				<button id="create-case-btn">Add new case</button>
 		</template>
+
 
 		<template id="flow-details-template">
 				<div class="flow-details">
@@ -50,6 +77,7 @@
 						</div>
 				</div>
 		</template>
+
 
 		<template id="flow-details-edit-template">
 				<div class="flow-details">

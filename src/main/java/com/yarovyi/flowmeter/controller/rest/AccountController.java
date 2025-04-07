@@ -49,9 +49,12 @@ public class AccountController {
 
         if (optional.isPresent()) {
             Long id = optional.get().getId();
-            return ResponseEntity.ok(Map.of("currentAccountId", id));
+            return ResponseEntity
+                    .ok(Map.of("currentAccountId", id));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
     }
 
@@ -77,7 +80,9 @@ public class AccountController {
         Account commitedAccount = COMMIT_ACCOUNT_UPDATES.apply(updatedAccount, account);
         this.accountService.updateAccount(commitedAccount);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
 
@@ -101,9 +106,10 @@ public class AccountController {
 
     @PostMapping("/{accountId:\\d+}/flows")
     public ResponseEntity<FlowDto> createFlowForAccount(@PathVariable(name = "accountId") Long accountId,
-                                                     @RequestBody FlowDto flowDto,
-                                                     Principal principal) {
-        Account currentAccount = this.accountService.getAccountByLogin(principal.getName())
+                                                        @RequestBody FlowDto flowDto,
+                                                        Principal principal) {
+        Account currentAccount = this.accountService
+                .getAccountByLogin(principal.getName())
                 .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
 
         if (!Objects.equals(currentAccount.getId(), accountId))
@@ -117,7 +123,8 @@ public class AccountController {
                 .buildAndExpand(Map.of("flowId", savedFlow.getId()))
                 .toUri();
 
-        return ResponseEntity.created(location)
+        return ResponseEntity
+                .created(location)
                 .body(FLOW_TO_DTO.apply(savedFlow));
     }
 

@@ -57,17 +57,19 @@ public class FlowController {
     }
 
     @PutMapping
-    public ResponseEntity<FlowDto> editFLow(@RequestBody FlowDto flowDto,
+    public ResponseEntity<FlowDto> editFlow(@RequestBody FlowDto flowDto,
                                             Principal principal) {
         Account account = this.accountService
                 .getAccountByLogin(principal.getName())
                 .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
+
         // for checking
         this.flowService.getFlowByIdAndAccountId(flowDto.id(), account.getId());
 
         Flow flow = this.flowService.update(DTO_TO_FLOW.apply(flowDto));
 
-        return ResponseEntity.ok(FLOW_TO_DTO.apply(flow));
+        return ResponseEntity
+                .ok(FLOW_TO_DTO.apply(flow));
     }
 
 
@@ -87,7 +89,9 @@ public class FlowController {
                 .buildAndExpand(Map.of("stepId", savedStep.getId()))
                 .toUri();
 
-        return ResponseEntity.created(location).body(STEP_TO_DTO.apply(savedStep));
+        return ResponseEntity
+                .created(location)
+                .body(STEP_TO_DTO.apply(savedStep));
     }
 
 
