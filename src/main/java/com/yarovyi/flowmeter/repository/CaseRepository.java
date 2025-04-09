@@ -8,13 +8,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface CaseRepository extends JpaRepository<Case, Long> {
-
     @Query(value = """
-            SELECT c FROM Case c
-            WHERE c.id = :caseId
-            AND c.step.flow.account.id = :accountId
-            """
-    )
-    Optional<Case> findCaseByIdAndAccountId(@Param("caseId") Long caseId, @Param("accountId") Long accountId);
-
+            SELECT EXISTS(
+                SELECT 1
+                FROM t_cases c
+                JOIN t_steps s on c.step_id = s.id
+                JOIN t_flows f on s.flow_id = f.id
+                WHERE c.id = :caseId
+                AND f.account_id = :accountId
+            );
+            """, nativeQuery = true)
+    boolean existsByIdAndAccountId(@Param("caseId") Long caseId, @Param("accountId") Long accountId);
 }

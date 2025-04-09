@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "t_cases")
+@SQLRestriction("c_deleted = false") // for soft-deleting
 public class Case extends BaseEntity {
     @Column(name = "c_text")
     private String text;

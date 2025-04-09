@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "t_steps")
+@SQLRestriction("c_deleted = false") // for soft-deleting
 public class Step extends BaseEntity {
     @Column(name = "c_day")
     private LocalDate day;

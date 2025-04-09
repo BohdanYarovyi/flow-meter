@@ -48,6 +48,10 @@ export function cloneCreateCaseBtnTemplate() {
     return loadTemplateById("create-case-btn-template");
 }
 
+export function cloneDeleteStepBtnTemplate() {
+    return loadTemplateById("delete-step-btn-template");
+}
+
 export function cloneFlowDetailsTemplate() {
     return loadTemplateById("flow-details-template");
 }

@@ -32,15 +32,6 @@ public class CaseServiceImpl implements CaseService {
     }
 
 
-    // todo: mb here must be void, cause it is more check method than access method
-    @Override
-    public Case getCaseByIdAndAccountId(Long caseId, Long accountId) {
-        return this.caseRepository
-                .findCaseByIdAndAccountId(caseId, accountId)
-                .orElseThrow(() -> new SubentityNotFoundException(Case.class));
-    }
-
-
     @Override
     public Case edit(Case editedCase) {
         if (Objects.isNull(editedCase))
@@ -55,6 +46,20 @@ public class CaseServiceImpl implements CaseService {
         existCase = COMMIT_CASE_UPDATE.apply(existCase, editedCase);
 
         return this.caseRepository.save(existCase);
+    }
+
+
+    @Override
+    public boolean checkOwnership(Long caseId, Long accountId) {
+        return this.caseRepository.existsByIdAndAccountId(caseId, accountId);
+    }
+
+
+    @Override
+    public void checkOwnershipOrElseThrow(Long caseId, Long accountId) {
+        if (!checkOwnership(caseId, accountId)) {
+            throw new SubentityNotFoundException("Account has not such case", Case.class);
+        }
     }
 
 

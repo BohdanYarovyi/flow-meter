@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS t_flows
     c_updated_at        timestamp    not null,
     c_deleted           boolean      not null,
     PRIMARY KEY (id),
-    FOREIGN KEY (account_id) REFERENCES t_accounts (id)
+    FOREIGN KEY (account_id) REFERENCES t_accounts (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS t_steps
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS t_steps
     c_updated_at timestamp not null,
     c_deleted    boolean   not null,
     PRIMARY KEY (id),
-    FOREIGN KEY (flow_id) REFERENCES t_flows (id)
+    FOREIGN KEY (flow_id) REFERENCES t_flows (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS t_cases
@@ -35,5 +35,5 @@ CREATE TABLE IF NOT EXISTS t_cases
     c_updated_at timestamp    not null,
     c_deleted    boolean      not null,
     PRIMARY KEY (id),
-    FOREIGN KEY (step_id) REFERENCES t_steps(id)
+    FOREIGN KEY (step_id) REFERENCES t_steps(id) ON DELETE CASCADE
 );

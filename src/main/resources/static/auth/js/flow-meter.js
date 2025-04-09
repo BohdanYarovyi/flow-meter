@@ -1,41 +1,46 @@
 import {
     createCaseForStepById,
-    createFlowForAccountById, createStepForFlowById,
+    createFlowForAccountById,
+    createStepForFlowById,
     fetchCurrentAccountId,
-    fetchFlowsByAccountId, fetchToEditCase, fetchToEditFlow
+    fetchFlowsByAccountId,
+    fetchToDeleteFlowById, fetchToDeleteStepById,
+    fetchToEditCase,
+    fetchToEditFlow
 } from "./api.js";
 
 import {
-    cloneFlowNotFoundLabelTemplate,
-    cloneFlowItemTemplate,
-    cloneStepItemTemplate,
+    cloneCaseEditTemplate,
     cloneCaseTemplate,
+    cloneCaseWrapperTemplate,
     cloneCreateCaseBtnTemplate,
     cloneCreateStepBtnTemplate,
-    cloneFlowDetailsTemplate,
+    cloneDeleteStepBtnTemplate,
     cloneFlowDetailsEditTemplate,
-    cloneCaseEditTemplate,
-    cloneCaseWrapperTemplate
+    cloneFlowDetailsTemplate,
+    cloneFlowItemTemplate,
+    cloneFlowNotFoundLabelTemplate,
+    cloneStepItemTemplate
 } from "../../template-loader.js";
 
 import {
-    selectItem,
     clearContainers,
-    openModalWindow,
     closeModalWindow,
-    showError,
-    handleInputAvailableByCheckbox
+    handleInputAvailableByCheckbox,
+    openModalWindow,
+    selectItem,
+    showError
 } from "../../util.js";
 
 import {validateCase, validateFlow} from "../../validation.js";
-import {Flow, Step, Case} from "./classes.js";
+import {Case, Flow, Step} from "./classes.js";
 
 // components
 const DOM = {
     flowContainer: document.getElementById("flow-container"),
     stepsContainer: document.getElementById("steps-container"),
     caseContainer: document.getElementById("case-container"),
-    buttonHolderCreateCase: document.getElementById("create-case-btn-holder"),
+    stepButtons: document.getElementById("step-buttons"),
     buttonHolderCreateStep: document.getElementById("create-step-btn-holder"),
     buttonCreateFlow: document.getElementById("create-flow-btn"),
     modal: {
@@ -88,7 +93,7 @@ async function loadPage() {
         currentAccount = await fetchCurrentAccountId();
         flowsCache = (await fetchFlowsByAccountId(currentAccount)).map(Flow.flowFromJSON);
 
-        loadFlows(flowsCache);
+        loadFlows();
     } catch (error) {
         console.log("Error", error.detail);
     }
@@ -96,14 +101,14 @@ async function loadPage() {
 
 
 // flow
-function loadFlows(flows) {
+function loadFlows() {
     clearContainers(
         DOM.flowContainer,
         DOM.caseContainer
     );
 
-    if (flows.length > 0) {
-        for (const flow of flows) {
+    if (flowsCache.length > 0) {
+        for (const flow of flowsCache) {
             const clone = cloneFlowItemTemplate();
             const flowItem = clone.querySelector("#flow-item");
 
@@ -141,21 +146,26 @@ function openFlowDetailsEditor(flow) {
 
     const clone = cloneFlowDetailsEditTemplate();
 
-    const title = clone.querySelector("#flow-details-edit__title");
-    const description = clone.querySelector("#flow-details-edit__description");
-    const percentage = clone.querySelector("#flow-details-edit__percentage-value");
-    const saveBtn = clone.querySelector("#flow-details-edit__save-btn");
-    const cancelBtn = clone.querySelector("#flow-details-edit__cancel-btn");
+    const editForm = {
+        title: clone.querySelector("#flow-details-edit__title"),
+        description: clone.querySelector("#flow-details-edit__description"),
+        percentage: clone.querySelector("#flow-details-edit__percentage-value"),
+        saveBtn: clone.querySelector("#flow-details-edit__save-btn"),
+        cancelBtn: clone.querySelector("#flow-details-edit__cancel-btn"),
+        deleteBtn: clone.querySelector("#flow-details-edit__delete-btn")
+    }
 
-    title.value = flow.title;
-    description.value = flow.description;
-    description.addEventListener("input", () => adjustTextarea(description));
-    percentage.value = flow.targetPercentage;
-    cancelBtn.addEventListener("click", (event) => {
+    editForm.title.value = flow.title;
+    editForm.description.value = flow.description;
+    editForm.percentage.value = flow.targetPercentage;
+
+    editForm.description.addEventListener("input", () => adjustTextarea(editForm.description));
+    editForm.deleteBtn.addEventListener("click", (event) => deleteFlow(event, flow));
+    editForm.saveBtn.addEventListener("click", (event) => editFlow(event, flow));
+    editForm.cancelBtn.addEventListener("click", (event) => {
         event.preventDefault();
-        showFlowDetails(flow)
+        showFlowDetails(flow);
     });
-    saveBtn.addEventListener("click", (event) => editFlow(event, flow));
 
     DOM.caseContainer.appendChild(clone);
 }
@@ -187,6 +197,32 @@ async function editFlow(event, flow) {
     }
 }
 
+async function deleteFlow(event, flow) {
+    event.preventDefault();
+
+    // todo: make sure here about deleting flow
+    try {
+        await fetchToDeleteFlowById(flow.id);
+        removeFlowFromCache(flow.id);
+        loadFlows();
+    } catch (error) {
+        showError(
+            error,
+            document.querySelector(".flow-details-edit__error"),
+            document.querySelector("#flow-details-edit__error-message")
+        );
+    }
+}
+
+function removeFlowFromCache(flowId) {
+    const index = flowsCache.findIndex(flow => flow.id === flowId);
+    if (index !== -1) {
+        flowsCache.splice(index, 1);
+    } else {
+        console.warn(`Such flow not found in flowsCache`);
+    }
+}
+
 
 // step
 function loadSteps(steps, flowId) {
@@ -194,7 +230,7 @@ function loadSteps(steps, flowId) {
         DOM.stepsContainer,
         DOM.caseContainer,
         DOM.buttonHolderCreateStep,
-        DOM.buttonHolderCreateCase
+        DOM.stepButtons
     );
 
     steps.sort((a, b) => a.day.getTime() - b.day.getTime());
@@ -223,7 +259,7 @@ function loadCases(cases, stepId) {
     // clear case container
     clearContainers(
         DOM.caseContainer,
-        DOM.buttonHolderCreateCase
+        DOM.stepButtons
     );
 
     // fill container
@@ -234,11 +270,54 @@ function loadCases(cases, stepId) {
     });
 
     // add btn for adding new cases
+    addCreateCaseBtn(stepId);
+    addDeleteStepBtn(stepId);
+}
+
+function addCreateCaseBtn(stepId) {
     const createCaseTmp = cloneCreateCaseBtnTemplate();
+
     createCaseTmp
         .querySelector("#create-case-btn")
         .addEventListener("click", () => openCreateCaseModalWindow(stepId));
-    DOM.buttonHolderCreateCase.appendChild(createCaseTmp);
+    DOM.stepButtons.appendChild(createCaseTmp);
+}
+
+function addDeleteStepBtn(stepId) {
+    const clone = cloneDeleteStepBtnTemplate();
+
+    clone
+        .querySelector("#delete-current-step-btn")
+        .addEventListener("click", () => deleteStep(stepId));
+
+    DOM.stepButtons.appendChild(clone);
+}
+
+async function deleteStep(stepId) {
+    // todo: Maybe it is bad decision
+    const flow = flowsCache.find(flow => {
+        return flow.steps.some(step => step.id === stepId);
+    });
+
+    console.log("Flow id: " + flow.id);
+
+    try {
+        // todo: make sure about deleting step here.
+        await fetchToDeleteStepById(stepId);
+
+        // todo: after deleting on the server, steps mush be reloaded.
+        //       Here is piece of shit implementation, it works bad.
+        // const found = flow.steps.find(step => stepId === step.id);
+        // flow.steps.remove(found);
+
+        // loadSteps(flow.steps, flow.id);
+    } catch (error) {
+        // todo: show error here.
+    }
+}
+
+function removeStepFromCache(stepId) {
+    // todo: for implementing
 }
 
 function putCaseInWrapper(case1, wrapper) {
@@ -459,6 +538,8 @@ async function createNewCase(event) {
         let responseCase = await createCaseForStepById(newCase, stepId);
         responseCase = Case.caseFromJSON(responseCase);
 
+        // todo: refactor this piece of shit.
+        //       Case loading must load from cache, not from local cases.
         currentStep.cases.push(responseCase);
         loadCases(currentStep.cases, stepId);
         closeModalWindow(DOM.modal.createCase.window);

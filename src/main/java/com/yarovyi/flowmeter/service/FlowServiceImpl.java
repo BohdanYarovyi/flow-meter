@@ -49,11 +49,17 @@ public class FlowServiceImpl implements FlowService {
         return this.flowRepository.findById(id);
     }
 
+
     @Override
-    public Flow getFlowByIdAndAccountId(Long flowId, Long accountId) {
-        return this.flowRepository
-                .findFlowByIdAndAccount_Id(flowId, accountId)
-                .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
+    public boolean checkOwnership(Long flowId, Long accountId) {
+        return this.flowRepository.existsByIdAndAccount_Id(flowId, accountId);
+    }
+
+
+    @Override
+    public void checkOwnerShipOrElseThrow(Long flowId, Long accountId) {
+        if (!checkOwnership(flowId, accountId))
+            throw new SubentityNotFoundException("Account has not such flow", Flow.class);
     }
 
 
@@ -82,7 +88,16 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public void delete(Long id) {
-        throw new UnsupportedOperationException();
+        if (Objects.isNull(id))
+            throw new NullPointerException("Flow id is null");
+
+        Flow flow = this.flowRepository
+                .findById(id)
+                .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
+
+        // soft-delete
+        flow.delete();
+        this.flowRepository.save(flow);
     }
 
 

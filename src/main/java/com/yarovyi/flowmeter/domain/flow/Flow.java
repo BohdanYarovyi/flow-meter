@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "t_flows")
+@SQLRestriction("c_deleted = false") // for soft-deleting
 public class Flow extends BaseEntity {
     @Column(name = "c_title")
     private String title;

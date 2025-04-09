@@ -8,4 +8,8 @@ import java.util.Optional;
 public interface StepService {
     Optional<Step> getStepById(Long stepId);
     Step createStepForFlow(Step step, Flow flow);
+    void deleteStepById(Long stepId);
+
+    boolean checkOwnership(Long stepId, Long accountId);
+    void checkOwnershipOrElseThrow(Long stepId, Long accountId);
 }

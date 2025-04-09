@@ -57,7 +57,11 @@
 
 
 		<template id="create-case-btn-template">
-				<button id="create-case-btn">Add new case</button>
+				<button class="step__button" id="create-case-btn">Add new case</button>
+		</template>
+
+		<template id="delete-step-btn-template">
+				<button class="step__button" id="delete-current-step-btn">Delete step</button>
 		</template>
 
 
@@ -92,8 +96,11 @@
 										<p id="flow-details-edit__error-message">Default error message</p>
 								</div>
 								<div class="flow-details-edit__buttons">
-										<button id="flow-details-edit__save-btn">Save</button>
-										<button id="flow-details-edit__cancel-btn">Cancel</button>
+										<div class="flow-details-edit__edit-buttons">
+												<button class="flow-edit__button" id="flow-details-edit__save-btn">Save</button>
+												<button class="flow-edit__button" id="flow-details-edit__cancel-btn">Cancel</button>
+										</div>
+										<button class="flow-edit__button" id="flow-details-edit__delete-btn">Delete</button>
 								</div>
 						</form>
 				</div>

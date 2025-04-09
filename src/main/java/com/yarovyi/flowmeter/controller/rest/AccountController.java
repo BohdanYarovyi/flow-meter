@@ -5,12 +5,11 @@ import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.entity.dto.AccountDto;
 import com.yarovyi.flowmeter.entity.dto.AccountUpdatedDto;
 import com.yarovyi.flowmeter.entity.dto.FlowDto;
-import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
-import com.yarovyi.flowmeter.util.FlowMapper;
+import com.yarovyi.flowmeter.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,9 +60,12 @@ public class AccountController {
 
     @GetMapping("/{accountId:\\d+}")
     public ResponseEntity<?> getAccountById(@PathVariable(name = "accountId") Long accountId) {
-        Account account = this.accountService.getAccountById(accountId).orElseThrow(
-                () -> new SubentityNotFoundException("Account with id:%s not found".formatted(accountId), Account.class)
-        );
+        Account account = this.accountService
+                .getAccountById(accountId)
+                .orElseThrow(() -> {
+                    var message = String.format("Account with id:%s not found", accountId);
+                    return new SubentityNotFoundException(message, Account.class);
+                });
 
         AccountDto dto = ACCOUNT_TO_DTO.apply(account);
 
@@ -73,9 +75,12 @@ public class AccountController {
 
     @PutMapping
     public ResponseEntity<Void> updateAccount(@RequestBody AccountUpdatedDto updatedAccount) {
-        Account account = this.accountService.getAccountById(updatedAccount.id()).orElseThrow(
-                () -> new SubentityNotFoundException("Account with id:%s not found".formatted(updatedAccount.id()), Account.class)
-        );
+        Account account = this.accountService
+                .getAccountById(updatedAccount.id())
+                .orElseThrow(() -> {
+                    var message = String.format("Account with id:%s not found", updatedAccount.id());
+                    return new SubentityNotFoundException(message, Account.class);
+                });
 
         Account commitedAccount = COMMIT_ACCOUNT_UPDATES.apply(updatedAccount, account);
         this.accountService.updateAccount(commitedAccount);
@@ -108,15 +113,16 @@ public class AccountController {
     public ResponseEntity<FlowDto> createFlowForAccount(@PathVariable(name = "accountId") Long accountId,
                                                         @RequestBody FlowDto flowDto,
                                                         Principal principal) {
-        Account currentAccount = this.accountService
-                .getAccountByLogin(principal.getName())
-                .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
+        Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        if (!Objects.equals(account.getId(), accountId)) {
+            var title = "Creating flow forbidden";
+            var message = "Account cannot create flow for other accounts";
 
-        if (!Objects.equals(currentAccount.getId(), accountId))
-            throw new ForbiddenRequestException("Creating flow forbidden", "Account cannot create flow for other accounts");
+            throw new ForbiddenRequestException(title, message);
+        }
 
         Flow flow = DTO_TO_FLOW.apply(flowDto);
-        Flow savedFlow = this.flowService.createFlowForAccount(flow, currentAccount);
+        Flow savedFlow = this.flowService.createFlowForAccount(flow, account);
 
         URI location = UriComponentsBuilder
                 .fromPath("/api/flows/{flowId}")

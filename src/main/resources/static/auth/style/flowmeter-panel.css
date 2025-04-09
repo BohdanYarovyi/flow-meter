@@ -286,7 +286,6 @@ body {
 }
 
 #flow-details__edit-btn:hover {
-    border-color: #202020;
     color: #202020;
     background-color: #ffffff;
 }
@@ -332,44 +331,55 @@ body {
 }
 
 .flow-details-edit__buttons {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-#flow-details-edit__save-btn {
+.flow-edit__button {
     padding: 10px 50px;
     border-radius: 20px;
-    margin: 10px 40px;
-    border: solid 2px #7dc175;
+    border: solid 2px #ffffff;
 
     background-color: #202020;
-    color: #8ed885;
+    color: #ffffff;
 
     font-size: 30px;
     font-weight: 600;
     letter-spacing: 0.05em;
+    cursor: pointer;
 
     transition: color linear 0.1s,
                 background-color linear 0.1s,
-                border linear 0.1s;
+                border linear 0.1s,
+                box-shadow linear 0.1s;
+}
+
+.flow-edit__button:hover {
+    color: #202020;
+    background-color: #ffffff;
+}
+
+#flow-details-edit__save-btn {
+    margin: 10px 30px 10px 0;
+
+    border-color: #7dc175;
+    background-color: #202020;
+    color: #8ed885;
 }
 
 #flow-details-edit__save-btn:hover {
     color: #202020;
     background-color: #8ed885;
+    box-shadow: 0 0 25px rgba(142, 216, 133, 0.5);
 }
 
 #flow-details-edit__cancel-btn {
-    padding: 10px 50px;
-    border-radius: 20px;
-    margin: 10px 40px;
-    border: solid 2px #d62a2a;
+    margin: 10px 30px;
 
+    border-color: #d62a2a;
     background-color: #202020;
     color: #d62a2a;
-
-    font-size: 30px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
 
     transition: color linear 0.1s,
                 background-color linear 0.1s,
@@ -379,8 +389,27 @@ body {
 #flow-details-edit__cancel-btn:hover {
     color: #202020;
     background-color: #d62a2a;
+    box-shadow: 0 0 25px rgba(206, 8, 8, 0.5);
 }
 
+#flow-details-edit__delete-btn {
+    margin: 10px 0;
+
+    border-color: #710c0c;
+    background-color: #a50f0f;
+    color: #202020;
+
+    transition: color linear 0.1s,
+                background-color linear 0.1s,
+                border linear 0.1s;
+}
+
+#flow-details-edit__delete-btn:hover {
+    color: #202020;
+    background-color: #e02f2f;
+    box-shadow: 0 0 25px rgba(206, 8, 8, 0.5);
+
+}
 
 .flow-details-edit__error {
     display: none;
@@ -567,18 +596,23 @@ body {
     background-color: #d62a2a;
 }
 
-.create-case-btn-holder {
+#step-buttons {
     margin-top: 50px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
 }
 
-#create-case-btn {
+.step__button {
     width: 30%;
     padding: 10px 0;
     border: solid 3px #ffffff;
     border-radius: 18px;
 
     font-size: 32px;
+    letter-spacing: 0.05em;
 
     color: #ffffff;
     background-color: #202020;
@@ -590,11 +624,27 @@ body {
                 box-shadow linear 0.1s;
 }
 
-#create-case-btn:hover {
+.step__button:hover {
     color: #202020;
     background-color: #ffffff;
     border-color: #000000;
     box-shadow: 0 0 15px rgba(255, 255, 255, 60%);
+}
+
+#delete-current-step-btn {
+    width: 20%;
+    padding: 10px 20px;
+
+    font-size: 26px;
+    font-weight: 700;
+    background-color: #a50f0f;
+    color: #202020;
+    border-color: #202020;
+}
+
+#delete-current-step-btn:hover {
+    box-shadow: 0 0 25px rgba(206, 8, 8, 0.5);
+    background-color: #cb1818;
 }
 
 .hidden {
@@ -618,7 +668,6 @@ body {
     justify-content: center;
 
     background-color: rgba(0, 0, 0, 60%);
-
 }
 
 .modal-content {

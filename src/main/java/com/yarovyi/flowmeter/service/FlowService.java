@@ -10,10 +10,12 @@ public interface FlowService {
     List<Flow> getAll();
     List<Flow> getAllByAccountId(Long accountId);
     Optional<Flow> getById(Long id);
-    Flow getFlowByIdAndAccountId(Long flowId, Long accountId);
     Flow create(Flow flow);
     Flow update(Flow flow);
     void delete(Long id);
 
     Flow createFlowForAccount(Flow flow, Account account);
+
+    boolean checkOwnership(Long flowId, Long accountId);
+    void checkOwnerShipOrElseThrow(Long flowId, Long accountId);
 }

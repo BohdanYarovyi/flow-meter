@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface FlowRepository extends JpaRepository<Flow,Long> {
     List<Flow> findAllByAccount_Id(Long accountId);
-    Optional<Flow> findFlowByIdAndAccount_Id(Long id, Long accountId);
+    boolean existsByIdAndAccount_Id(Long id, Long accountId);
 }

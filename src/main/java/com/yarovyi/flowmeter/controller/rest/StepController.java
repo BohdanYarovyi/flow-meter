@@ -4,13 +4,11 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Case;
 import com.yarovyi.flowmeter.domain.flow.Step;
 import com.yarovyi.flowmeter.entity.dto.CaseDto;
-import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
-import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.CaseService;
 import com.yarovyi.flowmeter.service.StepService;
-import com.yarovyi.flowmeter.util.CaseMapper;
+import com.yarovyi.flowmeter.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.security.Principal;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.yarovyi.flowmeter.util.CaseMapper.CASE_TO_DTO;
 import static com.yarovyi.flowmeter.util.CaseMapper.DTO_TO_CASE;
@@ -37,13 +34,12 @@ public class StepController {
     public ResponseEntity<CaseDto> createCaseForStep(@PathVariable(name = "stepId") Long stepId,
                                                   @RequestBody CaseDto caseDto,
                                                   Principal principal) {
-        Step step = this.stepService.getStepById(stepId)
-                .orElseThrow(() -> new SubentityNotFoundException(Step.class));
-        Account currentAccount = this.accountService.getAccountByLogin(principal.getName())
-                .orElseThrow(() -> new AccountAuthenticationException("Account is not logged in"));
+        Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        this.stepService.checkOwnership(stepId, account.getId());
 
-        if (!Objects.equals(currentAccount.getId(), step.getFlow().getAccount().getId()))
-            throw new ForbiddenRequestException("Creating case forbidden", "Account cannot create case for other steps");
+        Step step = this.stepService
+                .getStepById(stepId)
+                .orElseThrow(() -> new SubentityNotFoundException(Step.class));
 
         Case case1 = DTO_TO_CASE.apply(caseDto);
         Case savedCase = this.caseService.createCaseForStepById(step, case1);
@@ -56,6 +52,20 @@ public class StepController {
         return ResponseEntity
                 .created(location)
                 .body(CASE_TO_DTO.apply(savedCase));
+    }
+
+
+    @DeleteMapping("/{stepId:\\d+}")
+    public ResponseEntity<Void> deleteStepById(@PathVariable(name = "stepId") Long stepId,
+                                               Principal principal) {
+        Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        this.stepService.checkOwnershipOrElseThrow(stepId, account.getId());
+
+        this.stepService.deleteStepById(stepId);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
 

@@ -3,8 +3,12 @@ package com.yarovyi.flowmeter.entity.exception;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public class SubentityNotFoundException extends EntityNotFoundException {
+    private static final String DEFAULT_ERROR_MESSAGE = "%s entity not found";
+
     private final Class<?> entityClass;
 
     public SubentityNotFoundException(Class<?> entityClass) {
@@ -26,4 +30,13 @@ public class SubentityNotFoundException extends EntityNotFoundException {
         this.entityClass = entityClass;
     }
 
+    @Override
+    public String getMessage() {
+        String message = super.getMessage();
+
+        if (!Objects.isNull(message) && !message.isEmpty()) {
+            return message;
+        }
+        return DEFAULT_ERROR_MESSAGE.formatted(this.entityClass.getSimpleName());
+    }
 }
