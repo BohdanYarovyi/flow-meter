@@ -76,7 +76,7 @@ const DOM = {
 
 // initialization
 let currentAccount = null;
-let flowsCache = [];
+let flowsCache = [];    // it can be not a simple array, it can be Tree structure for optimization
 
 window.onload = loadPage;
 DOM.buttonCreateFlow.addEventListener("click", openCreateFlowModalWindow);
@@ -253,6 +253,38 @@ function loadSteps(steps, flowId) {
     DOM.buttonHolderCreateStep.appendChild(createStepBtn);
 }
 
+async function deleteStep(stepId) {
+    const flow = flowsCache.find(flow => {
+        return flow.steps.some(step => step.id === stepId);
+    });
+
+    try {
+        // todo: make sure about deleting step here.
+        await fetchToDeleteStepById(stepId);
+        removeStepFromCache(flow.id, stepId);
+
+        loadSteps(flow.steps, flow.id);
+    } catch (error) {
+        console.log(error);
+        showError(
+            error,
+            document.getElementById("case-block__error"),
+            document.getElementById("case-block__error-message"),
+        );
+    }
+}
+
+function removeStepFromCache(flowId, stepId) {
+    for (const flow of flowsCache) {
+        if (flow.id === flowId) {
+            const stepIndex = flow.steps.findIndex(step => step.id === stepId);
+            if (stepIndex !== -1) {
+                flow.steps.splice(stepIndex, 1);
+            }
+        }
+    }
+}
+
 
 // case
 function loadCases(cases, stepId) {
@@ -291,33 +323,6 @@ function addDeleteStepBtn(stepId) {
         .addEventListener("click", () => deleteStep(stepId));
 
     DOM.stepButtons.appendChild(clone);
-}
-
-async function deleteStep(stepId) {
-    // todo: Maybe it is bad decision
-    const flow = flowsCache.find(flow => {
-        return flow.steps.some(step => step.id === stepId);
-    });
-
-    console.log("Flow id: " + flow.id);
-
-    try {
-        // todo: make sure about deleting step here.
-        await fetchToDeleteStepById(stepId);
-
-        // todo: after deleting on the server, steps mush be reloaded.
-        //       Here is piece of shit implementation, it works bad.
-        // const found = flow.steps.find(step => stepId === step.id);
-        // flow.steps.remove(found);
-
-        // loadSteps(flow.steps, flow.id);
-    } catch (error) {
-        // todo: show error here.
-    }
-}
-
-function removeStepFromCache(stepId) {
-    // todo: for implementing
 }
 
 function putCaseInWrapper(case1, wrapper) {
@@ -470,22 +475,18 @@ async function createNewStep(event) {
     event.preventDefault();
     DOM.modal.createStep.submitButton.disabled = true;
 
-    const flowId = DOM.modal.createStep.inputFlowId.value;
-    const currentFlow = flowsCache.find(flow => flow.id === Number(flowId));
+    const flowId = Number(DOM.modal.createStep.inputFlowId.value);
     const step = Step.simpleStep(
         DOM.modal.createStep.inputDate.value
     );
-
-    if (!currentFlow) {
-        throw new Error(`Flow with id ${flowId} not found`);    // never happen
-    }
 
     try {
         let responseStep = await createStepForFlowById(step, flowId);
         responseStep = Step.stepFromJSON(responseStep);
 
-        currentFlow.steps.push(responseStep);
-        loadSteps(currentFlow.steps, flowId);
+        insertNewStepInCache(responseStep, flowId);
+        loadStepsByFlowId(flowId);
+
         closeModalWindow(DOM.modal.createStep.window);
         clearStepModalWindow();
     } catch (error) {
@@ -498,6 +499,20 @@ async function createNewStep(event) {
     } finally {
         DOM.modal.createStep.submitButton.disabled = false;
     }
+}
+
+function insertNewStepInCache(step, flowId) {
+    for (const flow of flowsCache) {
+        if (flow.id === flowId) {
+            flow.steps.push(step);
+            return;
+        }
+    }
+}
+
+function loadStepsByFlowId(flowId) {
+    const flow = flowsCache.find(flow => flow.id === flowId);
+    loadSteps(flow.steps ,flowId);
 }
 
 function clearStepModalWindow() {
@@ -519,29 +534,21 @@ async function createNewCase(event) {
     event.preventDefault();
     DOM.modal.createCase.submitButton.disabled = true;
 
-    const stepId = DOM.modal.createCase.inputStepId.value;
-    const currentStep = flowsCache
-        .flatMap(flow => flow.steps)
-        .find(step => step.id === Number(stepId));
+    const stepId = Number(DOM.modal.createCase.inputStepId.value);
     const newCase = Case.simpleCase(
         DOM.modal.createCase.inputDescription.value,
         DOM.modal.createCase.inputPercent.value,
         DOM.modal.createCase.inputCounting.checked
     );
 
-    if (!currentStep) {
-        throw new Error(`Step with id ${stepId} not found`);    // never happen
-    }
-
     try {
         validateCase(newCase);
         let responseCase = await createCaseForStepById(newCase, stepId);
         responseCase = Case.caseFromJSON(responseCase);
 
-        // todo: refactor this piece of shit.
-        //       Case loading must load from cache, not from local cases.
-        currentStep.cases.push(responseCase);
-        loadCases(currentStep.cases, stepId);
+        insertNewCaseInCache(responseCase, stepId);
+        loadCasesByStepId(stepId);
+
         closeModalWindow(DOM.modal.createCase.window);
         clearCaseModalWindow();
     } catch (error) {
@@ -554,6 +561,26 @@ async function createNewCase(event) {
     } finally {
         DOM.modal.createCase.submitButton.disabled = false;
     }
+}
+
+function insertNewCaseInCache(case1, stepId) {
+    // it's creepy
+    for (const flow of flowsCache) {
+        for (const step of flow.steps) {
+            if (step.id === stepId) {
+                step.cases.push(case1);
+                return;
+            }
+        }
+    }
+}
+
+function loadCasesByStepId(stepId) {
+    const step = flowsCache
+        .flatMap(flow => flow.steps)
+        .find(step => step.id === stepId);
+
+    loadCases(step.cases, stepId);
 }
 
 function clearCaseModalWindow() {

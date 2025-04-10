@@ -243,12 +243,12 @@ export async function fetchToDeleteStepById(stepId) {
     const fetchParams = {
         method: "DELETE",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type" : "application/json"
         }
     };
 
     try {
-        const response = await fetch(DELETE_STEP_BY_ID__URL(stepId, fetchParams));
+        const response = await fetch(DELETE_STEP_BY_ID__URL(stepId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();

@@ -16,7 +16,7 @@ export class Flow {
             null,
             title,
             description,
-            targetPercentage,
+            Number(targetPercentage),
             null
         );
     }
@@ -109,7 +109,7 @@ export class Case {
             null,
             null,
             text,
-            percent,
+            Number(percent),
             counting
         );
     }

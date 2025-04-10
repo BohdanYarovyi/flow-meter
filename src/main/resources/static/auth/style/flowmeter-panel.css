@@ -216,6 +216,18 @@ body {
     overflow-y: auto;
 }
 
+#case-block__error {
+    display: none;
+    text-align: center;
+}
+
+#case-block__error-message {
+    font-size: 30px;
+
+    color: #f23636;
+    letter-spacing: 0.07em;
+}
+
 .flow-details {
     display: flex;
     align-items: center;
@@ -597,9 +609,9 @@ body {
 }
 
 #step-buttons {
-    margin-top: 50px;
+    margin: 10px 0 50px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 40px;
