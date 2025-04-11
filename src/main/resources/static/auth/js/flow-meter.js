@@ -3,7 +3,7 @@ import {
     createFlowForAccountById,
     createStepForFlowById,
     fetchCurrentAccountId,
-    fetchFlowsByAccountId,
+    fetchFlowsByAccountId, fetchToDeleteCaseById,
     fetchToDeleteFlowById, fetchToDeleteStepById,
     fetchToEditCase,
     fetchToEditFlow
@@ -222,7 +222,7 @@ function removeFlowFromCache(flowId) {
     if (index !== -1) {
         flowsCache.splice(index, 1);
     } else {
-        console.warn(`Such flow not found in flowsCache`);
+        console.warn(`Such flow not found in cache`);
     }
 }
 
@@ -286,9 +286,11 @@ function removeStepFromCache(flowId, stepId) {
             const stepIndex = flow.steps.findIndex(step => step.id === stepId);
             if (stepIndex !== -1) {
                 flow.steps.splice(stepIndex, 1);
+                return;
             }
         }
     }
+    console.warn(`Such step not found in cache`);
 }
 
 
@@ -303,13 +305,32 @@ function loadCases(cases, stepId) {
     // fill container
     cases.forEach(case1 => {
         const clone = cloneCaseWrapperTemplate();
-        putCaseInWrapper(case1, clone.querySelector("#case"));
+        putCaseInWrapper(case1, clone.querySelector("#case"), stepId);
         DOM.caseContainer.appendChild(clone);
     });
 
     // add btn for adding new cases
     addCreateCaseBtn(stepId);
     addDeleteStepBtn(stepId);
+}
+
+function putCaseInWrapper(case1, wrapper, stepId) {
+    clearContainers(wrapper);
+
+    const clone = cloneCaseTemplate();
+    const editBtn = clone.querySelector("#case__edit-btn");
+    const deleteBtn = clone.querySelector("#case__delete-btn");
+
+    fillCaseTemplate(case1, clone);
+    editBtn.addEventListener("click", () => openCaseEditor(case1, wrapper, stepId));
+    deleteBtn.addEventListener("click", () => deleteCase(case1.id, stepId, wrapper));
+
+    wrapper.appendChild(clone);
+}
+
+function fillCaseTemplate(case1, clone) {
+    clone.querySelector("#case__text").textContent = case1.text;
+    clone.querySelector("#case__percent").textContent = case1.counting ? case1.percent : "";
 }
 
 function addCreateCaseBtn(stepId) {
@@ -331,26 +352,41 @@ function addDeleteStepBtn(stepId) {
     DOM.stepButtons.appendChild(clone);
 }
 
-function putCaseInWrapper(case1, wrapper) {
-    clearContainers(wrapper);
+async function deleteCase(caseId, stepId, wrapper) {
+    try {
+        await fetchToDeleteCaseById(caseId);
 
-    const clone = cloneCaseTemplate();
-    const editBtn = clone.querySelector("#case__edit-btn");
-
-    fillCaseTemplate(case1, clone);
-    editBtn.addEventListener("click", () => openCaseEditor(case1, wrapper));
-
-    wrapper.appendChild(clone);
+        removeCaseFromCache(caseId, stepId);
+        loadCasesByStepId(stepId);
+    } catch (error) {
+        console.log("Cached error: " + error);
+        showError(
+            error,
+            wrapper.querySelector(".case__error"),
+            wrapper.querySelector("#case__error-message")
+        );
+    }
 }
 
-function fillCaseTemplate(case1, clone) {
-    clone.querySelector("#case__text").textContent = case1.text;
-    clone.querySelector("#case__percent").textContent = case1.counting ? case1.percent : "";
+function removeCaseFromCache(case1, stepId) {
+    for (const flow of flowsCache) {
+        for (const step of flow.steps) {
+            if (step.id === stepId) {
+                const caseIndex = step.cases.findIndex(c => c.id === case1);
+
+                if (caseIndex !== -1) {
+                    step.cases.splice(caseIndex, 1);
+                    return;
+                }
+            }
+        }
+    }
+    console.warn(`Such case not found in cache`);
 }
 
 
 // editing case
-function openCaseEditor(case1, wrapper) {
+function openCaseEditor(case1, wrapper, stepId) {
     clearContainers(wrapper);
 
     const clone = cloneCaseEditTemplate();
@@ -370,15 +406,14 @@ function openCaseEditor(case1, wrapper) {
 
     editForm.text.addEventListener("input", () => adjustTextarea(editForm.text));
     editForm.counting.addEventListener("change", (event) => handleInputAvailableByCheckbox(event,  editForm.percent));
-    editForm.cancelBtn.addEventListener("click", () => putCaseInWrapper(case1, wrapper));
-    editForm.saveBtn.addEventListener("click", (event) => editCase(event, case1, wrapper));
+    editForm.cancelBtn.addEventListener("click", () => putCaseInWrapper(case1, wrapper, stepId));
+    editForm.saveBtn.addEventListener("click", (event) => editCase(event, case1, wrapper, stepId));
 
     wrapper.appendChild(clone);
 }
 
-async function editCase(event, case1, wrapper) {
+async function editCase(event, case1, wrapper, stepId) {
     event.preventDefault();
-
 
     const edited = new Case(
         case1.id,
@@ -396,7 +431,7 @@ async function editCase(event, case1, wrapper) {
         Object.assign(case1, Case.caseFromJSON(response));
         updateCaseInCache(case1);
 
-        putCaseInWrapper(case1, wrapper);
+        putCaseInWrapper(case1, wrapper, stepId);
     } catch (error) {
         console.log("Error", error);
         showError(

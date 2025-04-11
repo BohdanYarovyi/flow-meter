@@ -48,6 +48,20 @@ public class CaseServiceImpl implements CaseService {
         return this.caseRepository.save(existCase);
     }
 
+    @Override
+    public void deleteCaseById(Long caseId) {
+        if (Objects.isNull(caseId))
+            throw new NullPointerException("CaseId is null");
+
+        Case case1 = this.caseRepository
+                .findById(caseId)
+                .orElseThrow(() -> new SubentityNotFoundException(Case.class));
+
+        // soft-delete
+        case1.delete();
+        this.caseRepository.save(case1);
+    }
+
 
     @Override
     public boolean checkOwnership(Long caseId, Long accountId) {

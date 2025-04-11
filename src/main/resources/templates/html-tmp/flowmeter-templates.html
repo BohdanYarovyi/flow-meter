@@ -36,7 +36,13 @@
 						<div id="case__text">case-text-here</div>
 						<div id="case__percent">case-percent-here</div>
 				</div>
-				<button id="case__edit-btn">Edit</button>
+				<div class="case__error">
+						<p id="case__error-message">Default error message</p>
+				</div>
+				<div class="case__buttons">
+						<button class="case-btn" id="case__edit-btn">Edit</button>
+						<button class="case-btn" id="case__delete-btn">Delete</button>
+				</div>
 		</template>
 
 
@@ -51,14 +57,15 @@
 				<div class="case-edit__error">
 						<p id="case-edit__error-message">Default error message</p>
 				</div>
-				<button id="case-edit__save-btn">Save</button>
-				<button id="case-edit__cancel-btn">Cancel</button>
+				<button class="case-btn" id="case-edit__save-btn">Save</button>
+				<button class="case-btn" id="case-edit__cancel-btn">Cancel</button>
 		</template>
 
 
 		<template id="create-case-btn-template">
 				<button class="step__button" id="create-case-btn">Add new case</button>
 		</template>
+
 
 		<template id="delete-step-btn-template">
 				<div id="case-block__error">

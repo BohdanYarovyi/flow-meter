@@ -13,6 +13,7 @@ const CREATE_CASE_FOR_STEP_BY_ID__URL = (stepId) => `/api/steps/${stepId}/cases`
 const DELETE_STEP_BY_ID__URL = (id) => `/api/steps/${id}`;
 
 const EDIT_CASE__URL = `/api/cases`;
+const DELETE_CASE_BY_ID__URL = (caseId) => `/api/cases/${caseId}`;
 
 
 export async function fetchCurrentAccountId() {
@@ -262,3 +263,31 @@ export async function fetchToDeleteStepById(stepId) {
     }
 
 }
+
+
+export async function fetchToDeleteCaseById(caseId) {
+    const fetchParams = {
+        method: "DELETE",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(DELETE_CASE_BY_ID__URL(caseId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to delete case`);
+        }
+
+        return true;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
+
+

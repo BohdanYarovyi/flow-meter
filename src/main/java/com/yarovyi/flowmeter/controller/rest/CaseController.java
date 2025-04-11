@@ -21,6 +21,7 @@ public class CaseController {
     private final AccountService accountService;
     private final CaseService caseService;
 
+
     @PutMapping
     public ResponseEntity<CaseDto> editCase(@RequestBody CaseDto caseDto,
                                             Principal principal) {
@@ -32,5 +33,20 @@ public class CaseController {
         return ResponseEntity
                 .ok(CASE_TO_DTO.apply(updatedCase));
     }
+
+
+    @DeleteMapping("/{caseId:\\d+}")
+    public ResponseEntity<Void> deleteCaseById(@PathVariable(value = "caseId") Long caseId,
+                                               Principal principal) {
+        Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        this.caseService.checkOwnershipOrElseThrow(caseId, account.getId());
+
+        this.caseService.deleteCaseById(caseId);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
 
 }
