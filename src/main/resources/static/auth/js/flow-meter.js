@@ -25,7 +25,7 @@ import {
 
 import {
     clearContainers,
-    closeModalWindow,
+    closeModalWindow, getConfirmationFromUser,
     handleInputAvailableByCheckbox,
     openModalWindow,
     selectItem,
@@ -200,17 +200,20 @@ async function editFlow(event, flow) {
 async function deleteFlow(event, flow) {
     event.preventDefault();
 
-    // todo: make sure here about deleting flow
-    try {
-        await fetchToDeleteFlowById(flow.id);
-        removeFlowFromCache(flow.id);
-        loadFlows();
-    } catch (error) {
-        showError(
-            error,
-            document.querySelector(".flow-details-edit__error"),
-            document.querySelector("#flow-details-edit__error-message")
-        );
+    const confirmationMessage = `Are you really want to delete "${flow.title}" flow?`;
+    const confirmation = await getConfirmationFromUser(confirmationMessage);
+    if (confirmation) {
+        try {
+            await fetchToDeleteFlowById(flow.id);
+            removeFlowFromCache(flow.id);
+            loadFlows();
+        } catch (error) {
+            showError(
+                error,
+                document.querySelector(".flow-details-edit__error"),
+                document.querySelector("#flow-details-edit__error-message")
+            );
+        }
     }
 }
 
@@ -258,19 +261,22 @@ async function deleteStep(stepId) {
         return flow.steps.some(step => step.id === stepId);
     });
 
-    try {
-        // todo: make sure about deleting step here.
-        await fetchToDeleteStepById(stepId);
-        removeStepFromCache(flow.id, stepId);
+    const confirmationMessage = `Are you really want to delete this step?`;
+    const confirmation = await getConfirmationFromUser(confirmationMessage);
+    if (confirmation) {
+        try {
+            await fetchToDeleteStepById(stepId);
+            removeStepFromCache(flow.id, stepId);
 
-        loadSteps(flow.steps, flow.id);
-    } catch (error) {
-        console.log(error);
-        showError(
-            error,
-            document.getElementById("case-block__error"),
-            document.getElementById("case-block__error-message"),
-        );
+            loadSteps(flow.steps, flow.id);
+        } catch (error) {
+            console.log(error);
+            showError(
+                error,
+                document.getElementById("case-block__error"),
+                document.getElementById("case-block__error-message"),
+            );
+        }
     }
 }
 

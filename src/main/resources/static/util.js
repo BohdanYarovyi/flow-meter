@@ -36,3 +36,35 @@ export function handleInputAvailableByCheckbox(event, targetInput) {
         targetInput.setAttribute("disabled", "true");
     }
 }
+
+export function getConfirmationFromUser(message) {
+    return new Promise((resolve) => {
+        const components = {
+            window: document.getElementById("confirmation-window"),
+            message: document.getElementById("confirmation-window__message"),
+            yesBtn: document.getElementById("confirmation-window__yes-btn"),
+            noBtn: document.getElementById("confirmation-window__no-btn"),
+        };
+        components.message.textContent = message || "Are you sure?"
+        components.window.classList.remove("hidden");
+
+        const clenUp = () => {
+            components.window.classList.add("hidden");
+            components.yesBtn.removeEventListener("click", onYes);
+            components.noBtn.removeEventListener("click", onNo);
+        };
+
+        const onYes = () => {
+            clenUp();
+            resolve(true);
+        };
+
+        const onNo = () => {
+            clenUp();
+            resolve(false);
+        };
+
+        components.yesBtn.addEventListener("click", onYes);
+        components.noBtn.addEventListener("click", onNo);
+    });
+}

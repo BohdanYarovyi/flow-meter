@@ -472,6 +472,7 @@ body {
         font-size: 26px;
         font-weight: 600;
         padding: 6px 40px;
+        cursor: pointer;
     }
 }
 
