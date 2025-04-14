@@ -1,3 +1,77 @@
+export class Account {
+    constructor(id, createdAt, updatedAt, roles, credentials, personalInfo) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.roles = roles;
+        this.credentials = credentials;
+        this.personalInfo = personalInfo;
+    }
+
+    static accountFromJson(json) {
+        const roles = json.roles.map(Role.roleFromJson);
+
+        return new Account(
+            json.id,
+            json.createdAt,
+            json.updatedAt,
+            roles,
+            Credentials.credentialsFromJson(json),
+            PersonalInfo.personalInfoFromJson(json)
+        );
+    }
+}
+
+export class Credentials {
+    constructor(login, email, password) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
+    }
+
+    static credentialsFromJson(json) {
+        return new Credentials(
+            json.login,
+            json.email,
+            json.password || ""
+        );
+    }
+}
+
+export class PersonalInfo {
+    constructor(firstname, lastname, patronymic, dateOfBirth, phone) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.patronymic = patronymic;
+        this.dateOfBirth = dateOfBirth;
+        this.phone = phone;
+    }
+
+    static personalInfoFromJson(json) {
+        return new PersonalInfo(
+            json.firstname,
+            json.lastname,
+            json.patronymic,
+            json.dateOfBirth,
+            json.phone
+        );
+    }
+}
+
+export class Role {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    static roleFromJson(json) {
+        return new Role(
+            json.id,
+            json.name
+        );
+    }
+}
+
 export class Flow {
     constructor(id, createdAt, updatedAt, title, description, targetPercentage, steps) {
         this.id = id;

@@ -16,10 +16,12 @@ public class BeanConfiguration {
 
     @Bean
     public Role defaultRole(RoleRepository roleRepository) {
-        return roleRepository.findRoleByName("USER").orElseGet(() -> {
-            Role role = new Role(null, "USER");
-            return roleRepository.save(role);
-        });
+        return roleRepository
+                .findRoleByName("USER")
+                .orElseGet(() -> {
+                    Role role = new Role(null, "USER");
+                    return roleRepository.save(role);
+                });
     }
 
 }

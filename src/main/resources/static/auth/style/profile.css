@@ -32,47 +32,110 @@ body {
     margin: 0 auto;
 }
 
-.profile-inner {
-    margin: 0 auto;
-    padding: 30px 40px;
-    width: 85%;
-
-    border-radius: 26px;
-    background: rgba(255,255,255,10%);
+.profile-block__inner {
+    border-radius: 20px;
 }
 
-.profile-title {
-    margin: 30px 0;
-
-    font-size: 70px;
+#profile__title {
     text-align: center;
-}
-
-.profile-content {
-    padding: 0 50px;
-}
-
-.profile-content-item {
-    margin-bottom: 20px;
-    padding: 12px 30px;
-
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-variation-settings: "wdth" 100;
     font-size: 30px;
-    line-height: 1.4;
-
-    background-color: rgba(0,0,0,20%);
+    letter-spacing: 0.08em;
 }
 
-.content-item-name {
-    margin-right: 10px;
+#profile__title span {
+    margin: 0 15px;
 }
 
-.content-item-value {
-    letter-spacing: 0.1em;
+#profile__title .profile__title-label {
+    text-transform: uppercase;
 }
 
-.marker:before {
-    content: "*";
+#profile__title .profile__title-value {
 }
+
+.profile__item {
+    background-color: rgba(255, 255, 255, 3.5%);
+    border-radius: 8px;
+    padding: 30px 60px;
+    margin-top: 30px;
+    font-size: 36px
+}
+
+.item-row {
+    margin-top: 15px;
+}
+
+.item-row span {
+    margin: 0 14px 0 0;
+}
+
+.item-row .item__label {
+    text-transform: capitalize;
+    letter-spacing: 0.03em;
+}
+
+.item-row .item__value {
+    letter-spacing: 0.06em;
+}
+
+.profile__btn-holder {
+    padding: 50px 0 10px;
+}
+
+.profile__btn {
+    font-size: 30px;
+    font-weight: 600;
+    padding: 16px 46px;
+    background-color: #202020;
+    color: #ffffff;
+    border: solid 2px #ffffff;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+
+    transition: color linear 0.1s,
+                background-color linear 0.1s;
+}
+
+.profile__btn:hover {
+    background-color: #fff;
+    color: #202020;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 40%);
+}
+
+.profile__item:hover {
+    .auto-hide-btn {
+        font-size: 30px;
+        padding: 16px 46px;
+        opacity: 1;
+    }
+
+    .auto-hide-btn-holder {
+        padding: 50px 0 10px;
+        opacity: 1;
+    }
+}
+
+.auto-hide-btn-holder {
+    padding: 0;
+    opacity: 0;
+
+    transition: opacity linear 0.15s,
+                padding linear 0.15s;
+}
+
+.auto-hide-btn {
+    font-size: 0;
+    padding: 0;
+    opacity: 0;
+
+    transition: opacity linear 0.15s,
+                padding linear 0.15s,
+                font-size linear 0.15s;
+}
+
+.milk-wrap {
+    background-color: rgba(255, 255, 255, 8%);
+    padding: 0 30px;
+    border-radius: 30px;
+}
+

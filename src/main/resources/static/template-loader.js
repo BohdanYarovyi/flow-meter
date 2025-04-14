@@ -8,12 +8,16 @@ export function loadTemplateById(templateId) {
     return template.content.cloneNode(true);
 }
 
-export function cloneProfileTemplate() {
-    return loadTemplateById("profile-template");
+export function cloneProfileTitleTemplate() {
+    return loadTemplateById("profile-title-template");
 }
 
-export function cloneRoleTemplate() {
-    return loadTemplateById("role-template");
+export function cloneProfileItemTemplate() {
+    return loadTemplateById("profile-item-template");
+}
+
+export function cloneProfileButtonTemplate() {
+    return loadTemplateById("profile-btn-template");
 }
 
 export function cloneFlowItemTemplate() {
@@ -59,3 +63,5 @@ export function cloneFlowDetailsTemplate() {
 export function cloneFlowDetailsEditTemplate() {
     return loadTemplateById("flow-details-edit-template");
 }
+
+
