@@ -1,7 +1,6 @@
 package com.yarovyi.flowmeter.service;
 
 import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.flow.Flow;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +11,9 @@ public interface AccountService {
     Optional<Account> getAccountByLogin(String login);
     Optional<Account> getAccountByEmail(String email);
     Long createAccount(Account account);
-    void updateAccount(Account account);
+    void updatePersonalInfo(Account account);
     void deleteAccountById(Long id);
+
+    boolean checkOwnership(Long currentAccountId, Long targetAccountId);
+    void checkOwnershipOrElseThrow(Long currentAccountId, Long targetAccountId);
 }

@@ -20,6 +20,10 @@ export function cloneProfileButtonTemplate() {
     return loadTemplateById("profile-btn-template");
 }
 
+export function cloneEditPersonalInfoTemplate() {
+    return loadTemplateById("edit-personal-info-template");
+}
+
 export function cloneFlowItemTemplate() {
     return loadTemplateById("flow-item-template")
 }

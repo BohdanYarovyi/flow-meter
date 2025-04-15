@@ -1,14 +1,15 @@
 import {
     fetchAccountById,
-    fetchCurrentAccountId
+    fetchCurrentAccountId, fetchToUpdatePersonalInfo
 } from "./api.js";
 import {
+    cloneEditPersonalInfoTemplate,
     cloneProfileButtonTemplate,
     cloneProfileItemTemplate,
     cloneProfileTitleTemplate
 } from "../../template-loader.js";
-import {Account} from "./classes.js";
-import {clearContainers} from "../../util.js";
+import {Account, PersonalInfo} from "./classes.js";
+import {clearContainers, showError} from "../../util.js";
 
 const DOM = {
     titleContainer: document.querySelector("#profile__title"),
@@ -21,7 +22,6 @@ let account = null;
 
 window.onload = loadProfile;
 
-// todo: add edit menu for personal info
 // todo: add edit menu for credentials
 // todo: add available for password changing
 
@@ -65,8 +65,61 @@ function loadPersonalInfo() {
     addButtonInContainer(
         "Edit personal info",
         DOM.personalInfoContainer,
-        () => {console.log("edit personal info btn was clicked");}
+        () => openPersonalInfoEditor(info, container)
     );
+}
+
+function openPersonalInfoEditor(personalInfo, container) {
+    clearContainers(container);
+
+    const clone = cloneEditPersonalInfoTemplate();
+    const editor = {
+        firstname: clone.querySelector("#personal-info__firstname"),
+        lastname: clone.querySelector("#personal-info__lastname"),
+        patronymic: clone.querySelector("#personal-info__patronymic"),
+        dateOfBirth: clone.querySelector("#personal-info__dateOfBirth"),
+        phone: clone.querySelector("#personal-info__phone"),
+        saveBtn: clone.querySelector("#personal-info__save-button"),
+        cancelBtn: clone.querySelector("#personal-info__cancel-button")
+    };
+
+    editor.firstname.value = personalInfo.firstname;
+    editor.lastname.value = personalInfo.lastname;
+    editor.patronymic.value = personalInfo.patronymic;
+    editor.dateOfBirth.value = personalInfo.dateOfBirth;
+    editor.phone.value = personalInfo.phone;
+
+    editor.cancelBtn.addEventListener("click", () => loadPersonalInfo());
+    editor.saveBtn.addEventListener('click', (event) => savePersonalInfo(event, editor, container));
+
+    container.appendChild(clone);
+}
+
+async function savePersonalInfo(event, editor, container) {
+    event.preventDefault();
+
+    const info = new PersonalInfo(
+        editor.firstname.value,
+        editor.lastname.value,
+        editor.patronymic.value,
+        editor.dateOfBirth.value,
+        editor.phone.value
+    );
+
+    try {
+        // todo: validating personal info here;
+        await fetchToUpdatePersonalInfo(account.id, info);
+        account.personalInfo = info;
+
+        loadPersonalInfo();
+    } catch (error) {
+        console.log(error);
+        showError(
+            error,
+            container.querySelector(".personal-info-edit__error"),
+            container.querySelector("#personal-info-edit__error-message")
+        );
+    }
 }
 
 function loadCredentials() {

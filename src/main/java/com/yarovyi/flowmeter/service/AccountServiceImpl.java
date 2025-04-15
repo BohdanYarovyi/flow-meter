@@ -74,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void updateAccount(Account account) {
+    public void updatePersonalInfo(Account account) {
         this.accountRepository.save(account);
     }
 
@@ -90,6 +90,24 @@ public class AccountServiceImpl implements AccountService {
 
         account.setDeleted(true);
         this.accountRepository.save(account);
+    }
+
+
+    @Override
+    public boolean checkOwnership(Long currentAccountId, Long targetAccountId) {
+        if (Objects.isNull(currentAccountId) || Objects.isNull(targetAccountId))
+            throw new NullPointerException("Parameters is null");
+
+        return Objects.equals(currentAccountId, targetAccountId);
+    }
+
+
+    @Override
+    public void checkOwnershipOrElseThrow(Long currentAccountId, Long targetAccountId) {
+        if (!this.checkOwnership(currentAccountId, targetAccountId)) {
+            String message = "You can chane only your account";
+            throw new SubentityNotFoundException(message, Account.class);
+        }
     }
 
 

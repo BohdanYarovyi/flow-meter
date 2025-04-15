@@ -2,6 +2,7 @@ const GET_CURRENT_ACCOUNT_ID__URL = `/api/accounts/current`;
 const GET_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}`;
 const GET_FLOWS_BY_ACCOUNT_ID__URL = (id) => `/api/accounts/${id}/flows`;
 const CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}/flows`;
+const EDIT_PERSONAL_INFO_BY_ID__URL = (id) => `/api/accounts/${id}/edit/personal-info`;
 
 const GET_ALL_FLOWS__URL = `/api/flows`;
 const GET_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
@@ -111,6 +112,29 @@ export async function createFlowForAccountById(flow, accountId) {
         return response.json();
     } catch (error) {
         console.log("Error: ", error);
+        throw error;
+    }
+}
+
+
+export async function fetchToUpdatePersonalInfo(accountId, personalInfo) {
+    const fetchParams = {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(personalInfo)
+    };
+
+    try {
+        const response = await fetch(EDIT_PERSONAL_INFO_BY_ID__URL(accountId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to update personal info`)
+        }
+    } catch (error) {
+        console.log(error);
         throw error;
     }
 }

@@ -2,8 +2,7 @@ package com.yarovyi.flowmeter.entity.dto;
 
 import java.time.LocalDate;
 
-public record AccountUpdatedDto(
-        Long id,
+public record UpdatedPersonalInfoDto(
         String firstname,
         String lastname,
         String patronymic,

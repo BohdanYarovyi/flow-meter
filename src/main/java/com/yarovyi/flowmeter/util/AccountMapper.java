@@ -6,7 +6,7 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.account.Credentials;
 import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.account.Role;
-import com.yarovyi.flowmeter.entity.dto.AccountUpdatedDto;
+import com.yarovyi.flowmeter.entity.dto.UpdatedPersonalInfoDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class AccountMapper {
         return account;
     };
 
-    public static final BiFunction<AccountUpdatedDto, Account, Account> COMMIT_ACCOUNT_UPDATES = (updates, account) -> {
+    public static final BiFunction<UpdatedPersonalInfoDto, Account, Account> COMMIT_PERSONAL_INFO_UPDATES = (updates, account) -> {
         if (Objects.isNull(account.getPersonalInfo())) {
             account.setPersonalInfo(new PersonalInfo());
         }

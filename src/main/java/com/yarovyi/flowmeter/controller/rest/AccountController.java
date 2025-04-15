@@ -3,7 +3,7 @@ package com.yarovyi.flowmeter.controller.rest;
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.entity.dto.AccountDto;
-import com.yarovyi.flowmeter.entity.dto.AccountUpdatedDto;
+import com.yarovyi.flowmeter.entity.dto.UpdatedPersonalInfoDto;
 import com.yarovyi.flowmeter.entity.dto.FlowDto;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
@@ -73,17 +73,16 @@ public class AccountController {
     }
 
 
-    @PutMapping
-    public ResponseEntity<Void> updateAccount(@RequestBody AccountUpdatedDto updatedAccount) {
-        Account account = this.accountService
-                .getAccountById(updatedAccount.id())
-                .orElseThrow(() -> {
-                    var message = String.format("Account with id:%s not found", updatedAccount.id());
-                    return new SubentityNotFoundException(message, Account.class);
-                });
+    @PutMapping("/{accountId:\\d+}/edit/personal-info")
+    public ResponseEntity<Void> updatePersonalInfo(@PathVariable(name = "accountId") Long accountId,
+                                                   @RequestBody UpdatedPersonalInfoDto updatedInfo,
+                                                   Principal principal) {
+        Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        System.out.println("Idss:  " + currentAccount.getId() + " = " + accountId);
+        this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
-        Account commitedAccount = COMMIT_ACCOUNT_UPDATES.apply(updatedAccount, account);
-        this.accountService.updateAccount(commitedAccount);
+        Account commitedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(updatedInfo, currentAccount);
+        this.accountService.updatePersonalInfo(commitedAccount);
 
         return ResponseEntity
                 .noContent()

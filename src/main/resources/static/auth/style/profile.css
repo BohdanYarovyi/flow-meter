@@ -58,6 +58,7 @@ body {
     border-radius: 8px;
     padding: 30px 60px;
     margin-top: 30px;
+
     font-size: 36px
 }
 
@@ -138,4 +139,110 @@ body {
     padding: 0 30px;
     border-radius: 30px;
 }
+
+#profile-edit__personal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input__item {
+    display: flex;
+    align-items: center;
+
+    width: 50%;
+}
+
+.input__label {
+    min-width: 33%;
+    font-size: 36px;
+    letter-spacing: 0.03em;
+}
+
+.input__value {
+    width: 100%;
+    font-size: 30px;
+    letter-spacing: 0.04em;
+
+    border-radius: 18px;
+    padding: 3px 15px;
+    color: #ffffff;
+    background-color: #404040;
+    border-color: #ffffff;
+}
+
+#profile-edit__personal-info .input__buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+
+    margin-top: 40px;
+}
+
+.input__btn {
+    padding: 8px 32px;
+    border-radius: 18px;
+    border: solid 2px #ffffff;
+    background-color: rgba(20, 20, 20);
+    color: #ffffff;
+
+    font-size: 30px;
+    letter-spacing: 0.03em;
+
+    transition: color linear 0.15s,
+                background-color linear 0.15s,
+                border linear 0.15s,
+                box-shadow linear 0.15s;
+}
+
+.input__btn:hover {
+    color: #202020;
+    background-color: #ffffff;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 40%);
+}
+
+#personal-info__save-button {
+    color: #8ed885;
+    border-color: #8ed885;
+}
+
+#personal-info__save-button:hover {
+    color: #202020;
+    border-color: #202020;
+    background-color: #8ed885;
+    box-shadow: 0 0 16px rgba(142, 216, 133, 40%);
+}
+
+#personal-info__cancel-button {
+    color: #f93f3f;
+    border-color: #f93f3f;
+}
+
+#personal-info__cancel-button:hover {
+    color: #202020;
+    border-color: #202020;
+    background-color: #f93f3f;
+    box-shadow: 0 0 16px rgba(249, 63, 63, 0.40);
+}
+
+.personal-info-edit__error {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+
+    width: 100%;
+}
+
+#personal-info-edit__error-message {
+    width: 85%;
+    margin: 0 auto;
+
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+
+    color: #f93f3f;
+}
+
+
 
