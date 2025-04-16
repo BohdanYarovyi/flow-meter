@@ -1,9 +1,12 @@
 package com.yarovyi.flowmeter.controller.rest;
 
 import com.yarovyi.flowmeter.domain.account.Account;
+import com.yarovyi.flowmeter.domain.account.Credentials;
+import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.entity.dto.AccountDto;
-import com.yarovyi.flowmeter.entity.dto.UpdatedPersonalInfoDto;
+import com.yarovyi.flowmeter.entity.dto.CredentialsDto;
+import com.yarovyi.flowmeter.entity.dto.PersonalInfoDto;
 import com.yarovyi.flowmeter.entity.dto.FlowDto;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
@@ -75,14 +78,32 @@ public class AccountController {
 
     @PutMapping("/{accountId:\\d+}/edit/personal-info")
     public ResponseEntity<Void> updatePersonalInfo(@PathVariable(name = "accountId") Long accountId,
-                                                   @RequestBody UpdatedPersonalInfoDto updatedInfo,
+                                                   @RequestBody PersonalInfoDto updatedInfo,
                                                    Principal principal) {
         Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
-        System.out.println("Idss:  " + currentAccount.getId() + " = " + accountId);
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
-        Account commitedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(updatedInfo, currentAccount);
-        this.accountService.updatePersonalInfo(commitedAccount);
+        PersonalInfo personalInfo = DTO_TO_PERSONAL_INFO.apply(updatedInfo);
+        this.accountService.updatePersonalInfo(currentAccount, personalInfo);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+
+    @PutMapping("/{accountId:\\d+}/edit/credentials")
+    public ResponseEntity<Void> updateCredentials(@PathVariable(name = "accountId") Long accountId,
+                                                  @RequestBody CredentialsDto updatedCredentials,
+                                                  Principal principal) {
+        Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
+
+        Credentials credentials = DTO_TO_CREDENTIALS.apply(updatedCredentials);
+        this.accountService.updateCredentials(currentAccount, credentials);
+        // todo: after changing credentials in db,
+        //  how to reauthenticate account here with new credentials.
+        //  Maybe i have to create some service for authentication
 
         return ResponseEntity
                 .noContent()

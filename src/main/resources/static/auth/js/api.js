@@ -1,21 +1,29 @@
-const GET_CURRENT_ACCOUNT_ID__URL = `/api/accounts/current`;
-const GET_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}`;
-const GET_FLOWS_BY_ACCOUNT_ID__URL = (id) => `/api/accounts/${id}/flows`;
-const CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL = (id) => `/api/accounts/${id}/flows`;
-const EDIT_PERSONAL_INFO_BY_ID__URL = (id) => `/api/accounts/${id}/edit/personal-info`;
-
-const GET_ALL_FLOWS__URL = `/api/flows`;
-const GET_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
-const EDIT_FLOW__URL = `/api/flows`;
-const DELETE_FLOW_BY_ID__URL = (id) => `/api/flows/${id}`;
-const CREATE_STEP_FOR_FLOW_BY_ID__URL = (flowId) => `/api/flows/${flowId}/steps`;
-
-const CREATE_CASE_FOR_STEP_BY_ID__URL = (stepId) => `/api/steps/${stepId}/cases`;
-const DELETE_STEP_BY_ID__URL = (id) => `/api/steps/${id}`;
-
-const EDIT_CASE__URL = `/api/cases`;
-const DELETE_CASE_BY_ID__URL = (caseId) => `/api/cases/${caseId}`;
-
+const API = {
+    account: {
+        GET_CURRENT_ACCOUNT_ID__URL:            ()   => `/api/accounts/current`,
+        GET_ACCOUNT_BY_ID__URL:                 (id) => `/api/accounts/${id}`,
+        GET_FLOWS_BY_ACCOUNT_ID__URL:           (id) => `/api/accounts/${id}/flows`,
+        CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL:     (id) => `/api/accounts/${id}/flows`,
+        EDIT_PERSONAL_INFO_BY_ID__URL:          (id) => `/api/accounts/${id}/edit/personal-info`,
+        EDIT_CREDENTIALS_BY_ID__URL:            (id) => `/api/accounts/${id}/edit/credentials`,
+    },
+    flow: {
+        GET_ALL_FLOWS__URL:                     ()   => `/api/flows`,
+        GET_FLOW_BY_ID__URL:                    (id) => `/api/flows/${id}`,
+        EDIT_FLOW__URL:                         ()   => `/api/flows`,
+        DELETE_FLOW_BY_ID__URL:                 (id) => `/api/flows/${id}`,
+        CREATE_STEP_FOR_FLOW_BY_ID__URL:        (flowId) => `/api/flows/${flowId}/steps`,
+    },
+    step: {
+        CREATE_CASE_FOR_STEP_BY_ID__URL:        (stepId) => `/api/steps/${stepId}/cases`,
+        DELETE_STEP_BY_ID__URL:                 (id) => `/api/steps/${id}`,
+    },
+    case1: {
+        EDIT_CASE__URL:                         ()   => `/api/cases`,
+        DELETE_CASE_BY_ID__URL:                 (caseId) => `/api/cases/${caseId}`,
+    }
+};
+const defaultErrorPrefix = "Error on API layer: ";
 
 export async function fetchCurrentAccountId() {
     const fetchParams = {
@@ -26,7 +34,7 @@ export async function fetchCurrentAccountId() {
     };
 
     try {
-        const response = await fetch(GET_CURRENT_ACCOUNT_ID__URL, fetchParams);
+        const response = await fetch(API.account.GET_CURRENT_ACCOUNT_ID__URL(), fetchParams);
 
         if (response.status === 401) {
             throw new Error("Unauthorized");
@@ -37,7 +45,7 @@ export async function fetchCurrentAccountId() {
         const body = await response.json();
         return body.currentAccountId;
     } catch (error) {
-        console.log("Error: ", error.message)
+        console.log(defaultErrorPrefix, error.message)
         throw error;
     }
 }
@@ -52,7 +60,7 @@ export async function fetchAccountById(id) {
     };
 
     try {
-        const response = await fetch(GET_ACCOUNT_BY_ID__URL(id), fetchParams);
+        const response = await fetch(API.account.GET_ACCOUNT_BY_ID__URL(id), fetchParams);
 
         if (response.status === 401) {
             throw new Error("Unauthorized");
@@ -62,7 +70,7 @@ export async function fetchAccountById(id) {
 
         return await response.json();
     } catch (error) {
-        console.log("Error: ", error.message);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -77,7 +85,7 @@ export async function fetchFlowsByAccountId(accountId) {
     };
 
     try {
-        const response = await fetch(GET_FLOWS_BY_ACCOUNT_ID__URL(accountId), fetchParams);
+        const response = await fetch(API.account.GET_FLOWS_BY_ACCOUNT_ID__URL(accountId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -86,7 +94,7 @@ export async function fetchFlowsByAccountId(accountId) {
 
         return await response.json();
     } catch (error) {
-        console.log("Error: ", error.message);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -102,7 +110,7 @@ export async function createFlowForAccountById(flow, accountId) {
     };
 
     try {
-        const response = await fetch(CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL(accountId), fetchParams);
+        const response = await fetch(API.account.CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL(accountId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -111,7 +119,7 @@ export async function createFlowForAccountById(flow, accountId) {
 
         return response.json();
     } catch (error) {
-        console.log("Error: ", error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -127,14 +135,36 @@ export async function fetchToUpdatePersonalInfo(accountId, personalInfo) {
     };
 
     try {
-        const response = await fetch(EDIT_PERSONAL_INFO_BY_ID__URL(accountId), fetchParams);
+        const response = await fetch(API.account.EDIT_PERSONAL_INFO_BY_ID__URL(accountId), fetchParams);
 
         if (!response.ok) {
             const responseError = await response.json();
             throw new Error(responseError.detail || `Failed to update personal info`)
         }
     } catch (error) {
-        console.log(error);
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchToUpdateCredentials(accountId, credentials) {
+    const fetchParams = {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(credentials)
+    };
+
+    try {
+        const response = await fetch(API.account.EDIT_CREDENTIALS_BY_ID__URL(accountId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to change credentials`);
+        }
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -150,7 +180,7 @@ export async function createStepForFlowById(step, flowId) {
     };
 
     try {
-        const response = await fetch(CREATE_STEP_FOR_FLOW_BY_ID__URL(flowId), fetchParams);
+        const response = await fetch(API.flow.CREATE_STEP_FOR_FLOW_BY_ID__URL(flowId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -159,7 +189,7 @@ export async function createStepForFlowById(step, flowId) {
 
         return response.json();
     } catch (error) {
-        console.log("Error: ", error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -175,7 +205,7 @@ export async function createCaseForStepById(case1, stepId) {
     };
 
     try {
-        const response = await fetch(CREATE_CASE_FOR_STEP_BY_ID__URL(stepId), fetchParams);
+        const response = await fetch(API.step.CREATE_CASE_FOR_STEP_BY_ID__URL(stepId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -184,7 +214,7 @@ export async function createCaseForStepById(case1, stepId) {
 
         return response.json();
     } catch (error) {
-        console.log("Error: ", error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -200,7 +230,7 @@ export async function fetchToEditFlow(flow) {
     };
 
     try {
-        const response = await fetch(EDIT_FLOW__URL, fetchParams);
+        const response = await fetch(API.flow.EDIT_FLOW__URL(), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -209,7 +239,7 @@ export async function fetchToEditFlow(flow) {
 
         return response.json();
     } catch (error) {
-        console.log("Error: ", error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -225,7 +255,7 @@ export async function fetchToEditCase(case1) {
     };
 
     try {
-        const response = await fetch(EDIT_CASE__URL, fetchParams);
+        const response = await fetch(API.case1.EDIT_CASE__URL(), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -234,7 +264,7 @@ export async function fetchToEditCase(case1) {
 
         return response.json();
     } catch (error) {
-        console.log("Error: ", error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -249,7 +279,7 @@ export async function fetchToDeleteFlowById(flowId) {
     };
 
     try {
-        const response = await fetch(DELETE_FLOW_BY_ID__URL(flowId), fetchParams);
+        const response = await fetch(API.flow.DELETE_FLOW_BY_ID__URL(flowId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -258,7 +288,7 @@ export async function fetchToDeleteFlowById(flowId) {
 
         return true;
     } catch (error) {
-        console.log(error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }
@@ -273,7 +303,7 @@ export async function fetchToDeleteStepById(stepId) {
     };
 
     try {
-        const response = await fetch(DELETE_STEP_BY_ID__URL(stepId), fetchParams);
+        const response = await fetch(API.step.DELETE_STEP_BY_ID__URL(stepId), fetchParams);
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -282,10 +312,9 @@ export async function fetchToDeleteStepById(stepId) {
 
         return true;
     } catch (error) {
-        console.log(error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
-
 }
 
 
@@ -298,7 +327,7 @@ export async function fetchToDeleteCaseById(caseId) {
     };
 
     try {
-        const response = await fetch(DELETE_CASE_BY_ID__URL(caseId), fetchParams);
+        const response = await fetch(API.case1.DELETE_CASE_BY_ID__URL(caseId), fetchParams);
 
         if (!response.ok) {
             const responseError = await response.json();
@@ -307,7 +336,7 @@ export async function fetchToDeleteCaseById(caseId) {
 
         return true;
     } catch (error) {
-        console.log(error);
+        console.log(defaultErrorPrefix, error.message);
         throw error;
     }
 }

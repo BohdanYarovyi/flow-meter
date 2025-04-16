@@ -1,14 +1,15 @@
 import {
     fetchAccountById,
-    fetchCurrentAccountId, fetchToUpdatePersonalInfo
+    fetchCurrentAccountId, fetchToUpdateCredentials, fetchToUpdatePersonalInfo
 } from "./api.js";
 import {
+    cloneEditCredentialsTemplate,
     cloneEditPersonalInfoTemplate,
     cloneProfileButtonTemplate,
     cloneProfileItemTemplate,
     cloneProfileTitleTemplate
 } from "../../template-loader.js";
-import {Account, PersonalInfo} from "./classes.js";
+import {Account, Credentials, PersonalInfo} from "./classes.js";
 import {clearContainers, showError} from "../../util.js";
 
 const DOM = {
@@ -51,10 +52,10 @@ function loadPageTitle() {
 }
 
 function loadPersonalInfo() {
-    clearContainers(DOM.personalInfoContainer);
-
     const info = account.personalInfo;
     const container = DOM.personalInfoContainer;
+
+    clearContainers(container);
 
     addItemInContainer("Firstname", info.firstname, container);
     addItemInContainer("lastname", info.lastname, container);
@@ -64,7 +65,7 @@ function loadPersonalInfo() {
 
     addButtonInContainer(
         "Edit personal info",
-        DOM.personalInfoContainer,
+        container,
         () => openPersonalInfoEditor(info, container)
     );
 }
@@ -116,26 +117,75 @@ async function savePersonalInfo(event, editor, container) {
         console.log(error);
         showError(
             error,
-            container.querySelector(".personal-info-edit__error"),
-            container.querySelector("#personal-info-edit__error-message")
+            container.querySelector(".edit__error"),
+            container.querySelector(".edit__error p")
         );
     }
 }
 
 function loadCredentials() {
-    clearContainers(DOM.credentialsContainer);
-
     const credentials = account.credentials;
     const container = DOM.credentialsContainer;
+
+    clearContainers(container);
 
     addItemInContainer("Login", credentials.login, container);
     addItemInContainer("Email", credentials.email, container);
 
     addButtonInContainer(
         "Edit credentials",
-        DOM.credentialsContainer,
-        () => {console.log("edit credentials btn was clicked");}
+        container,
+        () => openCredentialsEditor(credentials, container)
     );
+}
+
+function openCredentialsEditor(credentials, container) {
+    clearContainers(container);
+
+    const clone = cloneEditCredentialsTemplate();
+    const editor = {
+        login: clone.querySelector("#credentials__login"),
+        email: clone.querySelector("#credentials__email"),
+        saveBtn: clone.querySelector("#credentials__save-button"),
+        cancelBtn: clone.querySelector("#credentials__cancel-button")
+    };
+
+    editor.login.value = credentials.login;
+    editor.email.value = credentials.email;
+
+    editor.saveBtn.addEventListener("click", (event) =>
+        saveCredentials(event, editor, container)
+    );
+    editor.cancelBtn.addEventListener("click", () =>
+        loadCredentials()
+    );
+
+    container.appendChild(clone);
+}
+
+async function saveCredentials(event, editor, container) {
+    event.preventDefault();
+
+    const credentials = new Credentials(
+        editor.login.value,
+        editor.email.value,
+        null
+    );
+
+    try {
+        // todo: validate here
+        await fetchToUpdateCredentials(accountId, credentials);
+        account.credentials = credentials;
+
+        loadCredentials();
+    } catch (error) {
+        console.log(error);
+        showError(
+            error,
+            container.querySelector(".edit__error"),
+            container.querySelector(".edit__error p"),
+        );
+    }
 }
 
 function addButtonInContainer(btnTitle, container, onClick) {

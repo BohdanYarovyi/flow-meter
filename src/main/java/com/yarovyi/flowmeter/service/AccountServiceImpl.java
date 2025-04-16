@@ -1,6 +1,8 @@
 package com.yarovyi.flowmeter.service;
 
 import com.yarovyi.flowmeter.domain.account.Account;
+import com.yarovyi.flowmeter.domain.account.Credentials;
+import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.account.Role;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.yarovyi.flowmeter.util.AccountMapper.COMMIT_CREDENTIALS_UPDATES;
+import static com.yarovyi.flowmeter.util.AccountMapper.COMMIT_PERSONAL_INFO_UPDATES;
 
 @Service
 @RequiredArgsConstructor
@@ -74,8 +79,18 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void updatePersonalInfo(Account account) {
-        this.accountRepository.save(account);
+    public void updatePersonalInfo(Account account, PersonalInfo personalInfo) {
+        // TODO: here is a unique fields like: login, email.
+        //  I must write some handler for catching SQL Exceptions or another way
+        Account updatedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(personalInfo, account);
+        this.accountRepository.save(updatedAccount);
+    }
+
+
+    @Override
+    public void updateCredentials(Account account, Credentials credentials) {
+        Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credentials, account);
+        this.accountRepository.save(updatedAccount);
     }
 
 

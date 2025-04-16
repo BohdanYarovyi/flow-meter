@@ -24,6 +24,10 @@ export function cloneEditPersonalInfoTemplate() {
     return loadTemplateById("edit-personal-info-template");
 }
 
+export function cloneEditCredentialsTemplate() {
+    return loadTemplateById("edit-credentials-template");
+}
+
 export function cloneFlowItemTemplate() {
     return loadTemplateById("flow-item-template")
 }

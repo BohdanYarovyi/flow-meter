@@ -140,7 +140,7 @@ body {
     border-radius: 30px;
 }
 
-#profile-edit__personal-info {
+.profile-edit {
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -171,7 +171,7 @@ body {
     border-color: #ffffff;
 }
 
-#profile-edit__personal-info .input__buttons {
+.profile-edit .input__buttons {
     display: flex;
     flex-direction: row;
     gap: 60px;
@@ -201,31 +201,31 @@ body {
     box-shadow: 0 0 16px rgba(255, 255, 255, 40%);
 }
 
-#personal-info__save-button {
+.save-btn {
     color: #8ed885;
     border-color: #8ed885;
 }
 
-#personal-info__save-button:hover {
+.save-btn:hover {
     color: #202020;
     border-color: #202020;
     background-color: #8ed885;
     box-shadow: 0 0 16px rgba(142, 216, 133, 40%);
 }
 
-#personal-info__cancel-button {
+.cancel-button {
     color: #f93f3f;
     border-color: #f93f3f;
 }
 
-#personal-info__cancel-button:hover {
+.cancel-button:hover {
     color: #202020;
     border-color: #202020;
     background-color: #f93f3f;
     box-shadow: 0 0 16px rgba(249, 63, 63, 0.40);
 }
 
-.personal-info-edit__error {
+.edit__error {
     display: none;
     text-align: center;
     margin-top: 20px;
@@ -233,7 +233,7 @@ body {
     width: 100%;
 }
 
-#personal-info-edit__error-message {
+.edit__error p {
     width: 85%;
     margin: 0 auto;
 
