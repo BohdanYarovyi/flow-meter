@@ -88,9 +88,9 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void updateCredentials(Account account, Credentials credentials) {
+    public Account updateCredentials(Account account, Credentials credentials) {
         Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credentials, account);
-        this.accountRepository.save(updatedAccount);
+        return this.accountRepository.save(updatedAccount);
     }
 
 

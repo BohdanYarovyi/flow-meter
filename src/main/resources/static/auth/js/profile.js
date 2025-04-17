@@ -23,7 +23,6 @@ let account = null;
 
 window.onload = loadProfile;
 
-// todo: add edit menu for credentials
 // todo: add available for password changing
 
 async function loadProfile() {
@@ -177,6 +176,7 @@ async function saveCredentials(event, editor, container) {
         await fetchToUpdateCredentials(accountId, credentials);
         account.credentials = credentials;
 
+        loadPageTitle();
         loadCredentials();
     } catch (error) {
         console.log(error);

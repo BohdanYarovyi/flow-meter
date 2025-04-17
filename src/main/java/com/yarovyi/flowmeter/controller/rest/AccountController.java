@@ -12,7 +12,9 @@ import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
+import com.yarovyi.flowmeter.service.SecurityService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ import static com.yarovyi.flowmeter.util.FlowMapper.*;
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
+    private final SecurityService securityService;
     private final AccountService accountService;
     private final FlowService flowService;
 
@@ -95,15 +98,14 @@ public class AccountController {
     @PutMapping("/{accountId:\\d+}/edit/credentials")
     public ResponseEntity<Void> updateCredentials(@PathVariable(name = "accountId") Long accountId,
                                                   @RequestBody CredentialsDto updatedCredentials,
-                                                  Principal principal) {
+                                                  Principal principal,
+                                                  HttpSession session) {
         Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
         Credentials credentials = DTO_TO_CREDENTIALS.apply(updatedCredentials);
-        this.accountService.updateCredentials(currentAccount, credentials);
-        // todo: after changing credentials in db,
-        //  how to reauthenticate account here with new credentials.
-        //  Maybe i have to create some service for authentication
+        Account account = this.accountService.updateCredentials(currentAccount, credentials);
+        this.securityService.reauthenticate(account, session);
 
         return ResponseEntity
                 .noContent()

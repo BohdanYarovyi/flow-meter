@@ -14,7 +14,7 @@ public interface AccountService {
     Optional<Account> getAccountByEmail(String email);
     Long createAccount(Account account);
     void updatePersonalInfo(Account account, PersonalInfo personalInfo);
-    void updateCredentials(Account account, Credentials credentials);
+    Account updateCredentials(Account account, Credentials credentials);
     void deleteAccountById(Long id);
 
     boolean checkOwnership(Long currentAccountId, Long targetAccountId);

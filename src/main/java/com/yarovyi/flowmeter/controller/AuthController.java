@@ -7,6 +7,7 @@ import com.yarovyi.flowmeter.entity.exception.EntityValidationException;
 import com.yarovyi.flowmeter.entity.login.LoginRequest;
 import com.yarovyi.flowmeter.entity.login.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
+import com.yarovyi.flowmeter.service.SecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ import static com.yarovyi.flowmeter.util.AccountMapper.ACCOUNT_CREATED_DTO_TO_AC
 @RequiredArgsConstructor
 @Controller
 public class AuthController {
-    private final AuthenticationProvider authenticationProvider;
+    private final SecurityService securityService;
     private final AccountService accountService;
 
 
@@ -54,23 +55,14 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request,
                                                BindingResult bindingResult,
-                                               HttpServletRequest httpRequest) {
+                                               HttpSession session) {
         if (bindingResult.hasErrors()) {
             throw new EntityValidationException(bindingResult);
         }
 
-        try {
-            var authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-            Authentication authentication = authenticationProvider.authenticate(authToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        this.securityService.login(request, session);
 
-            HttpSession session = httpRequest.getSession(true);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-
-            return ResponseEntity.ok(new LoginResponse("Login success"));
-        } catch (AuthenticationException e) {
-            throw new AccountAuthenticationException("Invalid username or password");
-        }
+        return ResponseEntity.ok(new LoginResponse("Login success"));
     }
 
 
@@ -82,8 +74,8 @@ public class AuthController {
             throw new EntityValidationException(bindingResult);
         }
 
-        Account newAccount = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(registerDto);
-        Long accountId = this.accountService.createAccount(newAccount);
+        Account forRegister = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(registerDto);
+        Long accountId = this.securityService.register(forRegister, this.accountService);
 
         URI location = UriComponentsBuilder
                 .fromPath("/api/accounts/{id}")
