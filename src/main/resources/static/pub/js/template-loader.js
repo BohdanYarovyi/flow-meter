@@ -16,6 +16,10 @@ export function cloneProfileItemTemplate() {
     return loadTemplateById("profile-item-template");
 }
 
+export function cloneProfileButtonContainerTemplate() {
+    return loadTemplateById("profile-btn-container-template");
+}
+
 export function cloneProfileButtonTemplate() {
     return loadTemplateById("profile-btn-template");
 }
@@ -26,6 +30,10 @@ export function cloneEditPersonalInfoTemplate() {
 
 export function cloneEditCredentialsTemplate() {
     return loadTemplateById("edit-credentials-template");
+}
+
+export function cloneEditPasswordTemplate() {
+    return loadTemplateById("edit-password-template");
 }
 
 export function cloneFlowItemTemplate() {

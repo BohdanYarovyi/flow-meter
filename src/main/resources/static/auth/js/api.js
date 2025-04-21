@@ -6,6 +6,7 @@ const API = {
         CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL:     (id) => `/api/accounts/${id}/flows`,
         EDIT_PERSONAL_INFO_BY_ID__URL:          (id) => `/api/accounts/${id}/edit/personal-info`,
         EDIT_CREDENTIALS_BY_ID__URL:            (id) => `/api/accounts/${id}/edit/credentials`,
+        CHANGE_PASSWORD_BY_ACCOUNT_ID__URL:     (id) => `/api/accounts/${id}/edit/password`,
     },
     flow: {
         GET_ALL_FLOWS__URL:                     ()   => `/api/flows`,
@@ -147,11 +148,12 @@ export async function fetchToUpdatePersonalInfo(accountId, personalInfo) {
     }
 }
 
+
 export async function fetchToUpdateCredentials(accountId, credentials) {
     const fetchParams = {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type" : "application/json"
         },
         body: JSON.stringify(credentials)
     };
@@ -165,6 +167,33 @@ export async function fetchToUpdateCredentials(accountId, credentials) {
         }
     } catch (error) {
         console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+
+export async function fetchToChangePassword(accountId, currentPassword, newPassword) {
+    const fetchBody = {
+        currentPassword: currentPassword,
+        newPassword: newPassword
+    };
+    const fetchParams = {
+        method: "PUT",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(fetchBody)
+    };
+
+    try {
+        const response = await fetch(API.account.CHANGE_PASSWORD_BY_ACCOUNT_ID__URL(accountId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to change password`);
+        }
+    } catch (error) {
+        console.log(error);
         throw error;
     }
 }

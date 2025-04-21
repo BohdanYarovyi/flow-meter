@@ -1,3 +1,5 @@
+import {validatePassword, validateUsername} from "./validation.js";
+
 const form = document.getElementById("login-form");
 
 form.addEventListener("submit", login);
@@ -39,13 +41,8 @@ async function login(e) {
 }
 
 function validateLoginFields(data) {
-    if (!data.username || data.username.length < 3) {
-        throw new Error("Username length must be at least 3 symbols ");
-    }
-
-    if (!data.password || data.password.length < 8) {
-        throw new Error("Password length must be at least 8 symbols ");
-    }
+    validateUsername(data.username);
+    validatePassword(data.password);
 }
 
 function showError(error) {

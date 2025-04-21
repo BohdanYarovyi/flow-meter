@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.entity.dto;
+package com.yarovyi.flowmeter.entity.domainDto;
 
 /**
  * Here no transportation passwords, because it is in another place.

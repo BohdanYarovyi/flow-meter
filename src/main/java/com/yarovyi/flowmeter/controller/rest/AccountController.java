@@ -4,12 +4,13 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.account.Credentials;
 import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.entity.dto.AccountDto;
-import com.yarovyi.flowmeter.entity.dto.CredentialsDto;
-import com.yarovyi.flowmeter.entity.dto.PersonalInfoDto;
-import com.yarovyi.flowmeter.entity.dto.FlowDto;
+import com.yarovyi.flowmeter.entity.domainDto.AccountDto;
+import com.yarovyi.flowmeter.entity.domainDto.CredentialsDto;
+import com.yarovyi.flowmeter.entity.domainDto.PersonalInfoDto;
+import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.securityDto.PasswordChangeRequest;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.SecurityService;
@@ -106,6 +107,24 @@ public class AccountController {
         Credentials credentials = DTO_TO_CREDENTIALS.apply(updatedCredentials);
         Account account = this.accountService.updateCredentials(currentAccount, credentials);
         this.securityService.reauthenticate(account, session);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+
+    // todo: validate PasswordChangeRequest obj
+    @PutMapping("/{accountId:\\d+}/edit/password")
+    public ResponseEntity<Void> updatePassword(@PathVariable(name = "accountId") Long accountId,
+                                               @RequestBody PasswordChangeRequest passwordChangeRequest,
+                                               Principal principal,
+                                               HttpSession session) {
+        Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
+        this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
+
+        this.accountService.changePassword(currentAccount, passwordChangeRequest);
+        this.securityService.deauthenticate(currentAccount, session);
 
         return ResponseEntity
                 .noContent()

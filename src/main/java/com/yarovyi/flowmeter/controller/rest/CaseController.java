@@ -2,7 +2,7 @@ package com.yarovyi.flowmeter.controller.rest;
 
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Case;
-import com.yarovyi.flowmeter.entity.dto.CaseDto;
+import com.yarovyi.flowmeter.entity.domainDto.CaseDto;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.CaseService;
 import com.yarovyi.flowmeter.util.SecurityUtil;

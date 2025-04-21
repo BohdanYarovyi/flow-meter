@@ -21,7 +21,7 @@ import {
     cloneFlowItemTemplate,
     cloneFlowNotFoundLabelTemplate,
     cloneStepItemTemplate
-} from "../../template-loader.js";
+} from "../../pub/js/template-loader.js";
 
 import {
     clearContainers,
@@ -30,9 +30,9 @@ import {
     openModalWindow,
     selectItem,
     showError
-} from "../../util.js";
+} from "../../pub/js/util.js";
 
-import {validateCase, validateFlow} from "../../validation.js";
+import {validateCase, validateFlow} from "../../pub/js/validation.js";
 import {Case, Flow, Step} from "./classes.js";
 
 // components

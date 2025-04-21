@@ -5,7 +5,9 @@ import com.yarovyi.flowmeter.domain.account.Credentials;
 import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.account.Role;
 import com.yarovyi.flowmeter.domain.flow.Flow;
+import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.securityDto.PasswordChangeRequest;
 import com.yarovyi.flowmeter.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,8 +82,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updatePersonalInfo(Account account, PersonalInfo personalInfo) {
-        // TODO: here is a unique fields like: login, email.
-        //  I must write some handler for catching SQL Exceptions or another way
         Account updatedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(personalInfo, account);
         this.accountRepository.save(updatedAccount);
     }
@@ -89,8 +89,30 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account updateCredentials(Account account, Credentials credentials) {
+        // TODO: here is a unique fields like: login, email.
+        //  I must write some handler for catching SQL Exceptions or another way
         Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credentials, account);
         return this.accountRepository.save(updatedAccount);
+    }
+
+
+    @Override
+    public void changePassword(Account account, PasswordChangeRequest passwordChangeRequest) {
+        String rawCurrentPassword = passwordChangeRequest.currentPassword();
+        String newPassword = passwordChangeRequest.newPassword();
+
+        if (!this.passwordEncoder.matches(rawCurrentPassword, account.getCredentials().getPassword())) {
+            throw new AccountAuthenticationException("Password don't match with current password");
+        }
+
+        if (this.passwordEncoder.matches(newPassword, account.getCredentials().getPassword())) {
+            throw new AccountAuthenticationException("You can't change password to the same password");
+        }
+
+        String encoded = this.passwordEncoder.encode(newPassword);
+        account.getCredentials().setPassword(encoded);
+
+        this.accountRepository.save(account);
     }
 
 

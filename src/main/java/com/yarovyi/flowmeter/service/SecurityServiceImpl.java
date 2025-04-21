@@ -3,7 +3,7 @@ package com.yarovyi.flowmeter.service;
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.account.Role;
 import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
-import com.yarovyi.flowmeter.entity.login.LoginRequest;
+import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
 import com.yarovyi.flowmeter.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -11,16 +11,13 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-import static com.yarovyi.flowmeter.util.AccountMapper.ACCOUNT_CREATED_DTO_TO_ACCOUNT;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.*;
 
 @RequiredArgsConstructor
@@ -35,8 +32,8 @@ public class SecurityServiceImpl implements SecurityService {
             throw new NullPointerException("LoginRequest or session is null in parameters");
 
         try {
-            String username = loginRequest.getUsername();
-            String password = loginRequest.getPassword();
+            String username = loginRequest.username();
+            String password = loginRequest.password();
 
             Authentication authentication = authenticate(username, password);
             setAuthenticationInSession(authentication, session);
@@ -67,7 +64,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 
     @Override
-    public void reauthenticate(Account account, HttpSession httpSession) {
+    public void reauthenticate(Account account, HttpSession session) {
         var username = account.getCredentials().getLogin();
 
         //  todo: it is a problem, i have to ask about it
@@ -80,7 +77,14 @@ public class SecurityServiceImpl implements SecurityService {
                 .toList();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-        setAuthenticationInSession(authentication, httpSession);
+        setAuthenticationInSession(authentication, session);
+    }
+
+
+    @Override
+    public void deauthenticate(Account account, HttpSession session) {
+        SecurityContext securityContext = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
+        securityContext.setAuthentication(null);
     }
 
 

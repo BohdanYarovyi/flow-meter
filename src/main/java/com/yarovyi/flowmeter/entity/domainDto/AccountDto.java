@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.entity.dto;
+package com.yarovyi.flowmeter.entity.domainDto;
 
 import com.yarovyi.flowmeter.domain.account.Role;
 

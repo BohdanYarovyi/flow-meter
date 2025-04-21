@@ -1,23 +1,15 @@
 package com.yarovyi.flowmeter.controller;
 
 import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.entity.dto.AccountCreatedDto;
-import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
+import com.yarovyi.flowmeter.entity.domainDto.AccountCreatedDto;
 import com.yarovyi.flowmeter.entity.exception.EntityValidationException;
-import com.yarovyi.flowmeter.entity.login.LoginRequest;
-import com.yarovyi.flowmeter.entity.login.LoginResponse;
+import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
+import com.yarovyi.flowmeter.entity.securityDto.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.SecurityService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -41,13 +33,13 @@ public class AuthController {
 
     @GetMapping("/login")
     public String getLogin() {
-        return "public/login";
+        return "pub/login";
     }
 
 
     @GetMapping("/registration")
     public String getRegistration() {
-        return "public/registration";
+        return "pub/registration";
     }
 
 

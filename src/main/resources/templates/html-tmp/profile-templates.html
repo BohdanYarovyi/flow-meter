@@ -20,10 +20,13 @@
 		</template>
 
 
+		<template id="profile-btn-container-template">
+				<div class="profile__btn-holder auto-hide-btn-holder"></div>
+		</template>
+
+
 		<template id="profile-btn-template">
-				<div class="profile__btn-holder auto-hide-btn-holder">
 						<button class="profile__btn auto-hide-btn" id="profile__btn">Edit personal info</button>
-				</div>
 		</template>
 
 
@@ -76,6 +79,31 @@
 						<div class="input__buttons">
 								<button class="input__btn save-btn" id="credentials__save-button">Save</button>
 								<button class="input__btn cancel-button" id="credentials__cancel-button">Cancel</button>
+						</div>
+				</form>
+		</template>
+
+
+		<template id="edit-password-template">
+				<form class="profile-edit" id="profile-edit__password">
+						<div class="input__item">
+								<span class="input__label">Current password:</span>
+								<input class="input__value" id="password__current" type="password">
+						</div>
+						<div class="input__item">
+								<span class="input__label">New password:</span>
+								<input class="input__value" id="password__new" type="password">
+						</div>
+						<div class="input__item">
+								<span class="input__label">Repeat new password:</span>
+								<input class="input__value" id="password__new-repeat" type="password">
+						</div>
+						<div class="edit__error">
+								<p id="password-edit__error-message">Default error message</p>
+						</div>
+						<div class="input__buttons">
+								<button class="input__btn save-btn" id="password__save-button">Save</button>
+								<button class="input__btn cancel-button" id="password__cancel-button">Cancel</button>
 						</div>
 				</form>
 		</template>

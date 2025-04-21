@@ -1,13 +1,13 @@
 package com.yarovyi.flowmeter.util;
 
-import com.yarovyi.flowmeter.entity.dto.AccountDto;
-import com.yarovyi.flowmeter.entity.dto.AccountCreatedDto;
+import com.yarovyi.flowmeter.entity.domainDto.AccountDto;
+import com.yarovyi.flowmeter.entity.domainDto.AccountCreatedDto;
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.account.Credentials;
 import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.account.Role;
-import com.yarovyi.flowmeter.entity.dto.CredentialsDto;
-import com.yarovyi.flowmeter.entity.dto.PersonalInfoDto;
+import com.yarovyi.flowmeter.entity.domainDto.CredentialsDto;
+import com.yarovyi.flowmeter.entity.domainDto.PersonalInfoDto;
 
 import java.util.ArrayList;
 import java.util.List;

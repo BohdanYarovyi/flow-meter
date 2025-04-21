@@ -80,17 +80,20 @@ body {
 }
 
 .profile__btn-holder {
+    display: flex;
+    flex-direction: row;
+    gap: 35px;
     padding: 50px 0 10px;
 }
 
 .profile__btn {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 600;
-    padding: 16px 46px;
+    padding: 12px 36px;
     background-color: #202020;
     color: #ffffff;
     border: solid 2px #ffffff;
-    border-radius: 20px;
+    border-radius: 18px;
     letter-spacing: 0.06em;
 
     transition: color linear 0.1s,
@@ -105,8 +108,8 @@ body {
 
 .profile__item:hover {
     .auto-hide-btn {
-        font-size: 30px;
-        padding: 16px 46px;
+        font-size: 28px;
+        padding: 12px 36px;
         opacity: 1;
     }
 
@@ -245,4 +248,15 @@ body {
 }
 
 
+/* password editor */
+
+#profile-edit__password {
+    .input__item {
+        width: 60%;
+    }
+
+    .input__label {
+        min-width: 45%;
+    }
+}
 

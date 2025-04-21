@@ -11,7 +11,7 @@ public class PageController {
 
     @GetMapping
     public String getHome() {
-        return "public/index";
+        return "pub/index";
     }
 
 

@@ -1,7 +1,7 @@
 package com.yarovyi.flowmeter.util;
 
 import com.yarovyi.flowmeter.domain.flow.Case;
-import com.yarovyi.flowmeter.entity.dto.CaseDto;
+import com.yarovyi.flowmeter.entity.domainDto.CaseDto;
 
 import java.util.ArrayList;
 import java.util.List;

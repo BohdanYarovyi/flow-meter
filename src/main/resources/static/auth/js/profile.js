@@ -1,16 +1,21 @@
 import {
     fetchAccountById,
-    fetchCurrentAccountId, fetchToUpdateCredentials, fetchToUpdatePersonalInfo
+    fetchCurrentAccountId,
+    fetchToChangePassword,
+    fetchToUpdateCredentials,
+    fetchToUpdatePersonalInfo
 } from "./api.js";
 import {
-    cloneEditCredentialsTemplate,
+    cloneEditCredentialsTemplate, cloneEditPasswordTemplate,
     cloneEditPersonalInfoTemplate,
+    cloneProfileButtonContainerTemplate,
     cloneProfileButtonTemplate,
     cloneProfileItemTemplate,
     cloneProfileTitleTemplate
-} from "../../template-loader.js";
+} from "../../pub/js/template-loader.js";
 import {Account, Credentials, PersonalInfo} from "./classes.js";
-import {clearContainers, showError} from "../../util.js";
+import {clearContainers, showError} from "../../pub/js/util.js";
+import {validatePassword, validatePasswordMatches} from "../../pub/js/validation.js";
 
 const DOM = {
     titleContainer: document.querySelector("#profile__title"),
@@ -23,8 +28,6 @@ let account = null;
 
 window.onload = loadProfile;
 
-// todo: add available for password changing
-
 async function loadProfile() {
     accountId = await fetchCurrentAccountId();
     const json = await fetchAccountById(accountId);
@@ -35,7 +38,7 @@ async function loadProfile() {
 
 function loadPage() {
     loadPageTitle();
-    loadPersonalInfo()
+    loadPersonalInfo();
     loadCredentials();
 }
 
@@ -62,11 +65,11 @@ function loadPersonalInfo() {
     addItemInContainer("Date of birth", info.dateOfBirth, container);
     addItemInContainer("phone", info.phone, container);
 
-    addButtonInContainer(
+    const editPersonalInfoBtn = createBtn(
         "Edit personal info",
-        container,
         () => openPersonalInfoEditor(info, container)
     );
+    addButtonsInHolder(container, editPersonalInfoBtn);
 }
 
 function openPersonalInfoEditor(personalInfo, container) {
@@ -89,8 +92,13 @@ function openPersonalInfoEditor(personalInfo, container) {
     editor.dateOfBirth.value = personalInfo.dateOfBirth;
     editor.phone.value = personalInfo.phone;
 
-    editor.cancelBtn.addEventListener("click", () => loadPersonalInfo());
-    editor.saveBtn.addEventListener('click', (event) => savePersonalInfo(event, editor, container));
+    editor.cancelBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        loadPersonalInfo();
+    });
+    editor.saveBtn.addEventListener('click', (event) =>
+        savePersonalInfo(event, editor, container)
+    );
 
     container.appendChild(clone);
 }
@@ -131,11 +139,16 @@ function loadCredentials() {
     addItemInContainer("Login", credentials.login, container);
     addItemInContainer("Email", credentials.email, container);
 
-    addButtonInContainer(
+    const editCredentialsBtn = createBtn(
         "Edit credentials",
-        container,
         () => openCredentialsEditor(credentials, container)
     );
+    const changePasswordBtn = createBtn(
+        "Change password",
+        () => openPasswordEditor(credentials, container)
+    );
+
+    addButtonsInHolder(container, editCredentialsBtn, changePasswordBtn);
 }
 
 function openCredentialsEditor(credentials, container) {
@@ -155,8 +168,32 @@ function openCredentialsEditor(credentials, container) {
     editor.saveBtn.addEventListener("click", (event) =>
         saveCredentials(event, editor, container)
     );
-    editor.cancelBtn.addEventListener("click", () =>
-        loadCredentials()
+    editor.cancelBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        loadCredentials();
+    });
+
+    container.appendChild(clone);
+}
+
+function openPasswordEditor(credentials, container) {
+    clearContainers(container);
+
+    const clone = cloneEditPasswordTemplate();
+    const editor = {
+        passwordCurrent: clone.querySelector("#password__current"),
+        passwordNew: clone.querySelector("#password__new"),
+        passwordNewRepeat: clone.querySelector("#password__new-repeat"),
+        btnSave: clone.querySelector("#password__save-button"),
+        btnCancel: clone.querySelector("#password__cancel-button"),
+    };
+
+    editor.btnCancel.addEventListener("click", (event) => {
+        event.preventDefault();
+        loadCredentials();
+    });
+    editor.btnSave.addEventListener("click", (event) =>
+        changePassword(event, editor, container)
     );
 
     container.appendChild(clone);
@@ -188,14 +225,51 @@ async function saveCredentials(event, editor, container) {
     }
 }
 
-function addButtonInContainer(btnTitle, container, onClick) {
+async function changePassword(event, editor, container) {
+    event.preventDefault();
+    const currentPassword = editor.passwordCurrent.value;
+    const newPassword1 = editor.passwordNew.value;
+    const newPassword2 = editor.passwordNewRepeat.value;
+
+    try {
+        validateChangePasswordForm(currentPassword, newPassword1, newPassword2);
+        await fetchToChangePassword(accountId, currentPassword, newPassword1);
+
+        document.location.href = "/login";
+    } catch (error) {
+        console.log(error);
+        showError(
+            error,
+            container.querySelector(".edit__error"),
+            container.querySelector(".edit__error p"),
+        );
+    }
+}
+
+function validateChangePasswordForm(currentPassword, newPassword1, newPassword2) {
+    validatePassword(currentPassword);
+    validatePassword(newPassword1);
+    validatePassword(newPassword2);
+    validatePasswordMatches(newPassword1, newPassword2);
+}
+
+function addButtonsInHolder(container, ...buttons) {
+    const clone = cloneProfileButtonContainerTemplate();
+
+    const btnHolder = clone.querySelector(".profile__btn-holder");
+    buttons.forEach(btn => btnHolder.appendChild(btn));
+
+    container.appendChild(clone);
+}
+
+function createBtn(btnTitle, onClick) {
     const clone = cloneProfileButtonTemplate();
 
     const btn = clone.querySelector("#profile__btn");
     btn.textContent = btnTitle;
     btn.addEventListener("click", () => onClick());
 
-    container.appendChild(clone);
+    return clone;
 }
 
 function addItemInContainer(labelText, valueText, container) {

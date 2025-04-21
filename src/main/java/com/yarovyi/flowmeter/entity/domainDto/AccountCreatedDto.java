@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.entity.dto;
+package com.yarovyi.flowmeter.entity.domainDto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

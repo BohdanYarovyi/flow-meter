@@ -1,9 +1,7 @@
 package com.yarovyi.flowmeter.util;
 
 import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.domain.flow.Step;
-import com.yarovyi.flowmeter.entity.dto.FlowDto;
-import com.yarovyi.flowmeter.entity.dto.StepDto;
+import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.entity.dto;
+package com.yarovyi.flowmeter.entity.domainDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
