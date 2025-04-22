@@ -168,6 +168,7 @@ function openFlowDetailsEditor(flow) {
     });
 
     DOM.caseContainer.appendChild(clone);
+    adjustTextarea(editForm.description)
 }
 
 async function editFlow(event, flow) {
@@ -410,6 +411,7 @@ function openCaseEditor(case1, wrapper, stepId) {
     editForm.saveBtn.addEventListener("click", (event) => editCase(event, case1, wrapper, stepId));
 
     wrapper.appendChild(clone);
+    adjustTextarea(editForm.text);
 }
 
 async function editCase(event, case1, wrapper, stepId) {

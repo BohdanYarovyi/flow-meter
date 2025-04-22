@@ -30,7 +30,7 @@ public class StepServiceImpl implements StepService {
 
         if (this.stepRepository.existsStepByDayAndFlow_Id(step.getDay(), flow.getId())) {
             var title = "Forbidden step creation";
-            var message = String.format("Step with date: %s already exists in flow %s", step.getDay(), flow.getTitle());
+            var message = String.format("Step with date: %s already exists in flow '%s'", step.getDay(), flow.getTitle());
 
             throw new ForbiddenRequestException(title, message);
         }

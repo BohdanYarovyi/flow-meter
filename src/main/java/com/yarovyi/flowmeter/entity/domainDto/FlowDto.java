@@ -2,6 +2,7 @@ package com.yarovyi.flowmeter.entity.domainDto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +16,7 @@ public record FlowDto(
         String title,
         @Size(max = 1000, message = "Flow description length mast be less than {max}")
         String description,
-        @Size(min = 0, max = 100, message = "Target percentage must be between {min} and {max}")
+        @Range(min = 0, max = 100, message = "Target percentage must be between {min} and {max}")
         int targetPercentage,
         List<StepDto> steps
 ) {}
