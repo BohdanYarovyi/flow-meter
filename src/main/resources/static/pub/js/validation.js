@@ -44,3 +44,9 @@ export function validatePasswordMatches(password1, password2) {
         throw new Error("Passwords don't matches");
     }
 }
+
+export function validateField(value, maxCapacity, nameOfField) {
+    if (value.length > maxCapacity) {
+        throw new Error(`${nameOfField} length must be less than ${maxCapacity}`);
+    }
+}

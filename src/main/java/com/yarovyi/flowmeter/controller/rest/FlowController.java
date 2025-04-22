@@ -10,8 +10,11 @@ import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.StepService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
+import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -55,8 +58,11 @@ public class FlowController {
 
 
     @PutMapping
-    public ResponseEntity<FlowDto> editFlow(@RequestBody FlowDto flowDto,
+    public ResponseEntity<FlowDto> editFlow(@RequestBody @Validated FlowDto flowDto,
+                                            BindingResult bindingResult,
                                             Principal principal) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account account = SecurityUtil.getCurrentAccount(accountService, principal);
         this.flowService.checkOwnerShipOrElseThrow(flowDto.id(), account.getId());
 
@@ -69,8 +75,11 @@ public class FlowController {
 
     @PostMapping("/{flowId:\\d+}/steps")
     public ResponseEntity<StepDto> createStepForFlow(@PathVariable(name = "flowId") Long flowId,
-                                                  @RequestBody StepDto stepDto,
+                                                  @RequestBody @Validated StepDto stepDto,
+                                                  BindingResult bindingResult,
                                                   Principal principal) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.flowService.checkOwnerShipOrElseThrow(flowId, account.getId());
 

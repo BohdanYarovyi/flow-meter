@@ -15,10 +15,13 @@ import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.SecurityService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
+import com.yarovyi.flowmeter.util.ValidationUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -98,9 +101,12 @@ public class AccountController {
 
     @PutMapping("/{accountId:\\d+}/edit/credentials")
     public ResponseEntity<Void> updateCredentials(@PathVariable(name = "accountId") Long accountId,
-                                                  @RequestBody CredentialsDto updatedCredentials,
+                                                  @RequestBody @Validated CredentialsDto updatedCredentials,
+                                                  BindingResult bindingResult,
                                                   Principal principal,
                                                   HttpSession session) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
@@ -117,9 +123,12 @@ public class AccountController {
     // todo: validate PasswordChangeRequest obj
     @PutMapping("/{accountId:\\d+}/edit/password")
     public ResponseEntity<Void> updatePassword(@PathVariable(name = "accountId") Long accountId,
-                                               @RequestBody PasswordChangeRequest passwordChangeRequest,
+                                               @RequestBody @Validated PasswordChangeRequest passwordChangeRequest,
+                                               BindingResult bindingResult,
                                                Principal principal,
                                                HttpSession session) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
@@ -152,8 +161,11 @@ public class AccountController {
 
     @PostMapping("/{accountId:\\d+}/flows")
     public ResponseEntity<FlowDto> createFlowForAccount(@PathVariable(name = "accountId") Long accountId,
-                                                        @RequestBody FlowDto flowDto,
+                                                        @RequestBody @Validated FlowDto flowDto,
+                                                        BindingResult bindingResult,
                                                         Principal principal) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
         if (!Objects.equals(account.getId(), accountId)) {
             var title = "Creating flow forbidden";

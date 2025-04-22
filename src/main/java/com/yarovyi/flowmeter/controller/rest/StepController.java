@@ -9,8 +9,11 @@ import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.CaseService;
 import com.yarovyi.flowmeter.service.StepService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
+import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -32,8 +35,11 @@ public class StepController {
 
     @PostMapping("/{stepId:\\d+}/cases")
     public ResponseEntity<CaseDto> createCaseForStep(@PathVariable(name = "stepId") Long stepId,
-                                                  @RequestBody CaseDto caseDto,
-                                                  Principal principal) {
+                                                     @RequestBody @Validated CaseDto caseDto,
+                                                     BindingResult bindingResult,
+                                                     Principal principal) {
+        ValidationUtil.checkOrThrow(bindingResult);
+
         Account account = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.stepService.checkOwnership(stepId, account.getId());
 

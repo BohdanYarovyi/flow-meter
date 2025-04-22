@@ -7,6 +7,7 @@ import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
 import com.yarovyi.flowmeter.entity.securityDto.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.SecurityService;
+import com.yarovyi.flowmeter.util.ValidationUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +49,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request,
                                                BindingResult bindingResult,
                                                HttpSession session) {
-        if (bindingResult.hasErrors()) {
-            throw new EntityValidationException(bindingResult);
-        }
+        ValidationUtil.checkOrThrow(bindingResult);
 
         this.securityService.login(request, session);
 
@@ -62,9 +61,7 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<Void> register(@RequestBody @Validated AccountCreatedDto registerDto,
                                          BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new EntityValidationException(bindingResult);
-        }
+        ValidationUtil.checkOrThrow(bindingResult);
 
         Account forRegister = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(registerDto);
         Long accountId = this.securityService.register(forRegister, this.accountService);

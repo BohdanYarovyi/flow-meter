@@ -15,7 +15,13 @@ import {
 } from "../../pub/js/template-loader.js";
 import {Account, Credentials, PersonalInfo} from "./classes.js";
 import {clearContainers, showError} from "../../pub/js/util.js";
-import {validatePassword, validatePasswordMatches} from "../../pub/js/validation.js";
+import {
+    validateEmail,
+    validateField,
+    validatePassword,
+    validatePasswordMatches,
+    validateUsername
+} from "../../pub/js/validation.js";
 
 const DOM = {
     titleContainer: document.querySelector("#profile__title"),
@@ -115,7 +121,7 @@ async function savePersonalInfo(event, editor, container) {
     );
 
     try {
-        // todo: validating personal info here;
+        validatePersonalInfoFields(info);
         await fetchToUpdatePersonalInfo(account.id, info);
         account.personalInfo = info;
 
@@ -128,6 +134,13 @@ async function savePersonalInfo(event, editor, container) {
             container.querySelector(".edit__error p")
         );
     }
+}
+
+function validatePersonalInfoFields(info) {
+    validateField(info.firstname, 100, "Firstname");
+    validateField(info.lastname, 100, "Lastname");
+    validateField(info.patronymic, 100, "Patronymic");
+    validateField(info.phone, 100, "Phone");
 }
 
 function loadCredentials() {
@@ -209,7 +222,7 @@ async function saveCredentials(event, editor, container) {
     );
 
     try {
-        // todo: validate here
+        validateCredentials(credentials);
         await fetchToUpdateCredentials(accountId, credentials);
         account.credentials = credentials;
 
@@ -223,6 +236,11 @@ async function saveCredentials(event, editor, container) {
             container.querySelector(".edit__error p"),
         );
     }
+}
+
+function validateCredentials(credentials) {
+    validateEmail(credentials.email);
+    validateUsername(credentials.login);
 }
 
 async function changePassword(event, editor, container) {
