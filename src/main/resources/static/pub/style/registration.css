@@ -55,6 +55,7 @@ body {
 #registration-form {
     display: flex;
     flex-direction: column;
+
     gap: 28px;
 }
 
@@ -146,4 +147,37 @@ body {
     line-height: 1.5;
 
     color: #f93f3f;
+}
+
+#google-oauthentication__block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 250px;
+    height: 65px;
+    padding: 0 10px;
+    margin: 10px auto 0;
+
+    color: #202020;
+    background-color: #fff;
+    border-radius: 22px;
+    cursor: pointer;
+
+    transition: box-shadow linear 0.1s;
+
+    img {
+        width: 50px;
+    }
+
+    p {
+        text-align: center;
+        font-size: 24px;
+        line-height: 1.15;
+    }
+}
+
+#google-oauthentication__block:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }

@@ -7,6 +7,7 @@ import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
 import com.yarovyi.flowmeter.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Objects;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.*;
@@ -23,20 +25,22 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @RequiredArgsConstructor
 @Service
 public class SecurityServiceImpl implements SecurityService {
-    private final AuthenticationProvider authenticationProvider;
-
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public void login(LoginRequest loginRequest, HttpSession session) {
+    public void loginByUsernamePassword(LoginRequest loginRequest, HttpSession session) {
         if (Objects.isNull(loginRequest) || Objects.isNull(session))
             throw new NullPointerException("LoginRequest or session is null in parameters");
 
         try {
-            String username = loginRequest.username();
-            String password = loginRequest.password();
+            var authToken = new UsernamePasswordAuthenticationToken(
+                    loginRequest.username(),
+                    loginRequest.password()
+            );
+            Authentication authentication = this.authenticate(authToken);
 
-            Authentication authentication = authenticate(username, password);
-            setAuthenticationInSession(authentication, session);
+            this.setAuthenticationInSession(authentication, session);
+            this.setAuthenticationInContextHolder(authentication);
         } catch (AuthenticationException e) {
             throw new AccountAuthenticationException("Invalid username or password");
         }
@@ -53,6 +57,9 @@ public class SecurityServiceImpl implements SecurityService {
         securityContext.setAuthentication(authentication);
     }
 
+    private void setAuthenticationInContextHolder(Authentication authentication) {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
     // i don't know, for what this wrapper here
     // but maybe in future it will be useful
@@ -62,14 +69,9 @@ public class SecurityServiceImpl implements SecurityService {
         return accountService.createAccount(account);
     }
 
-
     @Override
     public void reauthenticate(Account account, HttpSession session) {
         var username = account.getCredentials().getLogin();
-
-        //  todo: it is a problem, i have to ask about it
-        //  Authentication authentication = authenticate(username, password);
-
         var authorities = account.getRoles().stream()
                 .map(Role::getName)
                 .map(SecurityUtil.PERFORM_WITH_ROLE_PREFIX)
@@ -77,21 +79,22 @@ public class SecurityServiceImpl implements SecurityService {
                 .toList();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-        setAuthenticationInSession(authentication, session);
+        this.setAuthenticationInSession(authentication, session);
+        this.setAuthenticationInContextHolder(authentication);
     }
-
 
     @Override
     public void deauthenticate(Account account, HttpSession session) {
         SecurityContext securityContext = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-        securityContext.setAuthentication(null);
+        if (securityContext != null) {
+            securityContext.setAuthentication(null);
+        }
+
+        SecurityContextHolder.clearContext();
     }
 
-
-    public Authentication authenticate(String username, String password) {
-        Authentication authToken = new UsernamePasswordAuthenticationToken(username, password);
-        return this.authenticationProvider.authenticate(authToken);
+    public Authentication authenticate(Authentication authentication) {
+        return this.authenticationManager.authenticate(authentication);
     }
-
 
 }

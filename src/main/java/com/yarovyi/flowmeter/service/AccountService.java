@@ -14,11 +14,13 @@ public interface AccountService {
     Optional<Account> getAccountByLogin(String login);
     Optional<Account> getAccountByEmail(String email);
     Long createAccount(Account account);
+    Account createAndGetAccount(Account account);
     void updatePersonalInfo(Account account, PersonalInfo personalInfo);
     Account updateCredentials(Account account, Credentials credentials);
     void changePassword(Account account, PasswordChangeRequest passwordChangeRequest);
     void deleteAccountById(Long id);
 
+    boolean existAccountByLogin(String login);
     boolean checkOwnership(Long currentAccountId, Long targetAccountId);
     void checkOwnershipOrElseThrow(Long currentAccountId, Long targetAccountId);
 }

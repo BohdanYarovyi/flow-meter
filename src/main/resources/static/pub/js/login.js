@@ -1,8 +1,12 @@
 import {validatePassword, validateUsername} from "./validation.js";
+import {fetchToLogin} from "./open-api.js";
+import {showError, startOAuthFlow} from "./util.js";
 
-const form = document.getElementById("login-form");
+const form = document.querySelector("#login-form");
+const googleAuthBtn = document.querySelector("#google-oauthentication__block");
 
 form.addEventListener("submit", login);
+googleAuthBtn.addEventListener("click", startOAuthFlow);
 
 
 async function login(e) {
@@ -17,24 +21,16 @@ async function login(e) {
 
     try {
         validateLoginFields(data);
+        await fetchToLogin(data);
 
-        const response = await fetch("/api/public/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.detail || "Login failed");
-        }
-
-        const result = await response.json();
-        console.log("Login successful: ", result)
         window.location.href = "/";
     } catch (error) {
         console.log("Error: ", error)
-        showError(error);
+        showError(
+            error,
+            document.querySelector(".login-error"),
+            document.querySelector("#login-error-message")
+        );
     } finally {
         submitButton.disabled = false;
     }
@@ -43,11 +39,4 @@ async function login(e) {
 function validateLoginFields(data) {
     validateUsername(data.username);
     validatePassword(data.password);
-}
-
-function showError(error) {
-    const loginError = document.querySelector(".login-error");
-    const errorHolder = document.querySelector("#login-error-message");
-    errorHolder.textContent = `Error: ${error.message}`;
-    loginError.style.display = "block";
 }

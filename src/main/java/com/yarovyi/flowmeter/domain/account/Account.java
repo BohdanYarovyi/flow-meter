@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "t_accounts")
 @SQLRestriction("c_deleted = false") // for soft-deleting
 public class Account extends BaseEntity {
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "t_accounts_roles",
             joinColumns = @JoinColumn(name = "account_id"),

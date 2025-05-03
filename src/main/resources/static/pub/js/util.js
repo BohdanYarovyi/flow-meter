@@ -68,3 +68,11 @@ export function getConfirmationFromUser(message) {
         components.noBtn.addEventListener("click", onNo);
     });
 }
+
+export function startOAuthFlow(event) {
+    event.preventDefault();
+
+    location.href = "/oauth2/authorization/google"
+
+    console.log("OAuth2 flow by Google was started")
+}

@@ -2,7 +2,6 @@ package com.yarovyi.flowmeter.controller;
 
 import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.entity.domainDto.AccountCreatedDto;
-import com.yarovyi.flowmeter.entity.exception.EntityValidationException;
 import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
 import com.yarovyi.flowmeter.entity.securityDto.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
@@ -48,10 +47,10 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request,
                                                BindingResult bindingResult,
-                                               HttpSession session) {
+                                               HttpSession session) {   // todo: session for removing from here
         ValidationUtil.checkOrThrow(bindingResult);
 
-        this.securityService.login(request, session);
+        this.securityService.loginByUsernamePassword(request, session);
 
         return ResponseEntity.ok(new LoginResponse("Login success"));
     }

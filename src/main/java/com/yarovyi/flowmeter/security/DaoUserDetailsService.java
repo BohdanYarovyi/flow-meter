@@ -10,18 +10,19 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 import static com.yarovyi.flowmeter.util.SecurityUtil.PERFORM_WITH_ROLE_PREFIX;
 
+@Component
 @RequiredArgsConstructor
 public class DaoUserDetailsService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(DaoUserDetailsService.class);
     private static final Function<String, String> USERNAME_NOT_FOUND = "Username '%s' not found"::formatted;
     private final AccountService accountService;
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,4 +50,5 @@ public class DaoUserDetailsService implements UserDetailsService {
                 .authorities(authorities)
                 .build();
     }
+
 }

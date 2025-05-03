@@ -10,6 +10,19 @@ spring:
     username: serveruser
     password: password123
     driver-class-name: org.postgresql.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 955713173154-cgaq9k1d9dmbl71957t3of8mmhptgbj2.apps.googleusercontent.com
+            client-secret: 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 # todo: it a danger to store secret here
 
   jpa:
     show-sql: false
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#      security=TRACE:

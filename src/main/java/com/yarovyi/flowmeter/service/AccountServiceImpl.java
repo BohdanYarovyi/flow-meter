@@ -66,17 +66,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Long createAccount(Account account) {
+        return this.createAndGetAccount(account).getId();
+    }
+
+    @Override
+    public Account createAndGetAccount(Account account) {
         if (Objects.isNull(account))
             throw new NullPointerException("Account is required");
 
         if (!Objects.isNull(account.getId()))
             throw new IllegalArgumentException("Account.id must be null");
 
-        String encodedPassword = passwordEncoder.encode(account.getCredentials().getPassword());
+        String encodedPassword = this.passwordEncoder.encode(account.getCredentials().getPassword());
         account.getCredentials().setPassword(encodedPassword);
-        account.getRoles().add(defaultRole);
+        account.getRoles().add(this.defaultRole);
 
-        return this.accountRepository.save(account).getId();
+        return this.accountRepository.save(account);
     }
 
 
@@ -127,6 +132,14 @@ public class AccountServiceImpl implements AccountService {
 
         account.setDeleted(true);
         this.accountRepository.save(account);
+    }
+
+    @Override
+    public boolean existAccountByLogin(String login) {
+        if (Objects.isNull(login))
+            throw new NullPointerException("Login is required");
+
+        return this.accountRepository.existsAccountByCredentials_Login(login);
     }
 
 
