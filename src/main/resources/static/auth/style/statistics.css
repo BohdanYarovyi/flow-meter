@@ -1,0 +1,81 @@
+/*
+    #202020
+    #323232
+    #282828
+    #313131
+*/
+
+body {
+    overflow-y: hidden;
+}
+
+/* fonts */
+.kanit-regular {
+    font-family: "Kanit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0.08em;
+}
+
+/* STATISTICS-PAGE */
+.statistics-page {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 40px);
+
+    color: white;
+    background-color: #313131;
+}
+
+/* OPTIONS */
+.options {
+    color: inherit;
+    width: 20%;
+    height: 100%;
+    border-right: solid 1px #ffffff;
+
+    background-color: #252525;
+}
+
+.tab-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tab-button {
+    width: 100%;
+    padding: 10px;
+    border: solid 2px #ffffff;
+
+    background-color: #202020;
+    color: #ffffff;
+    font-size: 24px;
+    letter-spacing: 0.08em;
+}
+
+.tab-button.active {
+    background-color: white;
+    color: #000000;
+}
+
+.tab {
+    padding: 15px;
+}
+
+.tab__title {
+    text-align: center;
+    font-size: 36px;
+    letter-spacing: 0.1em;
+}
+
+.hidden {
+    display: none;
+}
+
+/* DISPLAY */
+.graphic-display {
+    width: 80%;
+    height: 100%;
+
+    background-color: #404040;
+}

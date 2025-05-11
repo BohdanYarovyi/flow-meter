@@ -42,10 +42,10 @@ header {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 30px;
 }
 
 .header-nav__item {
-    width: 180px;
     text-align: center;
     font-family: "Kanit", sans-serif;
     font-weight: 400;
@@ -70,7 +70,6 @@ header {
                 background-color linear 0.15s;
 }
 .header-nav__button:hover {
-    font-weight: 800;
     border: dashed 3px #ffffff;
     box-shadow: 0 0 15px rgba(255,255,255, 80%);
 

@@ -16,8 +16,10 @@ const API = {
         CREATE_STEP_FOR_FLOW_BY_ID__URL:        (flowId) => `/api/flows/${flowId}/steps`,
     },
     step: {
+        GET_STEP_BY_ID__URL:                    (stepId) => `/api/steps/${stepId}`,
+        GET_TARGET_PERCENTAGE_BY_STEP_ID__URL:  (stepId) => `/api/steps/${stepId}/target-percentage`,
         CREATE_CASE_FOR_STEP_BY_ID__URL:        (stepId) => `/api/steps/${stepId}/cases`,
-        DELETE_STEP_BY_ID__URL:                 (id) => `/api/steps/${id}`,
+        DELETE_STEP_BY_ID__URL:                 (stepId) => `/api/steps/${stepId}`,
     },
     case1: {
         EDIT_CASE__URL:                         ()   => `/api/cases`,
@@ -26,6 +28,7 @@ const API = {
 };
 const defaultErrorPrefix = "Error on API layer: ";
 
+// account fetches
 export async function fetchCurrentAccountId() {
     const fetchParams = {
         method: "GET",
@@ -51,7 +54,6 @@ export async function fetchCurrentAccountId() {
     }
 }
 
-
 export async function fetchAccountById(id) {
     const fetchParams = {
         method: "GET",
@@ -76,7 +78,6 @@ export async function fetchAccountById(id) {
     }
 }
 
-
 export async function fetchFlowsByAccountId(accountId) {
     const fetchParams = {
         method: "GET",
@@ -99,7 +100,6 @@ export async function fetchFlowsByAccountId(accountId) {
         throw error;
     }
 }
-
 
 export async function createFlowForAccountById(flow, accountId) {
     const fetchParams = {
@@ -125,7 +125,6 @@ export async function createFlowForAccountById(flow, accountId) {
     }
 }
 
-
 export async function fetchToUpdatePersonalInfo(accountId, personalInfo) {
     const fetchParams = {
         method: "PUT",
@@ -148,7 +147,6 @@ export async function fetchToUpdatePersonalInfo(accountId, personalInfo) {
     }
 }
 
-
 export async function fetchToUpdateCredentials(accountId, credentials) {
     const fetchParams = {
         method: "PUT",
@@ -170,7 +168,6 @@ export async function fetchToUpdateCredentials(accountId, credentials) {
         throw error;
     }
 }
-
 
 export async function fetchToChangePassword(accountId, currentPassword, newPassword) {
     const fetchBody = {
@@ -199,6 +196,7 @@ export async function fetchToChangePassword(accountId, currentPassword, newPassw
 }
 
 
+// flows fetches
 export async function createStepForFlowById(step, flowId) {
     const fetchParams = {
         method: "POST",
@@ -222,32 +220,6 @@ export async function createStepForFlowById(step, flowId) {
         throw error;
     }
 }
-
-
-export async function createCaseForStepById(case1, stepId) {
-    const fetchParams = {
-        method: "POST",
-        headers: {
-            "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(case1)
-    };
-
-    try {
-        const response = await fetch(API.step.CREATE_CASE_FOR_STEP_BY_ID__URL(stepId), fetchParams);
-
-        if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error(errorResponse.detail || `Failed to create case for step`);
-        }
-
-        return response.json();
-    } catch (error) {
-        console.log(defaultErrorPrefix, error.message);
-        throw error;
-    }
-}
-
 
 export async function fetchToEditFlow(flow) {
     const fetchParams = {
@@ -273,32 +245,6 @@ export async function fetchToEditFlow(flow) {
     }
 }
 
-
-export async function fetchToEditCase(case1) {
-    const fetchParams = {
-        method: "PUT",
-        headers: {
-            "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(case1)
-    };
-
-    try {
-        const response = await fetch(API.case1.EDIT_CASE__URL(), fetchParams);
-
-        if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error(errorResponse.detail || `Failed to edit case`);
-        }
-
-        return response.json();
-    } catch (error) {
-        console.log(defaultErrorPrefix, error.message);
-        throw error;
-    }
-}
-
-
 export async function fetchToDeleteFlowById(flowId) {
     const fetchParams = {
         method: "DELETE",
@@ -322,6 +268,78 @@ export async function fetchToDeleteFlowById(flowId) {
     }
 }
 
+
+// step fetches
+export async function getStepById(stepId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.step.GET_STEP_BY_ID__URL(stepId), fetchParams);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to fetch step`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error)
+        throw error;
+    }
+}
+
+export async function getTargetPercentageByStepId(stepId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.step.GET_TARGET_PERCENTAGE_BY_STEP_ID__URL(stepId), fetchParams);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to fetch target percentage`);
+        }
+
+        const json = await response.json();
+        return json.targetPercentage;
+    } catch (error) {
+        console.log(defaultErrorPrefix, error)
+        throw error;
+    }
+}
+
+export async function createCaseForStepById(case1, stepId) {
+    const fetchParams = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(case1)
+    };
+
+    try {
+        const response = await fetch(API.step.CREATE_CASE_FOR_STEP_BY_ID__URL(stepId), fetchParams);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to create case for step`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
 
 export async function fetchToDeleteStepById(stepId) {
     const fetchParams = {
@@ -347,6 +365,31 @@ export async function fetchToDeleteStepById(stepId) {
 }
 
 
+// case fetches
+export async function fetchToEditCase(case1) {
+    const fetchParams = {
+        method: "PUT",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(case1)
+    };
+
+    try {
+        const response = await fetch(API.case1.EDIT_CASE__URL(), fetchParams);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to edit case`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
 export async function fetchToDeleteCaseById(caseId) {
     const fetchParams = {
         method: "DELETE",
@@ -369,7 +412,3 @@ export async function fetchToDeleteCaseById(caseId) {
         throw error;
     }
 }
-
-
-
-

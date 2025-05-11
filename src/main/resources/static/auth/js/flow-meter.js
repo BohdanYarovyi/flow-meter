@@ -6,21 +6,18 @@ import {
     fetchFlowsByAccountId, fetchToDeleteCaseById,
     fetchToDeleteFlowById, fetchToDeleteStepById,
     fetchToEditCase,
-    fetchToEditFlow
+    fetchToEditFlow, getStepById, getTargetPercentageByStepId
 } from "./api.js";
 
 import {
     cloneCaseEditTemplate,
     cloneCaseTemplate,
     cloneCaseWrapperTemplate,
-    cloneCreateCaseBtnTemplate,
-    cloneCreateStepBtnTemplate,
-    cloneDeleteStepBtnTemplate,
     cloneFlowDetailsEditTemplate,
     cloneFlowDetailsTemplate,
     cloneFlowItemTemplate,
-    cloneFlowNotFoundLabelTemplate,
-    cloneStepItemTemplate
+    cloneFlowNotFoundLabelTemplate, cloneStepHeaderTemplate,
+    cloneStepItemTemplate, cloneTimelinePanelTemplate
 } from "../../pub/js/template-loader.js";
 
 import {
@@ -38,10 +35,9 @@ import {Case, Flow, Step} from "./classes.js";
 // components
 const DOM = {
     flowContainer: document.getElementById("flow-container"),
-    stepsContainer: document.getElementById("steps-container"),
+    timelinePanel: document.getElementById("timeline-panel"),
+    stepHeader: document.getElementById("step-header"),
     caseContainer: document.getElementById("case-container"),
-    stepButtons: document.getElementById("step-buttons"),
-    buttonHolderCreateStep: document.getElementById("create-step-btn-holder"),
     buttonCreateFlow: document.getElementById("create-flow-btn"),
     modal: {
         createFlow: {
@@ -231,11 +227,17 @@ function removeFlowFromCache(flowId) {
 // step
 function loadSteps(steps, flowId) {
     clearContainers(
-        DOM.stepsContainer,
+        DOM.timelinePanel,
         DOM.caseContainer,
-        DOM.buttonHolderCreateStep,
-        DOM.stepButtons
+        DOM.stepHeader
     );
+
+    const clone = cloneTimelinePanelTemplate();
+    const stepContainer = clone.querySelector(".timeline");
+    clone.querySelector("#create-step-btn")
+        .addEventListener("click", () => openCreateStepModalWindow(flowId));
+
+    DOM.timelinePanel.appendChild(clone);
 
     steps.sort((a, b) => a.day.getTime() - b.day.getTime());
     for (const step of steps) {
@@ -248,13 +250,8 @@ function loadSteps(steps, flowId) {
             loadCases(step.cases, step.id);
         });
 
-        DOM.stepsContainer.appendChild(clone);
+        stepContainer.appendChild(clone);
     }
-
-    const createStepBtn = cloneCreateStepBtnTemplate();
-    createStepBtn.querySelector("#create-step-btn")
-        .addEventListener("click", () => openCreateStepModalWindow(flowId));
-    DOM.buttonHolderCreateStep.appendChild(createStepBtn);
 }
 
 async function deleteStep(stepId) {
@@ -297,22 +294,17 @@ function removeStepFromCache(flowId, stepId) {
 
 // case
 function loadCases(cases, stepId) {
-    // clear case container
     clearContainers(
         DOM.caseContainer,
-        DOM.stepButtons
     );
 
-    // fill container
     cases.forEach(case1 => {
         const clone = cloneCaseWrapperTemplate();
         putCaseInWrapper(case1, clone.querySelector("#case"), stepId);
         DOM.caseContainer.appendChild(clone);
     });
 
-    // add btn for adding new cases
-    addCreateCaseBtn(stepId);
-    addDeleteStepBtn(stepId);
+    addStepHeader(stepId)
 }
 
 function putCaseInWrapper(case1, wrapper, stepId) {
@@ -334,23 +326,68 @@ function fillCaseTemplate(case1, clone) {
     clone.querySelector("#case__percent").textContent = case1.counting ? case1.percent : "";
 }
 
-function addCreateCaseBtn(stepId) {
-    const createCaseTmp = cloneCreateCaseBtnTemplate();
+function addStepHeader(stepId) {
+    clearContainers(DOM.stepHeader);
 
-    createCaseTmp
+    const headerClone = cloneStepHeaderTemplate();
+
+    headerClone
         .querySelector("#create-case-btn")
         .addEventListener("click", () => openCreateCaseModalWindow(stepId));
-    DOM.stepButtons.appendChild(createCaseTmp);
-}
-
-function addDeleteStepBtn(stepId) {
-    const clone = cloneDeleteStepBtnTemplate();
-
-    clone
+    headerClone
         .querySelector("#delete-current-step-btn")
         .addEventListener("click", () => deleteStep(stepId));
+    calculateDayProductivity(
+        headerClone.querySelector("#statistics-block"),
+        stepId
+    );
 
-    DOM.stepButtons.appendChild(clone);
+    DOM.stepHeader.appendChild(headerClone);
+}
+
+async function calculateDayProductivity(productivityDisplay, stepId) {
+    const response = await getStepById(stepId);
+    const goal = Number(await getTargetPercentageByStepId(stepId));
+    const step = Step.stepFromJSON(response);
+    const avgPercent = getAveragePercent(step.cases);
+    const different = avgPercent - goal;
+
+    productivityDisplay.querySelector("#metric__avg-value").textContent = avgPercent || 0;
+    productivityDisplay.querySelector("#metric__goal-value").textContent = goal || 0;
+    productivityDisplay.querySelector("#metric__different-value").textContent = different || 0;
+
+    paintStatisticsDisplay(avgPercent, goal);
+}
+
+function paintStatisticsDisplay(avg, goal) {
+    if (avg > goal) {
+        setColor("title_green","metric__value_green");
+    } else if (avg < goal) {
+        setColor("title_red","metric__value_red");
+    } else {
+        setColor("title_yellow","metric__value_yellow");
+    }
+
+    function setColor(titleClass, metricTotalClass) {
+        const block = DOM.stepHeader.querySelector("#statistics-block");
+
+        block.querySelector(".title").classList.add(titleClass);
+        block.querySelector(".metric-total .metric__value").classList.add(metricTotalClass);
+    }
+}
+
+function getAveragePercent(cases) {
+    let counter = 0;
+    let sum = 0;
+
+    for (const caseItem of cases) {
+        if (caseItem.counting) {
+            sum += caseItem.percent;
+            counter++;
+        }
+    }
+    const avg = sum / counter;
+    return Number(avg.toFixed(2));
 }
 
 async function deleteCase(caseId, stepId, wrapper) {
@@ -434,6 +471,7 @@ async function editCase(event, case1, wrapper, stepId) {
         updateCaseInCache(case1);
 
         putCaseInWrapper(case1, wrapper, stepId);
+        addStepHeader(stepId);
     } catch (error) {
         console.log("Error", error);
         showError(
@@ -564,7 +602,7 @@ function clearStepModalWindow() {
 }
 
 
-//modal - create case
+// modal - create case
 function openCreateCaseModalWindow(stepId) {
     DOM.modal.createCase.errorBlock.style.display = "none";
     DOM.modal.createCase.inputStepId.value = stepId;

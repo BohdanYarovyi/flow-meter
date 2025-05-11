@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+		<meta charset="UTF-8">
+		<title>Flowmeter - Statistics</title>
+		<link rel="icon" type="image/x-icon" href="/pub/media/favicon.ico">
+		<link rel="stylesheet" href="/pub/style/reset.css">
+		<link rel="stylesheet" href="/auth/style/statistics.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+		      rel="stylesheet">
+</head>
+<body>
+<div th:insert="~{parts/header}"></div>
+
+<!-- CONTENT -->
+<div class="statistics-page kanit-regular">
+		<div class="options">
+				<div class="tab-buttons">
+						<button class="tab-button active">Flow</button>
+						<button class="tab-button">Scope</button>
+				</div>
+				<div class="tabs">
+						<div class="tab" id="flow">
+								<h2 class="tab__title">Flow</h2>
+								<!-- flow list -->
+						</div>
+						<div class="tab hidden" id="scope">
+								<h2 class="tab__title">Scope</h2>
+								<!-- scope choose-->
+						</div>
+				</div>
+		</div>
+
+		<div class="graphic-display">
+				<p>hello pppppp </p>
+		</div>
+</div>
+
+<div th:insert="~{html-tmp/statistics-templates :: body}"></div>
+<script type="module" src="/auth/js/statistics.js"></script>
+
+</body>
+</html>

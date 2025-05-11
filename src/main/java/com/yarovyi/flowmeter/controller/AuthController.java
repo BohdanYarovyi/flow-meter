@@ -30,31 +30,27 @@ public class AuthController {
     private final SecurityService securityService;
     private final AccountService accountService;
 
-
     @GetMapping("/login")
     public String getLogin() {
         return "pub/login";
     }
-
 
     @GetMapping("/registration")
     public String getRegistration() {
         return "pub/registration";
     }
 
-
     @PostMapping("/api/public/login")
     @ResponseBody
     public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request,
                                                BindingResult bindingResult,
-                                               HttpSession session) {   // todo: session for removing from here
+                                               HttpSession session) {
         ValidationUtil.checkOrThrow(bindingResult);
 
         this.securityService.loginByUsernamePassword(request, session);
 
         return ResponseEntity.ok(new LoginResponse("Login success"));
     }
-
 
     @PostMapping("/api/public/registration")
     @ResponseBody
@@ -72,6 +68,5 @@ public class AuthController {
 
         return ResponseEntity.created(location).build();
     }
-
 
 }

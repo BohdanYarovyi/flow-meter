@@ -1,4 +1,3 @@
-
 export function loadTemplateById(templateId) {
     const template = document.getElementById(templateId);
     if (!template) {
@@ -9,47 +8,51 @@ export function loadTemplateById(templateId) {
 }
 
 export function cloneProfileTitleTemplate() {
-    return loadTemplateById("profile-title-template");
+    return loadTemplateById("profileTitle-template");
 }
 
 export function cloneProfileItemTemplate() {
-    return loadTemplateById("profile-item-template");
+    return loadTemplateById("profileItem-template");
 }
 
 export function cloneProfileButtonContainerTemplate() {
-    return loadTemplateById("profile-btn-container-template");
+    return loadTemplateById("profileBtnContainer-template");
 }
 
 export function cloneProfileButtonTemplate() {
-    return loadTemplateById("profile-btn-template");
+    return loadTemplateById("profileBtn-template");
 }
 
 export function cloneEditPersonalInfoTemplate() {
-    return loadTemplateById("edit-personal-info-template");
+    return loadTemplateById("editPersonalInfo-template");
 }
 
 export function cloneEditCredentialsTemplate() {
-    return loadTemplateById("edit-credentials-template");
+    return loadTemplateById("editCredentials-template");
 }
 
 export function cloneEditPasswordTemplate() {
-    return loadTemplateById("edit-password-template");
+    return loadTemplateById("editPassword-template");
 }
 
 export function cloneFlowItemTemplate() {
-    return loadTemplateById("flow-item-template")
+    return loadTemplateById("flowItem-template")
 }
 
 export function cloneFlowNotFoundLabelTemplate() {
-    return loadTemplateById("flow-not-found-label-template");
+    return loadTemplateById("flowNotFoundLabel-template");
+}
+
+export function cloneTimelinePanelTemplate() {
+    return loadTemplateById("timelinePanel-template");
 }
 
 export function cloneStepItemTemplate() {
-    return loadTemplateById("step-item-template");
+    return loadTemplateById("stepItem-template");
 }
 
 export function cloneCaseWrapperTemplate() {
-    return loadTemplateById("case-wrapper-template");
+    return loadTemplateById("caseHolder-template");
 }
 
 export function cloneCaseTemplate() {
@@ -57,27 +60,19 @@ export function cloneCaseTemplate() {
 }
 
 export function cloneCaseEditTemplate() {
-    return loadTemplateById("case-edit-template");
+    return loadTemplateById("editCase-template");
 }
 
-export function cloneCreateStepBtnTemplate() {
-    return loadTemplateById("create-step-btn-template");
-}
-
-export function cloneCreateCaseBtnTemplate() {
-    return loadTemplateById("create-case-btn-template");
-}
-
-export function cloneDeleteStepBtnTemplate() {
-    return loadTemplateById("delete-step-btn-template");
+export function cloneStepHeaderTemplate() {
+    return loadTemplateById("stepHeader-template");
 }
 
 export function cloneFlowDetailsTemplate() {
-    return loadTemplateById("flow-details-template");
+    return loadTemplateById("flowDetails-template");
 }
 
 export function cloneFlowDetailsEditTemplate() {
-    return loadTemplateById("flow-details-edit-template");
+    return loadTemplateById("editFlowDetails-template");
 }
 
 

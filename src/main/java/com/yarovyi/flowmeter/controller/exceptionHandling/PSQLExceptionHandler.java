@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PSQLExceptionHandler {
 
+    // todo: need to refactor this method for creating more human-readable exception
     @ExceptionHandler(PSQLException.class)
     public ErrorResponse handlePsqlException(PSQLException e) {
         String title = "Data error";

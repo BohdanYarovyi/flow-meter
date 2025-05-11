@@ -6,27 +6,34 @@
 </head>
 <body>
 
-		<template id="flow-item-template">
+		<template id="flowItem-template">
 						<div class="flow-item" id="flow-item" >Flow inner</div>
 		</template>
 
 
-		<template id="flow-not-found-label-template">
+		<template id="flowNotFoundLabel-template">
 				<div class="flows-is-empty">Empty</div>
 		</template>
 
 
-		<template id="step-item-template">
+		<template id="stepItem-template">
 				<div class="step-item" id="step">date</div>
 		</template>
 
 
-		<template id="create-step-btn-template">
-				<button id="create-step-btn">Add</button>
+		<template id="timelinePanel-template">
+				<div class="timeline-wrapper">
+						<div class="timeline">
+								<!--inserting here by templates-->
+						</div>
+						<div class="create-step-btn-holder" id="create-step-btn-holder">
+								<button id="create-step-btn">Add</button>
+						</div>
+				</div>
 		</template>
 
 
-		<template id="case-wrapper-template">
+		<template id="caseHolder-template">
 				<div class="case" id="case"></div>
 		</template>
 
@@ -46,7 +53,7 @@
 		</template>
 
 
-		<template id="case-edit-template">
+		<template id="editCase-template">
 				<div class="case-edit-input">
 						<textarea id="case-edit__text" rows="1"></textarea>
 						<div class="case-edit__percent-wrapper">
@@ -62,20 +69,43 @@
 		</template>
 
 
-		<template id="create-case-btn-template">
-				<button class="step__button" id="create-case-btn">Add new case</button>
-		</template>
-
-
-		<template id="delete-step-btn-template">
-				<div id="case-block__error">
-						<p id="case-block__error-message">Default error message</p>
+		<template id="stepHeader-template">
+				<div class="step-header__items">
+						<button class="step__button" id="create-case-btn">Add new case</button>
+						<div id="statistics-block">
+								<h3 class="title">
+										Statistics
+								</h3>
+								<div class="statistics__metrics-wrapper">
+										<div class="statistics__metrics">
+												<div class="metric-variables">
+														<div class="metric">
+																<span class="metric__title">AVG:</span>
+																<span class="metric__value" id="metric__avg-value">44.6</span>
+														</div>
+														<div class="metric">
+																<span class="metric__title">GOAL:</span>
+																<span class="metric__value" id="metric__goal-value">70</span>
+														</div>
+												</div>
+												<div class="metric-total">
+														<div class="metric">
+																<span class="metric__title">Total:</span>
+																<span class="metric__value" id="metric__different-value">-25.4</span>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+						<button class="step__button" id="delete-current-step-btn">Delete step</button>
 				</div>
-				<button class="step__button" id="delete-current-step-btn">Delete step</button>
+				<div id="case-block__error">
+						<p id="case-block__error-message">Default error message Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id incidunt mollitia obcaecati possimus quia recusandae repudiandae soluta tempora? Inventore quaerat ratione sit veniam. Aliquam, beatae rem. Eius facere mollitia reprehenderit?</p>
+				</div>
 		</template>
 
 
-		<template id="flow-details-template">
+		<template id="flowDetails-template">
 				<div class="flow-details">
 						<div class="flow-details-content">
 								<h3 id="flow-details__title"></h3>
@@ -93,7 +123,7 @@
 		</template>
 
 
-		<template id="flow-details-edit-template">
+		<template id="editFlowDetails-template">
 				<div class="flow-details">
 						<form id="flow-details-edit__form">
 								<input id="flow-details-edit__title" value="fdsaf">

@@ -56,6 +56,14 @@ public class StepServiceImpl implements StepService {
         this.stepRepository.save(step);
     }
 
+    @Override
+    public Long getTargetPercentageByStepId(Long stepId) {
+        Step step = this.getStepById(stepId)
+                        .orElseThrow(() -> new SubentityNotFoundException(Step.class));
+
+        return (long) step.getFlow().getTargetPercentage();
+    }
+
 
     @Override
     public boolean checkOwnership(Long stepId, Long accountId) {

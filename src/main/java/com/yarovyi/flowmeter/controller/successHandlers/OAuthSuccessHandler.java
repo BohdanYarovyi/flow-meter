@@ -53,7 +53,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final AccountService accountService;
     private final SecurityService securityService;
 
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -75,7 +74,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
     }
-
 
     private Account createAccountOfGoogle(OAuth2User principal) {
         Map<String, Object> attributes = principal.getAttributes();
@@ -102,7 +100,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         return this.accountService.createAndGetAccount(account);
     }
 
-
     private String findFreeLogin(String firstname, String lastname, String googleId) {
         boolean loginExists;
         String login;
@@ -111,7 +108,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         do {
             login = generateNewLogin(firstname, lastname, formattedLoginId);
             loginExists = this.accountService.existAccountByLogin(login);
-        } while (loginExists);
+        } while (loginExists);  // maybe 20 attempts needed here, not infinity in theory
 
         return login;
     }

@@ -5,6 +5,11 @@ app:
   base-url: http://localhost:${server.port}
 
 spring:
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5002/flow-meter
     username: serveruser
@@ -17,7 +22,6 @@ spring:
           google:
             client-id: 955713173154-cgaq9k1d9dmbl71957t3of8mmhptgbj2.apps.googleusercontent.com
             client-secret: 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 # todo: it a danger to store secret here
-
   jpa:
     show-sql: false
 
@@ -26,3 +30,7 @@ spring:
 #    org:
 #      springframework:
 #      security=TRACE:
+
+springdoc:
+  swagger-ui:
+    enabled: true

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class PageController {
 
-
     @GetMapping
     public String getHome() {
         return "pub/index";
@@ -26,5 +25,10 @@ public class PageController {
         return "auth/flowmeter-panel";
     }
 
+
+    @GetMapping("/flow/statistics")
+    public String getStatisticPage() {
+        return "auth/statistics";
+    }
 
 }

@@ -4,11 +4,13 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Case;
 import com.yarovyi.flowmeter.domain.flow.Step;
 import com.yarovyi.flowmeter.entity.domainDto.CaseDto;
+import com.yarovyi.flowmeter.entity.domainDto.StepDto;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.CaseService;
 import com.yarovyi.flowmeter.service.StepService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
+import com.yarovyi.flowmeter.util.StepMapper;
 import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,25 @@ public class StepController {
     private final AccountService accountService;
     private final StepService stepService;
     private final CaseService caseService;
+
+
+    @GetMapping("/{stepId:\\d+}")
+    public ResponseEntity<StepDto> getById(@PathVariable(name = "stepId") Long stepId) {
+        Step step = this.stepService
+                .getStepById(stepId)
+                .orElseThrow(() -> new SubentityNotFoundException(Step.class));
+
+        StepDto dto = StepMapper.STEP_TO_DTO.apply(step);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{stepId:\\d+}/target-percentage")
+    public ResponseEntity<Map<String, String>> getTargetPercentage(@PathVariable(name = "stepId") Long stepId) {
+        Long targetPercentage = this.stepService.getTargetPercentageByStepId(stepId);
+
+        var response = Map.of("targetPercentage", String.valueOf(targetPercentage));
+        return ResponseEntity.ok(response);
+    }
 
 
     @PostMapping("/{stepId:\\d+}/cases")
