@@ -4,10 +4,7 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.account.Credentials;
 import com.yarovyi.flowmeter.domain.account.PersonalInfo;
 import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.entity.domainDto.AccountDto;
-import com.yarovyi.flowmeter.entity.domainDto.CredentialsDto;
-import com.yarovyi.flowmeter.entity.domainDto.PersonalInfoDto;
-import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
+import com.yarovyi.flowmeter.entity.domainDto.*;
 import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.entity.securityDto.PasswordChangeRequest;
@@ -154,6 +151,15 @@ public class AccountController {
         List<Flow> flows = this.flowService.getAllByAccountId(accountId);
 
         List<FlowDto> dtos = FLOWs_TO_DTOs.apply(flows);
+
+        return ResponseEntity.ok(dtos);
+    }
+
+
+    @GetMapping("/{accountId:\\d+}/short-flows")
+    public ResponseEntity<List<FlowShortDto>> getShortFlowsByAccountId(@PathVariable(name = "accountId") Long accountId) {
+        List<Flow> flows = this.flowService.getAllByAccountId(accountId);
+        List<FlowShortDto> dtos = FLOWs_TO_SHORT_DTOs.apply(flows);
 
         return ResponseEntity.ok(dtos);
     }

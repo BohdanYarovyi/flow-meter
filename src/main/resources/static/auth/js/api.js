@@ -1,18 +1,19 @@
 const API = {
     account: {
-        GET_CURRENT_ACCOUNT_ID__URL:            ()   => `/api/accounts/current`,
-        GET_ACCOUNT_BY_ID__URL:                 (id) => `/api/accounts/${id}`,
-        GET_FLOWS_BY_ACCOUNT_ID__URL:           (id) => `/api/accounts/${id}/flows`,
-        CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL:     (id) => `/api/accounts/${id}/flows`,
-        EDIT_PERSONAL_INFO_BY_ID__URL:          (id) => `/api/accounts/${id}/edit/personal-info`,
-        EDIT_CREDENTIALS_BY_ID__URL:            (id) => `/api/accounts/${id}/edit/credentials`,
-        CHANGE_PASSWORD_BY_ACCOUNT_ID__URL:     (id) => `/api/accounts/${id}/edit/password`,
+        GET_CURRENT_ACCOUNT_ID__URL:            ()       => `/api/accounts/current`,
+        GET_ACCOUNT_BY_ID__URL:                 (id)     => `/api/accounts/${id}`,
+        GET_FLOWS_BY_ACCOUNT_ID__URL:           (id)     => `/api/accounts/${id}/flows`,
+        GET_SHORT_FLOWS_BY_ACCOUNT_ID__URL:     (id)     => `/api/accounts/${id}/short-flows`,
+        CREATE_FLOW_FOR_ACCOUNT_BY_ID__URL:     (id)     => `/api/accounts/${id}/flows`,
+        EDIT_PERSONAL_INFO_BY_ID__URL:          (id)     => `/api/accounts/${id}/edit/personal-info`,
+        EDIT_CREDENTIALS_BY_ID__URL:            (id)     => `/api/accounts/${id}/edit/credentials`,
+        CHANGE_PASSWORD_BY_ACCOUNT_ID__URL:     (id)     => `/api/accounts/${id}/edit/password`,
     },
     flow: {
-        GET_ALL_FLOWS__URL:                     ()   => `/api/flows`,
-        GET_FLOW_BY_ID__URL:                    (id) => `/api/flows/${id}`,
-        EDIT_FLOW__URL:                         ()   => `/api/flows`,
-        DELETE_FLOW_BY_ID__URL:                 (id) => `/api/flows/${id}`,
+        GET_ALL_FLOWS__URL:                     ()       => `/api/flows`,
+        GET_FLOW_BY_ID__URL:                    (id)     => `/api/flows/${id}`,
+        EDIT_FLOW__URL:                         ()       => `/api/flows`,
+        DELETE_FLOW_BY_ID__URL:                 (id)     => `/api/flows/${id}`,
         CREATE_STEP_FOR_FLOW_BY_ID__URL:        (flowId) => `/api/flows/${flowId}/steps`,
     },
     step: {
@@ -22,12 +23,16 @@ const API = {
         DELETE_STEP_BY_ID__URL:                 (stepId) => `/api/steps/${stepId}`,
     },
     case1: {
-        EDIT_CASE__URL:                         ()   => `/api/cases`,
+        EDIT_CASE__URL:                         ()       => `/api/cases`,
         DELETE_CASE_BY_ID__URL:                 (caseId) => `/api/cases/${caseId}`,
+    },
+    statistics: {
+        GET_UNIQUE_MONTHS_BY_FLOW_ID__URL:      (flowId) => `/api/flowmeter/statistics/unique-months/${flowId}`,
     }
 };
 const defaultErrorPrefix = "Error on API layer: ";
 
+// todo: i know about a lot of duplicates here, but it is no sense to refactor it for now
 // account fetches
 export async function fetchCurrentAccountId() {
     const fetchParams = {
@@ -91,7 +96,30 @@ export async function fetchFlowsByAccountId(accountId) {
 
         if (!response.ok) {
             const errorResponse = await response.json();
-            throw new Error(errorResponse.detail || `Failed to fetchFlowsByAccountId with id:${accountId}`);
+            throw new Error(errorResponse.detail || `Failed to fetchFlowsByAccountId by id`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchShortFlowsByAccountId(accountId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.account.GET_SHORT_FLOWS_BY_ACCOUNT_ID__URL(accountId), fetchParams);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.detail || `Failed to fetchShortFlowsByAccountId by id`);
         }
 
         return await response.json();
@@ -407,6 +435,31 @@ export async function fetchToDeleteCaseById(caseId) {
         }
 
         return true;
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+
+// statistics fetches
+export async function fetchUniqueMonthsByFlowId(flowId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.statistics.GET_UNIQUE_MONTHS_BY_FLOW_ID__URL(flowId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to get all unique month by flow id`);
+        }
+
+        return await response.json();
     } catch (error) {
         console.log(defaultErrorPrefix, error.message);
         throw error;

@@ -53,6 +53,10 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final AccountService accountService;
     private final SecurityService securityService;
 
+    // todo: після того, як я розлогінююсь, а потім намагаюсь зайти через OAuth,
+    //  то в мене близько 30 секунд не може зайти чомусь
+    //  може це якісь обмеження від гугла, хз. От жиди..
+    //  А тепер все працює класно, це може бути пов'язано також з моїм інтернетом, поспостерігаю ще
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,

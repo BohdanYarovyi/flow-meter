@@ -14,6 +14,27 @@
 
 body {
     background-color: #202020;
+    overflow-y: auto;
+}
+
+/* стилізує скролбар, не шарю що тут та як */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #202020;
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+    border: 3px solid #202020;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }
 
 .registration {
@@ -33,7 +54,7 @@ body {
 
 .registration-form-holder {
     width: 80%;
-    padding: 50px;
+    padding: 20px 50px;
 
     border: solid 3px #ffffff;
     border-radius: 18px;
@@ -47,7 +68,7 @@ body {
     display: flex;
     justify-content: center;
 
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     font-size: 36px;
 }
@@ -56,11 +77,11 @@ body {
     display: flex;
     flex-direction: column;
 
-    gap: 28px;
+    gap: 22px;
 }
 
 .registration-table {
-    border-spacing: 2px 20px;
+    border-spacing: 2px 12px;
 }
 
 .registration-table tr td:last-child {
@@ -89,7 +110,7 @@ body {
 .registration-btn {
     width: 35%;
     padding: 10px 40px;
-    margin: 15px auto 0;
+    margin: 10px auto 0;
 
     font-size: 30px;
     font-weight: 800;
@@ -158,7 +179,7 @@ body {
     width: 250px;
     height: 65px;
     padding: 0 10px;
-    margin: 10px auto 0;
+    margin: 20px auto 0;
 
     color: #202020;
     background-color: #fff;

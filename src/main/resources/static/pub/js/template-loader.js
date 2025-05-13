@@ -7,6 +7,7 @@ export function loadTemplateById(templateId) {
     return template.content.cloneNode(true);
 }
 
+// PROFILE
 export function cloneProfileTitleTemplate() {
     return loadTemplateById("profileTitle-template");
 }
@@ -35,6 +36,7 @@ export function cloneEditPasswordTemplate() {
     return loadTemplateById("editPassword-template");
 }
 
+// FLOWMETER
 export function cloneFlowItemTemplate() {
     return loadTemplateById("flowItem-template")
 }
@@ -75,4 +77,11 @@ export function cloneFlowDetailsEditTemplate() {
     return loadTemplateById("editFlowDetails-template");
 }
 
+// STATISTICS
+export function cloneFlowItemStatisticsTemplate() {
+    return loadTemplateById("flow-template");
+}
 
+export function cloneMonthItemTemplate() {
+    return loadTemplateById("monthItem-template");
+}

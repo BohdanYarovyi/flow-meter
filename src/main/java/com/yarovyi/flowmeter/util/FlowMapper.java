@@ -2,6 +2,7 @@ package com.yarovyi.flowmeter.util;
 
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
+import com.yarovyi.flowmeter.entity.domainDto.FlowShortDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,4 +88,14 @@ public class FlowMapper {
         return exist;
     };
 
+    public static final Function<Flow, FlowShortDto> FLOW_TO_SHORT_DTO = (flow) -> {
+        return new FlowShortDto(
+                flow.getId(),
+                flow.getTitle()
+        );
+    };
+
+    public static final Function<List<Flow>, List<FlowShortDto>> FLOWs_TO_SHORT_DTOs = (flows) -> {
+        return flows.stream().map(FLOW_TO_SHORT_DTO).toList();
+    };
 }

@@ -17,6 +17,8 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 1000;
 
     height: 80px;
     padding: 5px 40px;

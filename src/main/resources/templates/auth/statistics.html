@@ -18,17 +18,34 @@
 <div class="statistics-page kanit-regular">
 		<div class="options">
 				<div class="tab-buttons">
-						<button class="tab-button active">Flow</button>
-						<button class="tab-button">Scope</button>
+						<button id="flow-tab-btn" class="tab-button tab-button--active">Flows</button>
+						<button id="scope-tab-btn" class="tab-button">Scope</button>
 				</div>
 				<div class="tabs">
 						<div class="tab" id="flow">
-								<h2 class="tab__title">Flow</h2>
-								<!-- flow list -->
+								<h2 class="tab__title">Flows</h2>
+								<div class="flows scroll" id="option-flow-list">
+										<!-- inserting here by templates -->
+								</div>
 						</div>
-						<div class="tab hidden" id="scope">
+						<div class="tab hidden scroll" id="scope">
 								<h2 class="tab__title">Scope</h2>
-								<!-- scope choose-->
+								<div class="scope-parameters">
+										<div class="scope-parameters__quick-range-buttons">
+												<button class="quick-range-button" id="last-week-qb">Last week</button>
+												<button class="quick-range-button" id="last-month-qb">Last month</button>
+												<button class="quick-range-button" id="last-year-qb">Last year</button>
+										</div>
+										<div class="bottom-side-wrapper">
+												<div class="month-picker">
+														<h3 class="month-picker__title">Choose month</h3>
+														<div class="month-picker__months-list scroll" id="months-list">
+																<!-- inserting here by templates -->
+														</div>
+												</div>
+												<button class="generate-button">Generate</button>
+										</div>
+								</div>
 						</div>
 				</div>
 		</div>

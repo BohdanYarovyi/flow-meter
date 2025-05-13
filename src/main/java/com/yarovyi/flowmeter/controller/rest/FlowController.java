@@ -4,11 +4,13 @@ import com.yarovyi.flowmeter.domain.account.Account;
 import com.yarovyi.flowmeter.domain.flow.Flow;
 import com.yarovyi.flowmeter.domain.flow.Step;
 import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
+import com.yarovyi.flowmeter.entity.domainDto.FlowShortDto;
 import com.yarovyi.flowmeter.entity.domainDto.StepDto;
 import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.StepService;
+import com.yarovyi.flowmeter.util.FlowMapper;
 import com.yarovyi.flowmeter.util.SecurityUtil;
 import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,7 @@ public class FlowController {
 
 
     @GetMapping
-    public ResponseEntity<List<FlowDto>> gatFlows() {
+    public ResponseEntity<List<FlowDto>> getFlows() {
         List<Flow> flows = this.flowService.getAll();
         List<FlowDto> dtos = FLOWs_TO_DTOs.apply(flows);
 

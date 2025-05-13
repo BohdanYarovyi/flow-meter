@@ -347,22 +347,22 @@ function addStepHeader(stepId) {
 
 async function calculateDayProductivity(productivityDisplay, stepId) {
     const response = await getStepById(stepId);
-    const goal = Number(await getTargetPercentageByStepId(stepId));
+    const goal = Number(await getTargetPercentageByStepId(stepId)) | 0;
     const step = Step.stepFromJSON(response);
-    const avgPercent = getAveragePercent(step.cases);
+    const avgPercent = getAveragePercent(step.cases) | 0;
     const different = avgPercent - goal;
 
-    productivityDisplay.querySelector("#metric__avg-value").textContent = avgPercent || 0;
-    productivityDisplay.querySelector("#metric__goal-value").textContent = goal || 0;
-    productivityDisplay.querySelector("#metric__different-value").textContent = different || 0;
+    productivityDisplay.querySelector("#metric__avg-value").textContent = avgPercent;
+    productivityDisplay.querySelector("#metric__goal-value").textContent = goal;
+    productivityDisplay.querySelector("#metric__different-value").textContent = different;
 
-    paintStatisticsDisplay(avgPercent, goal);
+    paintStatisticsDisplay(different);
 }
 
-function paintStatisticsDisplay(avg, goal) {
-    if (avg > goal) {
+function paintStatisticsDisplay(different) {
+    if (different > 0) {
         setColor("title_green","metric__value_green");
-    } else if (avg < goal) {
+    } else if (different < 0) {
         setColor("title_red","metric__value_red");
     } else {
         setColor("title_yellow","metric__value_yellow");

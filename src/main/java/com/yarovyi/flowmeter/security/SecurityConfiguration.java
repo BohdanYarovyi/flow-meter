@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                                 "/registration",
                                 "/error",
                                 "/api/public/**",   // rest
-                                "/pub/**"        // resources
+                                "/pub/**"           // resources
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

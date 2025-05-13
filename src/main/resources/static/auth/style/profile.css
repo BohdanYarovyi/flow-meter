@@ -15,6 +15,27 @@
 body {
     background-color: #202020;
     color: #ffffff;
+    overflow-y: auto;
+}
+
+/* стилізує скролбар, не шарю що тут та як */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #202020;
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+    border: 3px solid #202020;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }
 
 .profile-block {
