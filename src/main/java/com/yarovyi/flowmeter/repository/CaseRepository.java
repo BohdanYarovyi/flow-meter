@@ -1,11 +1,9 @@
 package com.yarovyi.flowmeter.repository;
 
-import com.yarovyi.flowmeter.domain.flow.Case;
+import com.yarovyi.flowmeter.entity.flow.Case;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
 
 public interface CaseRepository extends JpaRepository<Case, Long> {
     @Query(value = """

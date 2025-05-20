@@ -1,14 +1,13 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.account.Role;
-import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
-import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.account.Role;
+import com.yarovyi.flowmeter.exception.AccountAuthenticationException;
+import com.yarovyi.flowmeter.dto.auth.LoginRequest;
 import com.yarovyi.flowmeter.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.Objects;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.*;
@@ -71,7 +69,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void reauthenticate(Account account, HttpSession session) {
-        var username = account.getCredentials().getLogin();
+        var username = account.getCredential().getLogin();
         var authorities = account.getRoles().stream()
                 .map(Role::getName)
                 .map(SecurityUtil.PERFORM_WITH_ROLE_PREFIX)

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS t_accounts
 (
     id              bigserial,
     c_created_at    timestamp    not null,
-    c_updated_at    timestamp    not null,
+    c_updated_at    timestamp,
     c_deleted       boolean      not null,
     c_login         varchar(100) not null unique,
     c_email         varchar(100) not null unique,

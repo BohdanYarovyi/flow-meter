@@ -110,7 +110,6 @@ export class Flow {
     }
 }
 
-
 export class Step {
     constructor(id, createdAt, updatedAt, day, cases) {
         this.id = id;
@@ -155,7 +154,6 @@ export class Step {
     }
 }
 
-
 export class Case {
     constructor(id, createdAt, updatedAt, text, percent, counting) {
         this.id = id;
@@ -187,4 +185,28 @@ export class Case {
             counting
         );
     }
+}
+
+export class StatisticsData {
+    constructor(flowTitle, year, month, labels, values) {
+        this.flowTitle = flowTitle;
+        this.year = year;
+        this.month = month;
+        this.labels = labels;
+        this.values = values;
+    }
+
+    static statisticDataFromJSON(json) {
+        const labels = json.points.map(point => point.monthDay);
+        const values = json.points.map(point => point.avgPercentage);
+
+        return new StatisticsData(
+            json.flowTitle,
+            json.year,
+            json.month,
+            labels,
+            values,
+        );
+    }
+
 }

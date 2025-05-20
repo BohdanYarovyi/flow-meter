@@ -1,13 +1,17 @@
 package com.yarovyi.flowmeter.controller.rest;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.account.Credentials;
-import com.yarovyi.flowmeter.domain.account.PersonalInfo;
-import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.entity.domainDto.*;
-import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
-import com.yarovyi.flowmeter.entity.securityDto.PasswordChangeRequest;
+import com.yarovyi.flowmeter.dto.account.AccountDto;
+import com.yarovyi.flowmeter.dto.account.CredentialsDto;
+import com.yarovyi.flowmeter.dto.account.PersonalInfoDto;
+import com.yarovyi.flowmeter.dto.flow.FlowDto;
+import com.yarovyi.flowmeter.dto.flow.FlowShortDto;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.account.Credential;
+import com.yarovyi.flowmeter.entity.account.PersonalInfo;
+import com.yarovyi.flowmeter.entity.flow.Flow;
+import com.yarovyi.flowmeter.exception.ForbiddenRequestException;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.dto.auth.PasswordChangeRequest;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.SecurityService;
@@ -29,8 +33,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.yarovyi.flowmeter.util.AccountMapper.*;
-import static com.yarovyi.flowmeter.util.FlowMapper.*;
+import static com.yarovyi.flowmeter.mapper.AccountMapper.*;
+import static com.yarovyi.flowmeter.mapper.FlowMapper.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -107,8 +111,8 @@ public class AccountController {
         Account currentAccount = SecurityUtil.getCurrentAccount(this.accountService, principal);
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
-        Credentials credentials = DTO_TO_CREDENTIALS.apply(updatedCredentials);
-        Account account = this.accountService.updateCredentials(currentAccount, credentials);
+        Credential credential = DTO_TO_CREDENTIALS.apply(updatedCredentials);
+        Account account = this.accountService.updateCredentials(currentAccount, credential);
         this.securityService.reauthenticate(account, session);
 
         return ResponseEntity

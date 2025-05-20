@@ -1,7 +1,7 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.flow.Flow;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.flow.Flow;
 
 import java.util.List;
 import java.util.Optional;

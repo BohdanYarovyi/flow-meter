@@ -1,6 +1,6 @@
 package com.yarovyi.flowmeter.security;
 
-import com.yarovyi.flowmeter.domain.account.Account;
+import com.yarovyi.flowmeter.entity.account.Account;
 import com.yarovyi.flowmeter.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class DaoUserDetailsService implements UserDetailsService {
         Account account = accountByUsername
                 .orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND.apply(username)));
 
-        var credentials = account.getCredentials();
+        var credentials = account.getCredential();
         var authorities = account.getRoles().stream()
                 .map(r -> new SimpleGrantedAuthority(PERFORM_WITH_ROLE_PREFIX.apply(r.getName())))
                 .toList();

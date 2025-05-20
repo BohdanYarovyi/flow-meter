@@ -43,20 +43,24 @@
 																<!-- inserting here by templates -->
 														</div>
 												</div>
-												<button class="generate-button">Generate</button>
+												<button class="generate-button" id="generate-btn">Generate</button>
 										</div>
 								</div>
 						</div>
 				</div>
 		</div>
-
 		<div class="graphic-display">
-				<p>hello pppppp </p>
+				<canvas id="graph">Your browser do not support canvas</canvas>
 		</div>
 </div>
 
 <div th:insert="~{html-tmp/statistics-templates :: body}"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+
 <script type="module" src="/auth/js/statistics.js"></script>
+
 
 </body>
 </html>

@@ -1,9 +1,9 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.domain.flow.Step;
-import com.yarovyi.flowmeter.entity.exception.ForbiddenRequestException;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.flow.Flow;
+import com.yarovyi.flowmeter.entity.flow.Step;
+import com.yarovyi.flowmeter.exception.ForbiddenRequestException;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.StepRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

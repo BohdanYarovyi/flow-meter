@@ -1,6 +1,6 @@
 package com.yarovyi.flowmeter.util;
 
-import com.yarovyi.flowmeter.entity.exception.EntityValidationException;
+import com.yarovyi.flowmeter.exception.EntityValidationException;
 import org.springframework.validation.BindingResult;
 
 public class ValidationUtil {

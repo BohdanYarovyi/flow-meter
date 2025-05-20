@@ -1,6 +1,6 @@
 package com.yarovyi.flowmeter.repository;
 
-import com.yarovyi.flowmeter.domain.flow.Step;
+import com.yarovyi.flowmeter.entity.flow.Step;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

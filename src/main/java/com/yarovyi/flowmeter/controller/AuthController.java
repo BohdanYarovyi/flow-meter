@@ -1,9 +1,9 @@
 package com.yarovyi.flowmeter.controller;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.entity.domainDto.AccountCreatedDto;
-import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
-import com.yarovyi.flowmeter.entity.securityDto.LoginResponse;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.dto.account.AccountCreatedDto;
+import com.yarovyi.flowmeter.dto.auth.LoginRequest;
+import com.yarovyi.flowmeter.dto.auth.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.SecurityService;
 import com.yarovyi.flowmeter.util.ValidationUtil;
@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Map;
 
-import static com.yarovyi.flowmeter.util.AccountMapper.ACCOUNT_CREATED_DTO_TO_ACCOUNT;
+import static com.yarovyi.flowmeter.mapper.AccountMapper.ACCOUNT_CREATED_DTO_TO_ACCOUNT;
 
 @RequiredArgsConstructor
 @Controller

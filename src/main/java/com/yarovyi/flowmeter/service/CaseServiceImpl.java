@@ -1,18 +1,16 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.flow.Case;
-import com.yarovyi.flowmeter.domain.flow.Step;
-import com.yarovyi.flowmeter.entity.exception.EntityBadRequestException;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.flow.Case;
+import com.yarovyi.flowmeter.entity.flow.Step;
+import com.yarovyi.flowmeter.exception.EntityBadRequestException;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.CaseRepository;
-import com.yarovyi.flowmeter.util.CaseMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-import static com.yarovyi.flowmeter.util.CaseMapper.*;
+import static com.yarovyi.flowmeter.mapper.CaseMapper.*;
 
 @RequiredArgsConstructor
 @Service

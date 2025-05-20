@@ -1,16 +1,14 @@
 package com.yarovyi.flowmeter.controller.rest;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.domain.flow.Step;
-import com.yarovyi.flowmeter.entity.domainDto.FlowDto;
-import com.yarovyi.flowmeter.entity.domainDto.FlowShortDto;
-import com.yarovyi.flowmeter.entity.domainDto.StepDto;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.flow.Flow;
+import com.yarovyi.flowmeter.entity.flow.Step;
+import com.yarovyi.flowmeter.dto.flow.FlowDto;
+import com.yarovyi.flowmeter.dto.flow.StepDto;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.FlowService;
 import com.yarovyi.flowmeter.service.StepService;
-import com.yarovyi.flowmeter.util.FlowMapper;
 import com.yarovyi.flowmeter.util.SecurityUtil;
 import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +23,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import static com.yarovyi.flowmeter.util.FlowMapper.*;
-import static com.yarovyi.flowmeter.util.StepMapper.*;
-import static com.yarovyi.flowmeter.util.StepMapper.STEP_TO_DTO;
+import static com.yarovyi.flowmeter.mapper.FlowMapper.*;
+import static com.yarovyi.flowmeter.mapper.StepMapper.*;
+import static com.yarovyi.flowmeter.mapper.StepMapper.STEP_TO_DTO;
 
 @RequiredArgsConstructor
 @RestController

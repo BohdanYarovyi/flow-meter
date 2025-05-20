@@ -27,7 +27,8 @@ const API = {
         DELETE_CASE_BY_ID__URL:                 (caseId) => `/api/cases/${caseId}`,
     },
     statistics: {
-        GET_UNIQUE_MONTHS_BY_FLOW_ID__URL:      (flowId) => `/api/flowmeter/statistics/unique-months/${flowId}`,
+        GET_UNIQUE_MONTHS_BY_FLOW_ID__URL:              (flowId) => `/api/flowmeter/statistics/unique-months/${flowId}`,
+        GET_STATISTICS_FOR_MONTHS_BY_FLOW_ID__URL:      (flowId) => `/api/flowmeter/statistics/month/${flowId}`,
     }
 };
 const defaultErrorPrefix = "Error on API layer: ";
@@ -457,6 +458,35 @@ export async function fetchUniqueMonthsByFlowId(flowId) {
         if (!response.ok) {
             const responseError = await response.json();
             throw new Error(responseError.detail || `Failed to get all unique month by flow id`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchStatisticsForMonthsByFlowId(flowId, year, month) {
+    const params = {
+        month: month,
+        year: year,
+    };
+    const url = API.statistics.GET_STATISTICS_FOR_MONTHS_BY_FLOW_ID__URL(flowId) + "?" + new URLSearchParams(params).toString();
+
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(url, fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to get month statistics by flow id`);
         }
 
         return await response.json();

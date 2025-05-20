@@ -1,13 +1,12 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.account.Credentials;
-import com.yarovyi.flowmeter.domain.account.PersonalInfo;
-import com.yarovyi.flowmeter.domain.account.Role;
-import com.yarovyi.flowmeter.domain.flow.Flow;
-import com.yarovyi.flowmeter.entity.exception.AccountAuthenticationException;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
-import com.yarovyi.flowmeter.entity.securityDto.PasswordChangeRequest;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.account.Credential;
+import com.yarovyi.flowmeter.entity.account.PersonalInfo;
+import com.yarovyi.flowmeter.entity.account.Role;
+import com.yarovyi.flowmeter.exception.AccountAuthenticationException;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.dto.auth.PasswordChangeRequest;
 import com.yarovyi.flowmeter.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,8 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.yarovyi.flowmeter.util.AccountMapper.COMMIT_CREDENTIALS_UPDATES;
-import static com.yarovyi.flowmeter.util.AccountMapper.COMMIT_PERSONAL_INFO_UPDATES;
+import static com.yarovyi.flowmeter.mapper.AccountMapper.COMMIT_CREDENTIALS_UPDATES;
+import static com.yarovyi.flowmeter.mapper.AccountMapper.COMMIT_PERSONAL_INFO_UPDATES;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
             throw new NullPointerException("Login is required");
         }
 
-        return this.accountRepository.findAccountByCredentialsLogin(login);
+        return this.accountRepository.findAccountByCredentialLogin(login);
     }
 
 
@@ -60,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
             throw new NullPointerException("Email is required");
         }
 
-        return this.accountRepository.findAccountByCredentialsEmail(email);
+        return this.accountRepository.findAccountByCredentialEmail(email);
     }
 
 
@@ -77,8 +76,8 @@ public class AccountServiceImpl implements AccountService {
         if (!Objects.isNull(account.getId()))
             throw new IllegalArgumentException("Account.id must be null");
 
-        String encodedPassword = this.passwordEncoder.encode(account.getCredentials().getPassword());
-        account.getCredentials().setPassword(encodedPassword);
+        String encodedPassword = this.passwordEncoder.encode(account.getCredential().getPassword());
+        account.getCredential().setPassword(encodedPassword);
         account.getRoles().add(this.defaultRole);
 
         return this.accountRepository.save(account);
@@ -93,10 +92,10 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public Account updateCredentials(Account account, Credentials credentials) {
+    public Account updateCredentials(Account account, Credential credential) {
         // TODO: here is a unique fields like: login, email.
         //  I must write some handler for catching SQL Exceptions or another way
-        Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credentials, account);
+        Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credential, account);
         return this.accountRepository.save(updatedAccount);
     }
 
@@ -106,16 +105,16 @@ public class AccountServiceImpl implements AccountService {
         String rawCurrentPassword = passwordChangeRequest.currentPassword();
         String newPassword = passwordChangeRequest.newPassword();
 
-        if (!this.passwordEncoder.matches(rawCurrentPassword, account.getCredentials().getPassword())) {
+        if (!this.passwordEncoder.matches(rawCurrentPassword, account.getCredential().getPassword())) {
             throw new AccountAuthenticationException("Password don't match with current password");
         }
 
-        if (this.passwordEncoder.matches(newPassword, account.getCredentials().getPassword())) {
+        if (this.passwordEncoder.matches(newPassword, account.getCredential().getPassword())) {
             throw new AccountAuthenticationException("You can't change password to the same password");
         }
 
         String encoded = this.passwordEncoder.encode(newPassword);
-        account.getCredentials().setPassword(encoded);
+        account.getCredential().setPassword(encoded);
 
         this.accountRepository.save(account);
     }
@@ -139,7 +138,7 @@ public class AccountServiceImpl implements AccountService {
         if (Objects.isNull(login))
             throw new NullPointerException("Login is required");
 
-        return this.accountRepository.existsAccountByCredentials_Login(login);
+        return this.accountRepository.existsAccountByCredential_Login(login);
     }
 
 

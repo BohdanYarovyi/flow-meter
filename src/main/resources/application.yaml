@@ -24,6 +24,7 @@ spring:
             client-secret: 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 # todo: it a danger to store secret here
   jpa:
     show-sql: false
+    open-in-view: true  # TODO: to disable
 
 #logging:
 #  level:

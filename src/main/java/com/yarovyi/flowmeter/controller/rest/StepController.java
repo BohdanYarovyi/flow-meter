@@ -1,16 +1,16 @@
 package com.yarovyi.flowmeter.controller.rest;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.domain.flow.Case;
-import com.yarovyi.flowmeter.domain.flow.Step;
-import com.yarovyi.flowmeter.entity.domainDto.CaseDto;
-import com.yarovyi.flowmeter.entity.domainDto.StepDto;
-import com.yarovyi.flowmeter.entity.exception.SubentityNotFoundException;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.entity.flow.Case;
+import com.yarovyi.flowmeter.entity.flow.Step;
+import com.yarovyi.flowmeter.dto.flow.CaseDto;
+import com.yarovyi.flowmeter.dto.flow.StepDto;
+import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.service.AccountService;
 import com.yarovyi.flowmeter.service.CaseService;
 import com.yarovyi.flowmeter.service.StepService;
 import com.yarovyi.flowmeter.util.SecurityUtil;
-import com.yarovyi.flowmeter.util.StepMapper;
+import com.yarovyi.flowmeter.mapper.StepMapper;
 import com.yarovyi.flowmeter.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +23,8 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.Map;
 
-import static com.yarovyi.flowmeter.util.CaseMapper.CASE_TO_DTO;
-import static com.yarovyi.flowmeter.util.CaseMapper.DTO_TO_CASE;
+import static com.yarovyi.flowmeter.mapper.CaseMapper.CASE_TO_DTO;
+import static com.yarovyi.flowmeter.mapper.CaseMapper.DTO_TO_CASE;
 
 @RequiredArgsConstructor
 @RestController

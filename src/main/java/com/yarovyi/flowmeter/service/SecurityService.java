@@ -1,7 +1,7 @@
 package com.yarovyi.flowmeter.service;
 
-import com.yarovyi.flowmeter.domain.account.Account;
-import com.yarovyi.flowmeter.entity.securityDto.LoginRequest;
+import com.yarovyi.flowmeter.entity.account.Account;
+import com.yarovyi.flowmeter.dto.auth.LoginRequest;
 import jakarta.servlet.http.HttpSession;
 
 public interface SecurityService {
