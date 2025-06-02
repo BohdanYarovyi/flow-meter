@@ -20,8 +20,8 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret: # todo: it a danger to store secret here
+            client-id: [REMOVED]
+            client-secret: [REMOVED] # todo: it a danger to store secret here
   jpa:
     show-sql: false
     open-in-view: true  # TODO: to disable
