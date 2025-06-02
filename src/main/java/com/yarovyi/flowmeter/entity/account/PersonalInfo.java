@@ -14,19 +14,19 @@ import java.util.Objects;
 @Builder
 @Embeddable
 public class PersonalInfo {
-    @Column(name = "c_firstname")
+    @Column(name = "firstname")
     private String firstname;
 
-    @Column(name = "c_lastname")
+    @Column(name = "lastname")
     private String lastname;
 
-    @Column(name = "c_patronymic")
+    @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "c_date_of_birth")
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "c_phone")
+    @Column(name = "phone")
     private String phone;
 
     @Override

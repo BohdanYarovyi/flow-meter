@@ -188,22 +188,22 @@ export class Case {
 }
 
 export class StatisticsData {
-    constructor(flowTitle, year, month, labels, values) {
+    constructor(flowTitle, year, interval, labels, values) {
         this.flowTitle = flowTitle;
         this.year = year;
-        this.month = month;
+        this.interval = interval;
         this.labels = labels;
         this.values = values;
     }
 
     static statisticDataFromJSON(json) {
-        const labels = json.points.map(point => point.monthDay);
-        const values = json.points.map(point => point.avgPercentage);
+        const labels = json.points.map(point => point.date);
+        const values = json.points.map(point => point.percentage);
 
         return new StatisticsData(
             json.flowTitle,
             json.year,
-            json.month,
+            json.interval,
             labels,
             values,
         );

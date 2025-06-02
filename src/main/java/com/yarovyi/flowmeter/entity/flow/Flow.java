@@ -14,14 +14,14 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "t_flows")
-@SQLRestriction("c_deleted = false") // for soft-deleting
+@Table(name = "flow")
+@SQLRestriction("deleted = false") // for soft-deleting
 public class Flow extends BaseEntity {
-    @Column(name = "c_title")
+    @Column(name = "title")
     private String title;
-    @Column(name = "c_description")
+    @Column(name = "description")
     private String description;
-    @Column(name = "c_target_percentage")
+    @Column(name = "target_percentage")
     private int targetPercentage;
     @JsonIgnore
     @ManyToOne

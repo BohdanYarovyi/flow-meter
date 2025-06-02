@@ -14,12 +14,12 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "t_accounts")
-@SQLRestriction("c_deleted = false") // for soft-deleting
+@Table(name = "account")
+@SQLRestriction("deleted = false") // for soft-deleting
 public class Account extends BaseEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "t_accounts_roles",
+            name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )

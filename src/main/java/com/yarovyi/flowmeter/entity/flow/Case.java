@@ -16,14 +16,14 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "t_cases")
-@SQLRestriction("c_deleted = false") // for soft-deleting
+@Table(name = "cases")
+@SQLRestriction("deleted = false") // for soft-deleting
 public class Case extends BaseEntity {
-    @Column(name = "c_text")
+    @Column(name = "text")
     private String text;
-    @Column(name = "c_percent")
+    @Column(name = "percent")
     private int percent;
-    @Column(name = "c_counting")
+    @Column(name = "counting")
     private boolean counting;
     @JsonIgnore
     @ManyToOne

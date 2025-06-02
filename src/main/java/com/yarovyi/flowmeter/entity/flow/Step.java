@@ -15,10 +15,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "t_steps")
-@SQLRestriction("c_deleted = false") // for soft-deleting
+@Table(name = "step")
+@SQLRestriction("deleted = false") // for soft-deleting
 public class Step extends BaseEntity {
-    @Column(name = "c_day")
+    @Column(name = "day")
     private LocalDate day;
     @JsonIgnore
     @ManyToOne

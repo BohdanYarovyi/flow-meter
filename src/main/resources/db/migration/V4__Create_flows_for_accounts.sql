@@ -1,4 +1,4 @@
-INSERT INTO t_flows (account_id, c_title, c_description, c_target_percentage, c_created_at, c_updated_at, c_deleted)
+INSERT INTO flow (account_id, title, description, target_percentage, created_at, updated_at, deleted)
 VALUES
     (1, 'SQL Fundamentals', 'SQL Fundamental, HTTP/HTTPS, conspecting', 70, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),
     (1, 'Driving', 'Everyday learn road rules', 80, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),
@@ -11,7 +11,7 @@ VALUES
     (3, 'Guitar', 'Learn chords and solos', 70, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),
     (1, 'Project Management', 'Study Scrum and Kanban', 80, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false);
 
-INSERT INTO t_steps (flow_id, c_day, c_created_at, c_updated_at, c_deleted)
+INSERT INTO step (flow_id, day, created_at, updated_at, deleted)
 VALUES
     -- Flow 1: SQL Fundamentals (10 steps)
     (1, '2025-01-10', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),
@@ -125,7 +125,7 @@ VALUES
     (10, '2025-07-15', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),
     (10, '2025-08-20', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false);
 
-INSERT INTO t_cases (step_id, c_text, c_percent, c_counting, c_created_at, c_updated_at, c_deleted)
+INSERT INTO cases (step_id, text, percent, counting, created_at, updated_at, deleted)
 VALUES
     -- Flow 1: SQL Fundamentals (Steps 1-10)
     (1, 'Study SQL SELECT basics', 80, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false),

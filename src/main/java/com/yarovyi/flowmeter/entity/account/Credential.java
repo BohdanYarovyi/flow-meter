@@ -13,13 +13,13 @@ import java.util.Objects;
 @AllArgsConstructor
 @Embeddable
 public class Credential {
-    @Column(name = "c_login")
+    @Column(name = "login")
     private String login;
 
-    @Column(name = "c_email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "c_password")
+    @Column(name = "password")
     private String password;
 
     @Override

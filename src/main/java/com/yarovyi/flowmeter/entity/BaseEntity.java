@@ -19,13 +19,13 @@ public class BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "c_created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "c_updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "c_deleted")
+    @Column(name = "deleted")
     private boolean deleted;
 
     @PrePersist

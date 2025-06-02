@@ -296,7 +296,7 @@ function showGraphic(data) {
                 },
                 title: {
                     display: true,
-                    text: `${data.month}, ${data.year}`,
+                    text: `${data.interval}, ${data.year}`,
                     font: {
                         size: 22
                     },

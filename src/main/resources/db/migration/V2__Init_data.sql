@@ -1,6 +1,6 @@
-INSERT INTO t_accounts (c_created_at, c_updated_at, c_deleted,
-                        c_login, c_email, c_password, c_firstname,
-                        c_lastname, c_patronymic, c_date_of_birth, c_phone)
+INSERT INTO account (created_at, updated_at, deleted,
+                        login, email, password, firstname,
+                        lastname, patronymic, date_of_birth, phone)
 VALUES (now(), now(), false, 'maybyes', 'bogdan.yarovoy.01@gmail.com', '$2y$10$BcrFGOoSDDsuYfcGZRCJXu90XJjmsxWQM94jv9zpoQRcJ1lvIc5Lq',
         'Bohdan', 'Yarovyi', 'Serhiyovich','2001-11-07', '+380971773437'), -- password
 
@@ -25,11 +25,11 @@ VALUES (now(), now(), false, 'maybyes', 'bogdan.yarovoy.01@gmail.com', '$2y$10$B
 --      yana_petrova     |   securepassword  |
 --      john_doe         |   SecurePass123   |
 
-INSERT INTO t_roles ( c_name)
+INSERT INTO role (name)
 VALUES ('ADMIN'),
        ('USER');
 
-INSERT INTO t_accounts_roles (account_id, role_id)
+INSERT INTO account_role (account_id, role_id)
 VALUES (1, 1),
        (1, 2),
        (2, 2),

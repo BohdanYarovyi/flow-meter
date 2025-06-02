@@ -9,9 +9,9 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
     @Query(value = """
             SELECT EXISTS(
                 SELECT 1
-                FROM t_cases c
-                JOIN t_steps s on c.step_id = s.id
-                JOIN t_flows f on s.flow_id = f.id
+                FROM cases c
+                JOIN step s on c.step_id = s.id
+                JOIN flow f on s.flow_id = f.id
                 WHERE c.id = :caseId
                 AND f.account_id = :accountId
             );
