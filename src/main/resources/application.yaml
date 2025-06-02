@@ -15,13 +15,13 @@ spring:
     username: serveruser
     password: password123
     driver-class-name: org.postgresql.Driver
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: [REMOVED]
-            client-secret: [REMOVED] # todo: it a danger to store secret here
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: [REMOVED]
+#            client-secret: [REMOVED] # todo: it a danger to store secret here
   jpa:
     show-sql: false
     open-in-view: true  # TODO: to disable
