@@ -91,7 +91,8 @@ public class FlowMapper {
     public static final Function<Flow, FlowShortDto> FLOW_TO_SHORT_DTO = (flow) -> {
         return new FlowShortDto(
                 flow.getId(),
-                flow.getTitle()
+                flow.getTitle(),
+                flow.getTargetPercentage()
         );
     };
 

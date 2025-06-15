@@ -18,12 +18,7 @@ public class StatisticsLastYearFillStrategy implements StatisticsFillStrategy {
         addAbsentMonths(points);
         points.sort(StatPoint::compareTo);
 
-        return new StatInterval(
-                statInterval.interval(),
-                statInterval.flowTitle(),
-                statInterval.year(),
-                points
-        );
+        return StatInterval.of(statInterval, points);
     }
 
 

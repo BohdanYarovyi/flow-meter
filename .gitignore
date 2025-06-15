@@ -1,9 +1,8 @@
+**/oauth_google_client_secret.json
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-src/main/resources/application.yml
-
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

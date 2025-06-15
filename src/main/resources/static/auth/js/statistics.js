@@ -1,6 +1,9 @@
 import {
     fetchCurrentAccountId,
     fetchShortFlowsByAccountId,
+    fetchStatisticsForLastMonth,
+    fetchStatisticsForLastWeek,
+    fetchStatisticsForLastYear,
     fetchStatisticsForMonthsByFlowId,
     fetchUniqueMonthsByFlowId
 } from "./api.js";
@@ -9,7 +12,7 @@ import {
     cloneFlowNotFoundLabelTemplate,
     cloneMonthItemTemplate
 } from "../../pub/js/template-loader.js";
-import {clearContainers} from "../../pub/js/util.js";
+import {clearContainers, hideError, showError} from "../../pub/js/util.js";
 import {StatisticsData} from "./classes.js";
 
 const DOM = {
@@ -20,15 +23,12 @@ const DOM = {
         scopeTabBtn: document.querySelector("#scope-tab-btn"),
     }
 };
-
 const STATE = {
     currentAccountId: null,
     selectedFlow: null,
     selectedScope: null,
     graph: null,
 };
-
-
 const PERIODS = {
     WEEK: "week",
     MONTH: "month",
@@ -41,7 +41,6 @@ window.onload = setupPage;
 async function setupPage() {
     await initCurrentAccountId();
     await fillFlows();
-    await fillMonths();
     setupTabButtons();
     initQuickSelectionButtons();
     setupButtons();
@@ -85,7 +84,6 @@ function swapTab(tabId) {
 // flows tab
 async function fillFlows() {
     const flows = await fetchShortFlowsByAccountId(STATE.currentAccountId);
-
     if (!flows || flows.length === 0) {
         const clone = cloneFlowNotFoundLabelTemplate();
         DOM.optionPanel.flows.appendChild(clone);
@@ -96,24 +94,25 @@ async function fillFlows() {
             const flowItem = clone.querySelector(".flow");
 
             flowItem.textContent = flow.title;
-            flowItem.addEventListener("click", () => setFlowSelected(flowItem, flow.id));
+            flowItem.addEventListener("click", () => setFlowSelected(flowItem, flow));
 
             DOM.optionPanel.flows.appendChild(clone);
         });
 
         const firstFlow = DOM.optionPanel.flows.querySelector(".flow");
-        await setFlowSelected(firstFlow, flows[0].id);
+        await setFlowSelected(firstFlow, flows[0]);
     }
 }
 
-async function setFlowSelected(flowItem, flowId) {
+async function setFlowSelected(flowItem, flow) {
     const allFlows = DOM.optionPanel.flows.querySelectorAll(".flow");
 
     allFlows.forEach(flow => flow.classList.remove("selected"));
     flowItem.classList.add("selected");
-    STATE.selectedFlow = flowId;
+    STATE.selectedFlow = flow;
     STATE.selectedScope = null;
-    await fillMonths(flowId);
+
+    await fillMonths(flow.id);
 }
 
 function disableOptionPane() {
@@ -144,13 +143,12 @@ function setQuickButtonSelected(btn, period) {
     STATE.selectedScope = period;
 }
 
-async function fillMonths() {
+async function fillMonths(flowId) {
     clearContainers(DOM.optionPanel.months);
-    const months = await fetchUniqueMonthsByFlowId(STATE.selectedFlow);
+    const months = await fetchUniqueMonthsByFlowId(flowId);
 
     months.forEach(month => {
         const clone = cloneMonthItemTemplate();
-
         clone.querySelector(".month-item__month").textContent = month.month;
         clone.querySelector(".month-item__year").textContent = month.year;
 
@@ -185,227 +183,277 @@ async function generate() {
 
         const data = await fetchData();
         showGraphic(data);
+        hideError(document.querySelector(".scope-parameters__error"));
     } catch (error) {
-        console.log("Error: ", error);
-        // todo: show error here
+        showError(
+            error,
+            document.querySelector(".scope-parameters__error"),
+            document.querySelector("#scope-parameters__error-message")
+        );
     }
 }
 
 async function fetchData() {
     let data;
 
-    // todo: finish fetches by different types and refactor this peace of shit
     switch (STATE.selectedScope) {
         case PERIODS.WEEK :
-            console.log(PERIODS.WEEK);
+            data = await getStatForLastWeek();
             break;
         case PERIODS.MONTH :
-            console.log(PERIODS.MONTH);
+            data = await getStatForLastMonth();
             break;
         case PERIODS.YEAR :
-            console.log(PERIODS.YEAR);
+            data = await getStatForLastYear();
             break;
         default:
-            data = await getStatisticsByMonth(STATE.selectedScope.year, STATE.selectedScope.month);
+            data = await getStatForMonth();
     }
+
     return StatisticsData.statisticDataFromJSON(data);
 }
 
-async function getStatisticsByMonth(year, month) {
-    return await fetchStatisticsForMonthsByFlowId(STATE.selectedFlow, year, month);
+async function getStatForLastWeek() {
+    const flowId = STATE.selectedFlow.id;
+
+    return fetchStatisticsForLastWeek(flowId);
 }
 
-// todo: порізати конфігурацію графіка на шматки. Або функціями, або змінними
+async function getStatForLastMonth() {
+    const flowId = STATE.selectedFlow.id;
+
+    return fetchStatisticsForLastMonth(flowId);
+}
+
+async function getStatForLastYear() {
+    const flowId = STATE.selectedFlow.id;
+
+    return fetchStatisticsForLastYear(flowId);
+}
+
+async function getStatForMonth() {
+    const flowId = STATE.selectedFlow.id;
+    const year = STATE.selectedScope.year
+    const month = STATE.selectedScope.month;
+
+    return fetchStatisticsForMonthsByFlowId(flowId, year, month);
+}
+
+
+// graphic-drawing
 function showGraphic(data) {
     const context = document
         .getElementById('graph')
         .getContext('2d');
 
     destroyGraphIfExists();
-    STATE.graph = new Chart(context, {
-        type: 'line', // line, bar, radar, pie, doughnut, polarArea, bubble, scatter
-        data: {
-            labels: data.labels,
-            datasets: [
-                {
-                    data: data.values,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 3,
-                    pointBackgroundColor: 'black',
-                    pointBorderColor: 'white',
-                    pointRadius: 4,
-                    pointHoverRadius: 8,
-                    fill: true,
-                    tension: 0.3, // 0 - лінії прямі, >0 - згладжування
-                    hidden: false,
-                    cubicInterpolationMode: 'default',
-                    stepped: false
-                }
-            ]
+
+    const options = getGraphOptions(data);
+    STATE.graph = new Chart(context, options);
+}
+
+function getGraphOptions(data) {
+    const type = 'line';
+    const graphData = prepareGraphData(data.labels, data.values);
+    const graphOptions = prepareGraphOptions(
+        data.interval,
+        data.year,
+        data.flowTitle,
+        STATE.selectedFlow.targetPercentage
+    );
+
+    return {
+        type: type,
+        data: graphData,
+        options: graphOptions
+    };
+}
+
+function prepareGraphData(labels, values) {
+    return {
+        labels: labels,
+        datasets: [
+            {
+                data: values,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 3,
+                pointBackgroundColor: 'black',
+                pointBorderColor: 'white',
+                pointRadius: 4,
+                pointHoverRadius: 8,
+                fill: true,
+                tension: 0.3,
+                hidden: false,
+                cubicInterpolationMode: 'default',
+                stepped: false
+            }
+        ]
+    };
+}
+
+function prepareGraphOptions(interval, year, flowTitle, goal) {
+    return {
+        responsive: true,
+        maintainAspectRatio: false, // Якщо false — можна задавати розміри через CSS
+        layout: {
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Якщо false — можна задавати розміри через CSS
-            layout: {
-                padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
-                }
-            },
-            plugins: {
-                annotation: {
-                    annotations: {
-                        line1: {
-                            type: 'line',
-                            yMin: 70,
-                            yMax: 70,
-                            borderColor: 'red',
-                            borderWidth: 1,
-                            borderDash: [10, 6], // пунктир
-                            label: {
-                                enabled: true,
-                                content: 'Ціль: 70%',
-                                position: 'end',
-                                backgroundColor: 'rgba(255,255,255,0.8)',
-                                color: 'red',
-                                font: {
-                                    weight: 'bold'
-                                }
+        plugins: {
+            annotation: {
+                annotations: {
+                    line1: {
+                        type: 'line',
+                        yMin: goal,
+                        yMax: goal,
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        borderDash: [10, 6], // пунктир
+                        label: {
+                            enabled: true,
+                            content: `Goal: ${goal}%`,
+                            position: 'end',
+                            backgroundColor: 'rgba(255,255,255,0.8)',
+                            color: 'red',
+                            font: {
+                                weight: 'bold'
                             }
                         }
                     }
+                }
+            },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    modifierKey: 'ctrl',
                 },
                 zoom: {
-                    pan: {
+                    wheel: {
                         enabled: true,
-                        mode: 'x', // 'x', 'y', або 'xy'
-                        modifierKey: 'ctrl', // Наприклад, тільки з Ctrl
                     },
-                    zoom: {
-                        wheel: {
-                            enabled: true,
-                        },
-                        pinch: {
-                            enabled: true
-                        },
-                        mode: 'x',
-                    }
+                    pinch: {
+                        enabled: true
+                    },
+                    mode: 'x',
+                }
+            },
+            title: {
+                display: true,
+                text: `${interval}, ${year}`,
+                font: {
+                    size: 22
                 },
+                padding: {
+                    top: 10,
+                    bottom: 30
+                },
+                color: '#333'
+            },
+            subtitle: {
+                display: true,
+                text: flowTitle,
+                color: '#454545',
+                font: {
+                    size: 19
+                }
+            },
+            legend: {
+                display: false,
+                position: 'top',
+                labels: {
+                    color: 'black',
+                    font: {
+                        size: 14
+                    },
+                    boxWidth: 20
+                }
+            },
+            tooltip: {
+                enabled: true,
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                padding: 10,
+                borderColor: '#ddd',
+                borderWidth: 1
+            }
+        },
+        scales: {
+            x: {
+                display: true,
                 title: {
                     display: true,
-                    text: `${data.interval}, ${data.year}`,
+                    text: 'Days',
+                    color: '#333',
                     font: {
-                        size: 22
-                    },
-                    padding: {
-                        top: 10,
-                        bottom: 30
-                    },
-                    color: '#333'
+                        size: 17
+                    }
                 },
-                subtitle: {
+                grid: {
                     display: true,
-                    text: data.flowTitle,
-                    color: '#454545',
+                    color: '#e0e0e0',
+                    lineWidth: 1
+                },
+                ticks: {
+                    color: '#333',
                     font: {
-                        size: 19
-                    }
-                },
-                legend: {
-                    display: false,
-                    position: 'top', // top, left, bottom, right
-                    labels: {
-                        color: 'black',
-                        font: {
-                            size: 14
-                        },
-                        boxWidth: 20
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: 'rgba(0,0,0,0.7)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    padding: 10,
-                    borderColor: '#ddd',
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Дні',
-                        color: '#333',
-                        font: {
-                            size: 17
-                        }
-                    },
-                    grid: {
-                        display: true,
-                        color: '#e0e0e0',
-                        lineWidth: 1
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            size: 15
-                        }
-                    }
-                },
-                y: {
-                    display: true,
-                    beginAtZero: true,
-                    min: 0,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Відсотки (%)',
-                        color: '#333',
-                        font: {
-                            size: 17
-                        }
-                    },
-                    grid: {
-                        display: true,
-                        color: '#f0f0f0'
-                    },
-                    ticks: {
-                        stepSize: 5,
-                        color: '#333',
-                        font: {
-                            size: 15
-                        }
+                        size: 15
                     }
                 }
             },
-            animation: {
-                duration: 600,
-                easing: 'easeInOutQuart'
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-            elements: {
-                line: {
-                    borderWidth: 3
+            y: {
+                display: true,
+                beginAtZero: true,
+                min: 0,
+                max: 100,
+                title: {
+                    display: true,
+                    text: 'Percent (%)',
+                    color: '#333',
+                    font: {
+                        size: 17
+                    }
                 },
-                point: {
-                    radius: 5
+                grid: {
+                    display: true,
+                    color: '#f0f0f0'
+                },
+                ticks: {
+                    stepSize: 5,
+                    color: '#333',
+                    font: {
+                        size: 15
+                    }
                 }
             }
+        },
+        animation: {
+            duration: 600,
+            easing: 'easeInOutQuart'
+        },
+        hover: {
+            mode: 'nearest',
+            intersect: true
+        },
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+        elements: {
+            line: {
+                borderWidth: 3
+            },
+            point: {
+                radius: 5
+            }
         }
-    });
+    };
 }
 
 function destroyGraphIfExists() {

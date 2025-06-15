@@ -44,11 +44,11 @@ public class SecurityConfiguration {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-//                .oauth2Login(oauth -> oauth
-//                        .loginPage("/login")
-//                        .successHandler(oAuthSuccessHandler)
-//                        .permitAll()
-//                )
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .successHandler(oAuthSuccessHandler)
+                        .permitAll()
+                )
                 .formLogin(login -> login
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)

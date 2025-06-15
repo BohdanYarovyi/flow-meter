@@ -75,5 +75,4 @@ public interface StatisticsRepository extends JpaRepository<EfficiencyView, Long
     String getFlowTitleByFlowId(@Param("flowId") Long flowId);
 
 
-
 }

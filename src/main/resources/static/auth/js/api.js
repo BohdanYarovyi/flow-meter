@@ -28,6 +28,9 @@ const API = {
     },
     statistics: {
         GET_UNIQUE_MONTHS_BY_FLOW_ID__URL:              (flowId) => `/api/flowmeter/statistics/unique-months/${flowId}`,
+        GET_STATISTICS_FOR_LAST_WEEK__URL:              (flowId) => `/api/flowmeter/statistics/last-week/${flowId}`,
+        GET_STATISTICS_FOR_LAST_MONTH__URL:             (flowId) => `/api/flowmeter/statistics/last-month/${flowId}`,
+        GET_STATISTICS_FOR_LAST_YEAR__URL:              (flowId) => `/api/flowmeter/statistics/last-year/${flowId}`,
         GET_STATISTICS_FOR_MONTHS_BY_FLOW_ID__URL:      (flowId) => `/api/flowmeter/statistics/month/${flowId}`,
     }
 };
@@ -458,6 +461,75 @@ export async function fetchUniqueMonthsByFlowId(flowId) {
         if (!response.ok) {
             const responseError = await response.json();
             throw new Error(responseError.detail || `Failed to get all unique month by flow id`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchStatisticsForLastWeek(flowId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.statistics.GET_STATISTICS_FOR_LAST_WEEK__URL(flowId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to get last week statistics by flow id`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchStatisticsForLastMonth(flowId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.statistics.GET_STATISTICS_FOR_LAST_MONTH__URL(flowId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to get last month statistics by flow id`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log(defaultErrorPrefix, error.message);
+        throw error;
+    }
+}
+
+export async function fetchStatisticsForLastYear(flowId) {
+    const fetchParams = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    };
+
+    try {
+        const response = await fetch(API.statistics.GET_STATISTICS_FOR_LAST_YEAR__URL(flowId), fetchParams);
+
+        if (!response.ok) {
+            const responseError = await response.json();
+            throw new Error(responseError.detail || `Failed to get last year statistics by flow id`);
         }
 
         return await response.json();

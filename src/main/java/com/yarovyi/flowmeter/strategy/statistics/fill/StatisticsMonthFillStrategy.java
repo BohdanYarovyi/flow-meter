@@ -32,12 +32,7 @@ public class StatisticsMonthFillStrategy implements StatisticsFillStrategy {
             }
         }
 
-        return new StatInterval(
-                statInterval.interval(),
-                statInterval.flowTitle(),
-                statInterval.year(),
-                List.of(temp)
-        );
+        return StatInterval.of(statInterval, List.of(temp));
     }
 
     private YearMonth getYearMonth(StatInterval statInterval) {

@@ -29,6 +29,10 @@ export function showError(error, errorBlock, errorMessage) {
     errorBlock.style.display = "block";
 }
 
+export function hideError(errorBlock) {
+    errorBlock.style.display = "none";
+}
+
 export function handleInputAvailableByCheckbox(event, targetInput) {
     if (event.target.checked) {
         targetInput.removeAttribute("disabled");

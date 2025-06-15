@@ -185,7 +185,11 @@ body {
 .bottom-side-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 15px;
+}
+
+.month-picker {
+    padding-bottom: 25px;
 }
 
 .month-picker__title {
@@ -230,7 +234,7 @@ body {
 
 .generate-button {
     text-align: center;
-    margin: 40px auto 0;
+    margin: 0 auto 0;
     padding: 4px 80px;
     border: solid 2px white;
     border-radius: 22px;
@@ -273,4 +277,22 @@ body {
 
 #graph.active {
     display: inline-block;
+}
+
+.scope-parameters__error {
+    display: none;
+    text-align: center;
+
+    width: 100%;
+}
+
+.scope-parameters__error p {
+    width: 85%;
+    margin: 0 auto;
+
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+
+    color: #f93f3f;
 }

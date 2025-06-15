@@ -1,8 +1,8 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 app:
-  base-url: http://localhost:${server.port}
+  base-url: ${BASE_URL:http://localhost}:${server.port}
 
 spring:
   devtools:
@@ -11,17 +11,17 @@ spring:
     restart:
       enabled: true
   datasource:
-    url: jdbc:postgresql://localhost:5002/flow-meter
-    username: serveruser
-    password: password123
+    url: jdbc:postgresql://${DB_URL}/${DB_NAME:flow-meter}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id: [REMOVED]
-#            client-secret: [REMOVED] # todo: it a danger to store secret here
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
   jpa:
     show-sql: false
     open-in-view: true  # TODO: to disable
