@@ -5,6 +5,7 @@ import com.yarovyi.flowmeter.dto.account.AccountCreatedDto;
 import com.yarovyi.flowmeter.dto.auth.LoginRequest;
 import com.yarovyi.flowmeter.dto.auth.LoginResponse;
 import com.yarovyi.flowmeter.service.AccountService;
+import com.yarovyi.flowmeter.service.NotificationService;
 import com.yarovyi.flowmeter.service.SecurityService;
 import com.yarovyi.flowmeter.util.ValidationUtil;
 import jakarta.servlet.http.HttpSession;
@@ -46,7 +47,6 @@ public class AuthController {
                                                BindingResult bindingResult,
                                                HttpSession session) {
         ValidationUtil.checkOrThrow(bindingResult);
-
         this.securityService.loginByUsernamePassword(request, session);
 
         return ResponseEntity.ok(new LoginResponse("Login success"));

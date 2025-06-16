@@ -11,9 +11,14 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
 		<spring.version>3.4.2</spring.version>
+		<spring-swagger.version>2.8.6</spring-swagger.version>
+		<spring-security6.version>3.1.2.RELEASE</spring-security6.version>
 		<postgresql.version>42.7.5</postgresql.version>
 		<flyway.version>10.18.0</flyway.version>
+		<lombok.version>1.18.36</lombok.version>
+		<password-generator.version>1.0</password-generator.version>
 	</properties>
 	
 	<dependencies>
@@ -21,6 +26,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 		
@@ -60,26 +70,31 @@
 		<dependency> <!-- for thymeleaf -->
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>${spring-security6.version}</version>
 		</dependency>
 		
 		<!-- UTIL -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.36</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.github.cemiltokatli.passwordgenerator</groupId>
+			<artifactId>password-generator</artifactId>
+			<version>${password-generator.version}</version>
+		</dependency>
 		
 		<!-- TOOL -->
 		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.8.6</version>
+			<version>${spring-swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

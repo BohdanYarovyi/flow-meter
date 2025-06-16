@@ -2,13 +2,18 @@ package com.yarovyi.flowmeter.security.successHandler;
 
 import com.yarovyi.flowmeter.entity.account.Account;
 import com.yarovyi.flowmeter.dto.account.AccountCreatedDto;
+import com.yarovyi.flowmeter.exception.AccountAuthenticationException;
 import com.yarovyi.flowmeter.service.AccountService;
+import com.yarovyi.flowmeter.service.NotificationService;
 import com.yarovyi.flowmeter.service.SecurityService;
+import com.yarovyi.flowmeter.util.AccountCreator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -18,53 +23,36 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import static com.yarovyi.flowmeter.mapper.AccountMapper.ACCOUNT_CREATED_DTO_TO_ACCOUNT;
-
-// example token fetch
-/*
-        at_hash          --------   rBtuxSEyH9SQN0twtMPtFw
-        sub              --------   116279275092574045365
-        email_verified   --------   true
-        iss              --------   https://accounts.google.com
-        given_name       --------   Bohdan
-        nonce            --------   JtCARt8zbkyW6L8iSt54P2yjTCp3y9Vu7H3KJhrWw8o
-        picture          --------   https://lh3.googleusercontent.com/a/ACg8ocJgCve4MtqCIcxsqPIwbF8clGxWwpGEPj10C0PWcpmUFnsXluEx=s96-c
-        aud              --------   [955713173154-cgaq9k1d9dmbl71957t3of8mmhptgbj2.apps.googleusercontent.com]
-        azp              --------   955713173154-cgaq9k1d9dmbl71957t3of8mmhptgbj2.apps.googleusercontent.com
-        name             --------   Bohdan Yarovyi
-        exp              --------   2025-05-02T12:09:17Z
-        family_name      --------   Yarovyi
-        iat              --------   2025-05-02T11:09:17Z
-        email            --------   bogdan.yarovoy.01@gmail.com
-*/
 
 @Component
 @RequiredArgsConstructor
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
+    private final Logger LOG = LoggerFactory.getLogger(OAuthSuccessHandler.class);
     private final AccountService accountService;
     private final SecurityService securityService;
+    private final NotificationService notificationService;
 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         response.sendRedirect("/");
 
         if (authentication instanceof OAuth2AuthenticationToken token) {
             HttpSession session = request.getSession();
             OAuth2User principal = token.getPrincipal();
             String email = (String) principal.getAttributes().get("email");
-            Optional<Account> accountOptional = this.accountService.getAccountByEmail(email);
+            Optional<Account> accountOptional = accountService.getAccountByEmail(email);
 
             if (accountOptional.isPresent()) {
                 Account account = accountOptional.get();
-                this.securityService.reauthenticate(account, session);
+                securityService.reauthenticate(account, session);
             } else {
                 Account createdAccount = this.createAccountOfGoogle(principal);
-                this.securityService.reauthenticate(createdAccount, session);
+                securityService.reauthenticate(createdAccount, session);
             }
         }
     }
@@ -78,46 +66,38 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         String firstname = (String) attributes.get("given_name");
         String lastname = (String) attributes.get("family_name");
         String login = findFreeLogin(firstname, lastname, googleId);
-        String defaultPassword = "password"; // todo temporary: it is danger to create constantly such password for user
+        String password = AccountCreator.generatePassword(16);
 
-        AccountCreatedDto createdDto = new AccountCreatedDto(
-                login,
-                email,
-                defaultPassword, // todo temporary: maybe it is ok to create password for user and send it on email
-                firstname,
-                lastname,
-                null,
-                null,
-                null
-        );
-        Account account = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(createdDto);
+        AccountCreatedDto createdDto = AccountCreatedDto.baseAccount(login, email, password, firstname, lastname);
+        Account toCreate = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(createdDto);
+        Account created = accountService.createAndGetAccount(toCreate);
+        notificationService.sendMessageWithPassword(email, password);
 
-        return this.accountService.createAndGetAccount(account);
+        return created;
     }
 
 
     private String findFreeLogin(String firstname, String lastname, String googleId) {
-        boolean loginExists;
         String login;
+        boolean loginExists;
+        int maxAttempt = 20;
+        int attempt = 0;
+        long shortLoginId = Long.parseLong(googleId.substring(10));
 
-        long formattedLoginId = Long.parseLong(googleId.substring(10));
         do {
-            login = generateNewLogin(firstname, lastname, formattedLoginId);
-            loginExists = this.accountService.existAccountByLogin(login);
-        } while (loginExists);  // maybe 20 attempts needed here, not infinity in theory
+            login = AccountCreator.generateNewLogin(firstname, lastname, shortLoginId);
+            loginExists = accountService.existAccountByLogin(login);
+            attempt++;
+        } while (loginExists && attempt < maxAttempt);
+
+        if (loginExists) {
+            String errorTmp = "Failed to find login for user: %s %s googleId: %s";
+            LOG.error(errorTmp.formatted(firstname, lastname, googleId));
+
+            throw new AccountAuthenticationException("Something was wrong, try again please!");
+        }
 
         return login;
     }
-
-
-    private String generateNewLogin(String firstname, String lastname, long googleId) {
-        String suggestedLoginTemplate = "%s_%s_%s";
-        Random random = new Random();
-        int randomBound = 200_000;
-
-        long number = (googleId + random.nextInt(randomBound));
-        return suggestedLoginTemplate.formatted(firstname, lastname, number);
-    }
-
 
 }

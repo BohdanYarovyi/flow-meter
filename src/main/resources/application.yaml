@@ -22,9 +22,21 @@ spring:
           google:
             client-id: ${OAUTH_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: # username
+    password: # password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jpa:
     show-sql: false
     open-in-view: true  # TODO: to disable
+
 
 #logging:
 #  level:

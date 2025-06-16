@@ -25,4 +25,21 @@ public record AccountCreatedDto(
         LocalDate dateOfBirth,
         String phone
 ) {
+
+    public static AccountCreatedDto baseAccount(String login,
+                                                String email,
+                                                String password,
+                                                String firstname,
+                                                String lastname) {
+        return new AccountCreatedDto(
+                login,
+                email,
+                password,
+                firstname,
+                lastname,
+                null,
+                null,
+                null
+        );
+    }
 }

@@ -8,7 +8,7 @@ public record LoginRequest(
         @Size(min = 3, max = 100, message = "Username length must be between {min} and {max}")
         String username,
         @NotBlank(message = "Password must be not blank")
-        @Size(min = 3, max = 100, message = "Password length must be between {min} and {max}")
+        @Size(min = 8, max = 100, message = "Password length must be between {min} and {max}")
         String password
 ) {
 }
