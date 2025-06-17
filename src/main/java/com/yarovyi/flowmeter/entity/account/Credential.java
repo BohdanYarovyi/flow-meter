@@ -37,4 +37,14 @@ public class Credential {
     public int hashCode() {
         return Objects.hash(login, email, password);
     }
+
+    @Override
+    public String toString() {
+        return "Credential{" +
+               "login='" + login + '\'' +
+               ", email='" + email + '\'' +
+               ", password='" + password + '\'' +
+               '}';
+    }
+
 }

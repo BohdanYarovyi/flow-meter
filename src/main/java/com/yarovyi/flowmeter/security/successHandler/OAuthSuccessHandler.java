@@ -68,7 +68,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         String login = findFreeLogin(firstname, lastname, googleId);
         String password = AccountCreator.generatePassword(16);
 
-        AccountCreatedDto createdDto = AccountCreatedDto.baseAccount(login, email, password, firstname, lastname);
+        AccountCreatedDto createdDto = new AccountCreatedDto(login, email, password);
         Account toCreate = ACCOUNT_CREATED_DTO_TO_ACCOUNT.apply(createdDto);
         Account created = accountService.createAndGetAccount(toCreate);
         notificationService.sendMessageWithPassword(email, password);

@@ -5,12 +5,13 @@ import com.yarovyi.flowmeter.entity.account.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public record AccountDto(
         Long id,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        List<Role> roles,
+        Set<Role> roles,
         String login,
         String email,
         String firstname,

@@ -36,7 +36,7 @@ const API = {
 };
 const defaultErrorPrefix = "Error on API layer: ";
 
-// todo: i know about a lot of duplicates here, but it is no sense to refactor it for now
+// i know about a lot of duplicates here, but it is no sense to refactor it for now
 // account fetches
 export async function fetchCurrentAccountId() {
     const fetchParams = {

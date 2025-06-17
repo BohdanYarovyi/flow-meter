@@ -47,4 +47,15 @@ public class PersonalInfo {
         return Objects.hash(firstname, lastname, patronymic, dateOfBirth, phone);
     }
 
+    @Override
+    public String toString() {
+        return "PersonalInfo{" +
+               "firstname='" + firstname + '\'' +
+               ", lastname='" + lastname + '\'' +
+               ", patronymic='" + patronymic + '\'' +
+               ", dateOfBirth=" + dateOfBirth +
+               ", phone='" + phone + '\'' +
+               '}';
+    }
+
 }

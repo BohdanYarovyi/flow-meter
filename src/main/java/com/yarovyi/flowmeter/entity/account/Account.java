@@ -23,7 +23,7 @@ public class Account extends BaseEntity {
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;   // todo: Set<Role>
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "account")
     private List<Flow> flows;
@@ -40,6 +40,16 @@ public class Account extends BaseEntity {
         if (object == null || getClass() != object.getClass()) return false;
 
         return super.equals(object);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+               "roles=" + roles +
+               ", flows=" + flows +
+               ", credential=" + credential +
+               ", personalInfo=" + personalInfo +
+               "} " + super.toString();
     }
 
 }

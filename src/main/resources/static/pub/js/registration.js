@@ -17,12 +17,7 @@ async function register(e) {
     const data = {
         login: document.getElementById("login").value,
         email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        firstname: document.getElementById("firstname").value,
-        lastname: document.getElementById("lastname").value,
-        patronymic: document.getElementById("patronymic").value,
-        phone: document.getElementById("phone").value,
-        dateOfBirth: document.getElementById("date-of-birth").value
+        password: document.getElementById("password").value
     };
     const passwordConfirmation = document.getElementById("password-confirmation").value;
 

@@ -77,7 +77,6 @@ public class AccountController {
                     var message = String.format("Account with id:%s not found", accountId);
                     return new SubentityNotFoundException(message, Account.class);
                 });
-
         AccountDto dto = ACCOUNT_TO_DTO.apply(account);
 
         return ResponseEntity.ok(dto);
@@ -121,7 +120,6 @@ public class AccountController {
     }
 
 
-    // todo: validate PasswordChangeRequest obj
     @PutMapping("/{accountId:\\d+}/edit/password")
     public ResponseEntity<Void> updatePassword(@PathVariable(name = "accountId") Long accountId,
                                                @RequestBody @Validated PasswordChangeRequest passwordChangeRequest,

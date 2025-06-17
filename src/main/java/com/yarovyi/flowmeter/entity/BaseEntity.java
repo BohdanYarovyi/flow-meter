@@ -60,4 +60,14 @@ public class BaseEntity {
         return Objects.hash(this.id);
     }
 
+    @Override
+    public String toString() {
+        return "BaseEntity{" +
+               "id=" + id +
+               ", createdAt=" + createdAt +
+               ", updatedAt=" + updatedAt +
+               ", deleted=" + deleted +
+               '}';
+    }
+
 }

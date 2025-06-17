@@ -9,9 +9,7 @@ import com.yarovyi.flowmeter.entity.account.Role;
 import com.yarovyi.flowmeter.dto.account.CredentialsDto;
 import com.yarovyi.flowmeter.dto.account.PersonalInfoDto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -19,7 +17,9 @@ public class AccountMapper {
 
     public static final Function<Account, AccountDto> ACCOUNT_TO_DTO = (account) -> {
         var credentials = account.getCredential();
-        var personalInfo = account.getPersonalInfo();
+        var personalInfo = Optional
+                .ofNullable(account.getPersonalInfo())
+                .orElseGet(PersonalInfo::new);
 
         return new AccountDto(
                 account.getId(),
@@ -45,20 +45,13 @@ public class AccountMapper {
     public static final Function<AccountCreatedDto, Account> ACCOUNT_CREATED_DTO_TO_ACCOUNT = (dto) -> {
         var account = new Account();
 
+        var roles = new HashSet<Role>();
+        var info = new PersonalInfo();
         var credentials = new Credential();
+
         credentials.setLogin(dto.login());
         credentials.setEmail(dto.email());
         credentials.setPassword(dto.password());
-
-        var info = new PersonalInfo();
-        info.setFirstname(dto.firstname());
-        info.setLastname(dto.lastname());
-        info.setPatronymic(dto.patronymic());
-        info.setPhone(dto.phone());
-        info.setDateOfBirth(dto.dateOfBirth());
-
-        var roles = new ArrayList<Role>();
-
         account.setCredential(credentials);
         account.setPersonalInfo(info);
         account.setRoles(roles);
@@ -95,7 +88,6 @@ public class AccountMapper {
         return account;
     };
 
-    // It is impossible, that the account don't have credentials
     public static final BiFunction<Credential, Account, Account> COMMIT_CREDENTIALS_UPDATES = (credentials, account) -> {
         var existCredentials = account.getCredential();
 

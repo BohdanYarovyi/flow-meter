@@ -93,8 +93,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account updateCredentials(Account account, Credential credential) {
-        // TODO: here is a unique fields like: login, email.
-        //  I must write some handler for catching SQL Exceptions or another way
         Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credential, account);
         return this.accountRepository.save(updatedAccount);
     }
@@ -158,6 +156,5 @@ public class AccountServiceImpl implements AccountService {
             throw new SubentityNotFoundException(message, Account.class);
         }
     }
-
 
 }

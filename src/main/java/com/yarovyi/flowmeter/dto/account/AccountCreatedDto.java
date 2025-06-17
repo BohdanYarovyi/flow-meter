@@ -18,28 +18,5 @@ public record AccountCreatedDto(
         String email,
         @NotBlank(message = "Password is required")
         @Size(min = 8, max = 100, message = "Password length must be between {min} and {max}")
-        String password,
-        String firstname,
-        String lastname,
-        String patronymic,
-        LocalDate dateOfBirth,
-        String phone
-) {
-
-    public static AccountCreatedDto baseAccount(String login,
-                                                String email,
-                                                String password,
-                                                String firstname,
-                                                String lastname) {
-        return new AccountCreatedDto(
-                login,
-                email,
-                password,
-                firstname,
-                lastname,
-                null,
-                null,
-                null
-        );
-    }
-}
+        String password
+) {}

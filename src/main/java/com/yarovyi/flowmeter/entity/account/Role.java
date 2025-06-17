@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,7 +27,7 @@ public class Role {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "roles")
-    private List<Account> accounts;     // todo: Set<Account>
+    private Set<Account> accounts;
 
     public Role(Long id, String name) {
         this.id = id;
