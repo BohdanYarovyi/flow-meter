@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 
 interface PSQLErrorHandler {
-    Logger LOG = LoggerFactory.getLogger(PSQLErrorHandler.class);
+    Logger log = LoggerFactory.getLogger(PSQLErrorHandler.class);
 
     default boolean supportConstraint(PSQLException exception) {
         if (exception == null) {
@@ -15,7 +15,7 @@ interface PSQLErrorHandler {
 
         if (exception.getServerErrorMessage() == null || exception.getServerErrorMessage().getConstraint() == null) {
             String logMessage = "ServerErrorMessage or Constraint are missing in PSQLException when they are being checked by {}";
-            LOG.warn(logMessage, this.getClass().getSimpleName());
+            log.warn(logMessage, this.getClass().getSimpleName());
 
             return false;
         }

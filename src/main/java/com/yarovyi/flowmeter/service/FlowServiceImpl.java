@@ -2,14 +2,13 @@ package com.yarovyi.flowmeter.service;
 
 import com.yarovyi.flowmeter.entity.account.Account;
 import com.yarovyi.flowmeter.entity.flow.Flow;
-import com.yarovyi.flowmeter.entity.flow.Step;
 import com.yarovyi.flowmeter.exception.EntityBadRequestException;
 import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.FlowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,24 +21,24 @@ public class FlowServiceImpl implements FlowService {
     private final FlowRepository flowRepository;
 
 
+    @Transactional(readOnly = true)
     @Override
     public List<Flow> getAll() {
         return this.flowRepository.findAll();
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public List<Flow> getAllByAccountId(Long accountId) {
         if (Objects.isNull(accountId))
             throw new NullPointerException("accountId is required");
 
-        var flowsByAccountId = this.flowRepository.findAllByAccount_Id(accountId);
-        flowsByAccountId.forEach(flow -> flow.getSteps().sort(Comparator.comparing(Step::getDay)));
-
-        return flowsByAccountId;
+        return this.flowRepository.findAllByAccountIdWithEagerFetch(accountId);
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Flow> getById(Long id) {
         if (Objects.isNull(id))
@@ -49,12 +48,14 @@ public class FlowServiceImpl implements FlowService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public boolean checkOwnership(Long flowId, Long accountId) {
         return this.flowRepository.existsByIdAndAccount_Id(flowId, accountId);
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public void checkOwnerShipOrElseThrow(Long flowId, Long accountId) {
         if (!checkOwnership(flowId, accountId))
@@ -62,12 +63,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
 
-    @Override
-    public Flow create(Flow flow) {
-        throw new UnsupportedOperationException();
-    }
-
-
+    @Transactional
     @Override
     public Flow update(Flow flow) {
         if (Objects.isNull(flow))
@@ -85,6 +81,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
 
+    @Transactional
     @Override
     public void delete(Long id) {
         if (Objects.isNull(id))
@@ -100,6 +97,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
 
+    @Transactional
     @Override
     public Flow createFlowForAccount(Flow flow, Account account) {
         if (Objects.isNull(flow) || Objects.isNull(account))
@@ -110,6 +108,5 @@ public class FlowServiceImpl implements FlowService {
 
         return this.flowRepository.save(flow);
     }
-
 
 }

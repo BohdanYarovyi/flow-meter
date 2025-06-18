@@ -5,10 +5,12 @@ import com.yarovyi.flowmeter.entity.BaseEntity;
 import com.yarovyi.flowmeter.entity.account.Account;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,12 +29,13 @@ public class Flow extends BaseEntity {
     @ManyToOne
     private Account account;
     @OneToMany(mappedBy = "flow")
-    private List<Step> steps;
+    private Set<Step> steps;
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
+
         return super.equals(object);
     }
 

@@ -5,7 +5,6 @@ import com.yarovyi.flowmeter.dto.stat.StatParams;
 import com.yarovyi.flowmeter.dto.stat.StatPoint;
 import com.yarovyi.flowmeter.entity.view.EfficiencyView;
 import com.yarovyi.flowmeter.repository.StatisticsRepository;
-import com.yarovyi.flowmeter.service.StatisticsScope;
 import com.yarovyi.flowmeter.strategy.statistics.fill.*;
 import com.yarovyi.flowmeter.strategy.statistics.query.*;
 import org.springframework.stereotype.Component;

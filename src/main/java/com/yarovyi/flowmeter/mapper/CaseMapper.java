@@ -3,11 +3,10 @@ package com.yarovyi.flowmeter.mapper;
 import com.yarovyi.flowmeter.entity.flow.Case;
 import com.yarovyi.flowmeter.dto.flow.CaseDto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CaseMapper {
 
@@ -25,7 +24,7 @@ public class CaseMapper {
         );
     };
 
-    public static final Function<List<Case>, List<CaseDto>> CASEs_TO_DTOs = (cases) -> {
+    public static final Function<Set<Case>, List<CaseDto>> CASEs_TO_DTOs = (cases) -> {
         if (Objects.isNull(cases))
             return new ArrayList<>();
 
@@ -50,13 +49,13 @@ public class CaseMapper {
         return c;
     };
 
-    public static final Function<List<CaseDto>, List<Case>> DTOs_TO_CASEs = (dtos) -> {
+    public static final Function<List<CaseDto>, Set<Case>> DTOs_TO_CASEs = (dtos) -> {
         if (Objects.isNull(dtos))
-            return new ArrayList<>();
+            return new HashSet<>();
 
         return dtos.stream()
                 .map(DTO_TO_CASE)
-                .toList();
+                .collect(Collectors.toSet());
     };
 
     public static final BiFunction<Case,Case,Case> COMMIT_CASE_UPDATE = (existCase, editedCase) -> {

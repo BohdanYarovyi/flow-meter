@@ -7,6 +7,7 @@ import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.CaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -17,9 +18,9 @@ import static com.yarovyi.flowmeter.mapper.CaseMapper.*;
 public class CaseServiceImpl implements CaseService {
     private final CaseRepository caseRepository;
 
-
+    @Transactional
     @Override
-    public Case createCaseForStepById(Step step,Case case1) {
+    public Case createCaseForStep(Step step, Case case1) {
         if (Objects.isNull(case1) || Objects.isNull(step))
             throw new NullPointerException("case or step are null");
 
@@ -30,6 +31,7 @@ public class CaseServiceImpl implements CaseService {
     }
 
 
+    @Transactional
     @Override
     public Case edit(Case editedCase) {
         if (Objects.isNull(editedCase))
@@ -46,6 +48,8 @@ public class CaseServiceImpl implements CaseService {
         return this.caseRepository.save(existCase);
     }
 
+
+    @Transactional
     @Override
     public void deleteCaseById(Long caseId) {
         if (Objects.isNull(caseId))
@@ -61,12 +65,14 @@ public class CaseServiceImpl implements CaseService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public boolean checkOwnership(Long caseId, Long accountId) {
         return this.caseRepository.existsByIdAndAccountId(caseId, accountId);
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public void checkOwnershipOrElseThrow(Long caseId, Long accountId) {
         if (!checkOwnership(caseId, accountId)) {

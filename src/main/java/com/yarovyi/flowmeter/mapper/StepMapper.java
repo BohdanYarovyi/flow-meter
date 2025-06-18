@@ -3,10 +3,9 @@ package com.yarovyi.flowmeter.mapper;
 import com.yarovyi.flowmeter.entity.flow.Step;
 import com.yarovyi.flowmeter.dto.flow.StepDto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.yarovyi.flowmeter.mapper.CaseMapper.CASEs_TO_DTOs;
 import static com.yarovyi.flowmeter.mapper.CaseMapper.DTOs_TO_CASEs;
@@ -26,7 +25,7 @@ public class StepMapper {
         );
     };
 
-    public static final Function<List<Step>, List<StepDto>> STEPs_TO_DTOs = (steps) -> {
+    public static final Function<Set<Step>, List<StepDto>> STEPs_TO_DTOs = (steps) -> {
         if (Objects.isNull(steps))
             return new ArrayList<>();
 
@@ -54,13 +53,13 @@ public class StepMapper {
         return step;
     };
 
-    public static final Function<List<StepDto>, List<Step>> DTOs_TO_STEPs = (dtos) -> {
+    public static final Function<List<StepDto>, Set<Step>> DTOs_TO_STEPs = (dtos) -> {
         if (Objects.isNull(dtos))
-            return new ArrayList<>();
+            return new HashSet<>();
 
         return dtos.stream()
                 .map(DTO_TO_STEP)
-                .toList();
+                .collect(Collectors.toSet());
     };
 
 }

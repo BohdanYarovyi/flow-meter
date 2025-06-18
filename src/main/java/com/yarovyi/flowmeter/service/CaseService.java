@@ -4,7 +4,7 @@ import com.yarovyi.flowmeter.entity.flow.Case;
 import com.yarovyi.flowmeter.entity.flow.Step;
 
 public interface CaseService {
-    Case createCaseForStepById(Step step, Case case1);
+    Case createCaseForStep(Step step, Case case1);
     Case edit(Case editedCase);
     void deleteCaseById(Long caseId);
 

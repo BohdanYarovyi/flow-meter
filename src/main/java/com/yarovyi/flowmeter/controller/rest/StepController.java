@@ -69,7 +69,7 @@ public class StepController {
                 .orElseThrow(() -> new SubentityNotFoundException(Step.class));
 
         Case case1 = DTO_TO_CASE.apply(caseDto);
-        Case savedCase = this.caseService.createCaseForStepById(step, case1);
+        Case savedCase = this.caseService.createCaseForStep(step, case1);
 
         URI location = UriComponentsBuilder
                 .fromPath("api/cases/{caseId}")

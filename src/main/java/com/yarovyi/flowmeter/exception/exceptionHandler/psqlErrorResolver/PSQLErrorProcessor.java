@@ -3,13 +3,14 @@ package com.yarovyi.flowmeter.exception.exceptionHandler.psqlErrorResolver;
 import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 
 @Component
 public class PSQLErrorProcessor {
-    private final Set<PSQLErrorHandler> handlers;
+    private final List<PSQLErrorHandler> handlers;
 
-    public PSQLErrorProcessor(Set<PSQLErrorHandler> handlers) {
+    public PSQLErrorProcessor(List<PSQLErrorHandler> handlers) {
         this.handlers = handlers;
     }
 

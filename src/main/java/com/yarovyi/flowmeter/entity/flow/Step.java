@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Step extends BaseEntity {
     @ManyToOne
     private Flow flow;
     @OneToMany(mappedBy = "step")
-    private List<Case> cases;
+    private Set<Case> cases;
 
     @Override
     public boolean equals(Object object) {

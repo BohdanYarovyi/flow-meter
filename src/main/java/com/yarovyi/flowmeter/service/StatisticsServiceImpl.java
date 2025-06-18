@@ -5,19 +5,17 @@ import com.yarovyi.flowmeter.dto.stat.StatParams;
 import com.yarovyi.flowmeter.dto.stat.UniqueMonth;
 import com.yarovyi.flowmeter.entity.flow.Flow;
 import com.yarovyi.flowmeter.entity.flow.Step;
-import com.yarovyi.flowmeter.entity.view.EfficiencyView;
 import com.yarovyi.flowmeter.exception.InvalidParametersException;
 import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.FlowRepository;
 import com.yarovyi.flowmeter.repository.StatisticsRepository;
 import com.yarovyi.flowmeter.strategy.statistics.StatisticsFactory;
+import com.yarovyi.flowmeter.strategy.statistics.StatisticsScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DateTimeException;
 import java.time.Month;
-import java.time.YearMonth;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,6 +29,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsFactory statisticsFactory;
 
 
+    @Transactional(readOnly = true)
     @Override
     public Set<UniqueMonth> getSortedUniqueMonths(Long flowId) {
         if (flowId == null) {
@@ -41,15 +40,16 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .findById(flowId)
                 .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
 
-        List<Step> steps = flow.getSteps();
-
-        return steps.stream()
+        return flow
+                .getSteps()
+                .stream()
                 .map(Step::getDay)
                 .map(day -> new UniqueMonth(day.getYear(), day.getMonth().name()))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public StatInterval getStatisticsForMonth(Long flowId, int year, String month) {
         if (flowId == null || month == null ) {
@@ -62,6 +62,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public StatInterval getStatisticsForLastWeek(Long flowId) {
         if (flowId == null) {
@@ -73,6 +74,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public StatInterval getStatisticsForLastMonth(Long flowId) {
         if (flowId == null) {
@@ -84,6 +86,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public StatInterval getStatisticsForLastYear(Long flowId) {
         if (flowId == null) {
@@ -102,6 +105,5 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new InvalidParametersException("Month parameter is invalid: " + month);
         }
     }
-
 
 }

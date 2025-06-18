@@ -11,6 +11,7 @@ import com.yarovyi.flowmeter.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,12 +28,14 @@ public class AccountServiceImpl implements AccountService {
     private final Role defaultRole;
 
 
+    @Transactional(readOnly = true)
     @Override
     public List<Account> getAccounts() {
         return this.accountRepository.findAll();
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Account> getAccountById(Long accountId) {
         if (Objects.isNull(accountId)) {
@@ -43,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Account> getAccountByLogin(String login) {
         if (Objects.isNull(login)) {
@@ -53,6 +57,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Account> getAccountByEmail(String email) {
         if (Objects.isNull(email)) {
@@ -63,11 +68,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional
     @Override
     public Long createAccount(Account account) {
         return this.createAndGetAccount(account).getId();
     }
 
+
+    @Transactional
     @Override
     public Account createAndGetAccount(Account account) {
         if (Objects.isNull(account))
@@ -84,6 +92,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional
     @Override
     public void updatePersonalInfo(Account account, PersonalInfo personalInfo) {
         Account updatedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(personalInfo, account);
@@ -91,6 +100,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional
     @Override
     public Account updateCredentials(Account account, Credential credential) {
         Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credential, account);
@@ -98,6 +108,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional
     @Override
     public void changePassword(Account account, PasswordChangeRequest passwordChangeRequest) {
         String rawCurrentPassword = passwordChangeRequest.currentPassword();
@@ -118,6 +129,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Transactional
     @Override
     public void deleteAccountById(Long id) {
         if (Objects.isNull(id))
@@ -131,6 +143,8 @@ public class AccountServiceImpl implements AccountService {
         this.accountRepository.save(account);
     }
 
+
+    @Transactional(readOnly = true)
     @Override
     public boolean existAccountByLogin(String login) {
         if (Objects.isNull(login))

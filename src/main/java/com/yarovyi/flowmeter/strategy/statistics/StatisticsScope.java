@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.service;
+package com.yarovyi.flowmeter.strategy.statistics;
 
 public enum StatisticsScope {
     MONTH,

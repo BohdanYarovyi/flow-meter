@@ -10,7 +10,6 @@ public interface FlowService {
     List<Flow> getAll();
     List<Flow> getAllByAccountId(Long accountId);
     Optional<Flow> getById(Long id);
-    Flow create(Flow flow);
     Flow update(Flow flow);
     void delete(Long id);
 

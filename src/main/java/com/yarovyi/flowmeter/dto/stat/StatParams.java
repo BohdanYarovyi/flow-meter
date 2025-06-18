@@ -1,6 +1,6 @@
 package com.yarovyi.flowmeter.dto.stat;
 
-import com.yarovyi.flowmeter.service.StatisticsScope;
+import com.yarovyi.flowmeter.strategy.statistics.StatisticsScope;
 
 import java.time.LocalDate;
 

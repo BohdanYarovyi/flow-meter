@@ -35,10 +35,10 @@ public class SecurityServiceImpl implements SecurityService {
                     loginRequest.username(),
                     loginRequest.password()
             );
-            Authentication authentication = this.authenticate(authToken);
+            Authentication authentication = authenticate(authToken);
 
-            this.setAuthenticationInSession(authentication, session);
-            this.setAuthenticationInContextHolder(authentication);
+            setAuthenticationInSession(authentication, session);
+            setAuthenticationInContextHolder(authentication);
         } catch (AuthenticationException e) {
             throw new AccountAuthenticationException("Invalid username or password");
         }

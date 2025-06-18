@@ -7,6 +7,7 @@ import com.yarovyi.flowmeter.exception.SubentityNotFoundException;
 import com.yarovyi.flowmeter.repository.StepRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -17,12 +18,14 @@ public class StepServiceImpl implements StepService {
     private final StepRepository stepRepository;
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Step> getStepById(Long stepId) {
-        return this.stepRepository.findById(stepId);
+        return this.stepRepository.getStepWithEagerFetchById(stepId);
     }
 
 
+    @Transactional
     @Override
     public Step createStepForFlow(Step step, Flow flow) {
         if (Objects.isNull(step) || Objects.isNull(flow))
@@ -42,6 +45,7 @@ public class StepServiceImpl implements StepService {
     }
 
 
+    @Transactional
     @Override
     public void deleteStepById(Long stepId) {
         if (Objects.isNull(stepId))
@@ -56,6 +60,8 @@ public class StepServiceImpl implements StepService {
         this.stepRepository.save(step);
     }
 
+
+    @Transactional(readOnly = true)
     @Override
     public Long getTargetPercentageByStepId(Long stepId) {
         Step step = this.getStepById(stepId)
@@ -65,12 +71,13 @@ public class StepServiceImpl implements StepService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public boolean checkOwnership(Long stepId, Long accountId) {
         return this.stepRepository.existsByIdAndFlow_Account_Id(stepId, accountId);
     }
 
-
+    @Transactional(readOnly = true)
     @Override
     public void checkOwnershipOrElseThrow(Long stepId, Long accountId) {
         if (!checkOwnership(stepId, accountId)){

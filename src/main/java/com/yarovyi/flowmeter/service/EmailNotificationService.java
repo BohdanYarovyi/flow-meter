@@ -1,8 +1,11 @@
 package com.yarovyi.flowmeter.service;
 
+import com.yarovyi.flowmeter.exception.EmailNotificationException;
+import com.yarovyi.flowmeter.exception.HtmlMailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -12,13 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.IllegalFormatException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailNotificationService implements NotificationService {
     private static final Path BASE_LETTERS_PATH = Path.of("src/main/resources/templates/util-html/email-letters/");
 
-    private final Logger LOG = LoggerFactory.getLogger(EmailNotificationService.class);
     private final FileReaderService fileReaderService;
     private final JavaMailSender sender;
 
@@ -35,14 +39,20 @@ public class EmailNotificationService implements NotificationService {
                     .formatted(password);
 
             sendHtml(to, subject, html);
-        } catch (IOException | RuntimeException e) {
-            LOG.error(e.getMessage());
-            throw new RuntimeException("Failed to send letter to: " + to, e);
+        } catch (IllegalFormatException e) {
+            log.error("{} has problem with format", htmlPath, e);
+            throw new EmailNotificationException("Failed to create letter for: " + to, e);
+        } catch (HtmlMailException e) {
+            log.error("Failed to send letter, cause: {}", e.getMessage(), e);
+            throw new EmailNotificationException("Failed to send letter to: " + to, e);
+        } catch (IOException e) {
+            log.error("Failed to read letter-html-template from: {}", htmlPath, e);
+            throw new EmailNotificationException("Failed to send letter to: " + to, e);
         }
     }
 
 
-    public void sendHtml(String to, String subject, String html) {
+    private void sendHtml(String to, String subject, String html) throws HtmlMailException {
         try {
             MimeMessage message = sender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -52,9 +62,9 @@ public class EmailNotificationService implements NotificationService {
 
             sender.send(message);
         } catch (MailException e) {
-            throw new RuntimeException("Failed to configure letter");
+            throw new HtmlMailException("Failed to configure letter");
         } catch (MessagingException e) {
-            throw new RuntimeException("Failed to send letter");
+            throw new HtmlMailException("Failed to send letter");
         }
     }
 
