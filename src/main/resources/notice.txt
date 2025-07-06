@@ -13,6 +13,4 @@ Refactoring:
 + 2. Refactor entities
 - 3. Transaction management own
 + 4. Clear lombok
-- 5. Tests 80%
-
-// test row
+- 5. Write tests 80%
