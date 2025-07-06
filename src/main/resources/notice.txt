@@ -14,3 +14,5 @@ Refactoring:
 - 3. Transaction management own
 + 4. Clear lombok
 - 5. Tests 80%
+
+// test row
