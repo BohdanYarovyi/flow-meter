@@ -28,6 +28,20 @@ public class BaseEntity {
     @Column(name = "deleted")
     private boolean deleted;
 
+
+    /**
+     * Constructor for creating independence {@code BaseEntity}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code BaseEntity} object
+     */
+    public BaseEntity(BaseEntity other) {
+        this.id = other.id;
+        this.createdAt = other.createdAt == null ? null : LocalDateTime.from(other.createdAt);
+        this.updatedAt = other.updatedAt == null ? null : LocalDateTime.from(other.updatedAt);
+        this.deleted = other.deleted;
+    }
+
     @PrePersist
     protected void onCreate() {this.createdAt = LocalDateTime.now();}
 

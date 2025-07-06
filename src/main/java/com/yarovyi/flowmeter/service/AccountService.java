@@ -4,6 +4,7 @@ import com.yarovyi.flowmeter.entity.account.Account;
 import com.yarovyi.flowmeter.entity.account.Credential;
 import com.yarovyi.flowmeter.entity.account.PersonalInfo;
 import com.yarovyi.flowmeter.dto.auth.PasswordChangeRequest;
+import com.yarovyi.flowmeter.entity.account.Role;
 
 import java.util.List;
 import java.util.Optional;

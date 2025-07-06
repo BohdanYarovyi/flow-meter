@@ -34,6 +34,17 @@ public class Role {
         this.name = name;
     }
 
+    /**
+     * Constructor for creating independence {@code Role}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code Role} object
+     */
+    public Role(Role other) {
+        this.id = other.id;
+        this.name = other.name;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -48,4 +59,12 @@ public class Role {
         return Objects.hashCode(id);
     }
 
+    @Override
+    public String toString() {
+        return "Role{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", accounts.size=" + (accounts == null ? null : accounts.size()) +
+               '}';
+    }
 }

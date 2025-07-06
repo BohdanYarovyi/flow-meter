@@ -73,6 +73,20 @@
 			<version>${spring-security6.version}</version>
 		</dependency>
 		
+		<!-- TEST -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- auto-generating data -->
+		<dependency>
+			<groupId>org.instancio</groupId>
+			<artifactId>instancio-junit</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<!-- UTIL -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -91,6 +105,7 @@
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
 		</dependency>
+		<!-- swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

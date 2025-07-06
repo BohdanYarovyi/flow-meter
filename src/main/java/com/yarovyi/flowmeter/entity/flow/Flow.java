@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,6 +32,31 @@ public class Flow extends BaseEntity {
     @OneToMany(mappedBy = "flow")
     private Set<Step> steps;
 
+    /**
+     * Constructor for creating independence {@code Flow}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code Flow} object
+     */
+    public Flow(Flow other) {
+        super(other);
+        this.title = other.title;
+        this.description = other.description;
+        this.targetPercentage = other.targetPercentage;
+
+        copySteps(other);
+    }
+
+    private void copySteps(Flow other) {
+        if (other.steps != null) {
+            this.steps = new HashSet<>();
+            for (Step step : other.steps) {
+                var tmp = new Step(step);
+                this.steps.add(tmp);
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -39,4 +65,14 @@ public class Flow extends BaseEntity {
         return super.equals(object);
     }
 
+    @Override
+    public String toString() {
+        return "Flow{" +
+               "title='" + title + '\'' +
+               ", description='" + description + '\'' +
+               ", targetPercentage=" + targetPercentage +
+               ", account=[CUT]" +
+               ", steps=" + steps +
+               "} " + super.toString();
+    }
 }

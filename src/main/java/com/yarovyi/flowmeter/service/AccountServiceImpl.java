@@ -31,7 +31,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     @Override
     public List<Account> getAccounts() {
-        return this.accountRepository.findAll();
+        return accountRepository.findAll();
     }
 
 
@@ -39,10 +39,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountById(Long accountId) {
         if (Objects.isNull(accountId)) {
-            throw new NullPointerException("AccountId is required");
+            throw new IllegalArgumentException("AccountId is null");
         }
 
-        return this.accountRepository.findById(accountId);
+        return accountRepository.findById(accountId);
     }
 
 
@@ -50,10 +50,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountByLogin(String login) {
         if (Objects.isNull(login)) {
-            throw new NullPointerException("Login is required");
+            throw new IllegalArgumentException("Login is null");
         }
 
-        return this.accountRepository.findAccountByCredentialLogin(login);
+        return accountRepository.findAccountByCredentialLogin(login);
     }
 
 
@@ -61,10 +61,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountByEmail(String email) {
         if (Objects.isNull(email)) {
-            throw new NullPointerException("Email is required");
+            throw new IllegalArgumentException("Email is null");
         }
 
-        return this.accountRepository.findAccountByCredentialEmail(email);
+        return accountRepository.findAccountByCredentialEmail(email);
     }
 
 
@@ -79,32 +79,44 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAndGetAccount(Account account) {
         if (Objects.isNull(account))
-            throw new NullPointerException("Account is required");
+            throw new IllegalArgumentException("Account is required");
 
         if (!Objects.isNull(account.getId()))
             throw new IllegalArgumentException("Account.id must be null");
 
-        String encodedPassword = this.passwordEncoder.encode(account.getCredential().getPassword());
+        String encodedPassword = passwordEncoder.encode(account.getCredential().getPassword());
         account.getCredential().setPassword(encodedPassword);
-        account.getRoles().add(this.defaultRole);
+        account.getRoles().add(defaultRole);
 
-        return this.accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
 
     @Transactional
     @Override
     public void updatePersonalInfo(Account account, PersonalInfo personalInfo) {
+        if (account == null || personalInfo == null) {
+            throw new IllegalArgumentException("Parameters are null");
+        }
+
         Account updatedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(personalInfo, account);
-        this.accountRepository.save(updatedAccount);
+        accountRepository.save(updatedAccount);
     }
 
 
     @Transactional
     @Override
     public Account updateCredentials(Account account, Credential credential) {
+        if (account == null || credential == null) {
+            throw new IllegalArgumentException("Parameters are null");
+        }
+
+        if (account.getCredential() == null) {
+            throw new IllegalArgumentException("Account.credential is null");
+        }
+
         Account updatedAccount = COMMIT_CREDENTIALS_UPDATES.apply(credential, account);
-        return this.accountRepository.save(updatedAccount);
+        return accountRepository.save(updatedAccount);
     }
 
 
@@ -114,18 +126,18 @@ public class AccountServiceImpl implements AccountService {
         String rawCurrentPassword = passwordChangeRequest.currentPassword();
         String newPassword = passwordChangeRequest.newPassword();
 
-        if (!this.passwordEncoder.matches(rawCurrentPassword, account.getCredential().getPassword())) {
+        if (!passwordEncoder.matches(rawCurrentPassword, account.getCredential().getPassword())) {
             throw new AccountAuthenticationException("Password don't match with current password");
         }
 
-        if (this.passwordEncoder.matches(newPassword, account.getCredential().getPassword())) {
+        if (passwordEncoder.matches(newPassword, account.getCredential().getPassword())) {
             throw new AccountAuthenticationException("You can't change password to the same password");
         }
 
-        String encoded = this.passwordEncoder.encode(newPassword);
+        String encoded = passwordEncoder.encode(newPassword);
         account.getCredential().setPassword(encoded);
 
-        this.accountRepository.save(account);
+        accountRepository.save(account);
     }
 
 

@@ -29,6 +29,20 @@ public class PersonalInfo {
     @Column(name = "phone")
     private String phone;
 
+    /**
+     * Constructor for creating independence {@code PersonalInfo}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code PersonalInfo} object
+     */
+    public PersonalInfo(PersonalInfo other) {
+        this.firstname = other.firstname;
+        this.lastname = other.lastname;
+        this.patronymic = other.patronymic;
+        this.dateOfBirth = other.dateOfBirth == null ? null : LocalDate.from(other.dateOfBirth);
+        this.phone = other.phone;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

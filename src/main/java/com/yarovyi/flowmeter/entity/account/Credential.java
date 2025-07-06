@@ -22,6 +22,18 @@ public class Credential {
     @Column(name = "password")
     private String password;
 
+    /**
+     * Constructor for creating independence {@code Credential}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code Credential} object
+     */
+    public Credential(Credential other) {
+        this.login = other.login;
+        this.email = other.email;
+        this.password = other.password;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

@@ -29,6 +29,19 @@ public class Case extends BaseEntity {
     @ManyToOne
     private Step step;
 
+    /**
+     * Constructor for creating independence {@code Case}.
+     * @apiNote be careful, the constructor copies the object without preserving two-way relationships,
+     * as JPA entities do
+     * @param other other {@code Case} object
+     */
+    public Case(Case other) {
+        super(other);
+        this.text = other.text;
+        this.percent = other.percent;
+        this.counting = other.counting;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -37,4 +50,13 @@ public class Case extends BaseEntity {
         return super.equals(object);
     }
 
+    @Override
+    public String toString() {
+        return "Case{" +
+               "text='" + text + '\'' +
+               ", percent=" + percent +
+               ", counting=" + counting +
+               ", step=[CUT]" +
+               "} " + super.toString();
+    }
 }
