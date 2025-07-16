@@ -52,7 +52,8 @@ public interface StatisticsRepository extends JpaRepository<EfficiencyView, Long
         v.flow_title as flow_title,
         v.year as year,
         v.month as month,
-        AVG(v.average_percent) as average_percent
+        AVG(v.average_percent) as average_percent,
+        COUNT(v.average_percent) as average_count
     FROM v_statistics_data v
     WHERE v.flow_id = :flowId
         AND v.full_date BETWEEN CURRENT_DATE - interval '11 months' AND CURRENT_DATE

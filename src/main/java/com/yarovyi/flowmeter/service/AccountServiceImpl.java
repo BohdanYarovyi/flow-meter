@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountById(Long accountId) {
         if (Objects.isNull(accountId)) {
-            throw new IllegalArgumentException("AccountId is null");
+            throw new IllegalArgumentException("Parameter 'accountId' is null");
         }
 
         return accountRepository.findById(accountId);
@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountByLogin(String login) {
         if (Objects.isNull(login)) {
-            throw new IllegalArgumentException("Login is null");
+            throw new IllegalArgumentException("Parameter 'login' is null");
         }
 
         return accountRepository.findAccountByCredentialLogin(login);
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getAccountByEmail(String email) {
         if (Objects.isNull(email)) {
-            throw new IllegalArgumentException("Email is null");
+            throw new IllegalArgumentException("Parameter 'email' is null");
         }
 
         return accountRepository.findAccountByCredentialEmail(email);
@@ -78,11 +78,13 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public Account createAndGetAccount(Account account) {
-        if (Objects.isNull(account))
-            throw new IllegalArgumentException("Account is required");
+        if (account == null) {
+            throw new IllegalArgumentException("Parameter 'account' is null");
+        }
 
-        if (!Objects.isNull(account.getId()))
+        if (account.getId() != null) {
             throw new IllegalArgumentException("Account.id must be null");
+        }
 
         String encodedPassword = passwordEncoder.encode(account.getCredential().getPassword());
         account.getCredential().setPassword(encodedPassword);
@@ -96,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void updatePersonalInfo(Account account, PersonalInfo personalInfo) {
         if (account == null || personalInfo == null) {
-            throw new IllegalArgumentException("Parameters are null");
+            throw new IllegalArgumentException("Parameters 'account' or 'personalInfo' are null");
         }
 
         Account updatedAccount = COMMIT_PERSONAL_INFO_UPDATES.apply(personalInfo, account);
@@ -108,7 +110,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account updateCredentials(Account account, Credential credential) {
         if (account == null || credential == null) {
-            throw new IllegalArgumentException("Parameters are null");
+            throw new IllegalArgumentException("Parameters 'account' or 'credential' are null");
         }
 
         if (account.getCredential() == null) {
@@ -123,6 +125,10 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public void changePassword(Account account, PasswordChangeRequest passwordChangeRequest) {
+        if (account == null || passwordChangeRequest == null) {
+            throw new IllegalArgumentException("Parameters 'account' or 'passwordChangeRequest' are null");
+        }
+
         String rawCurrentPassword = passwordChangeRequest.currentPassword();
         String newPassword = passwordChangeRequest.newPassword();
 
@@ -144,41 +150,44 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public void deleteAccountById(Long id) {
-        if (Objects.isNull(id))
-            throw new NullPointerException("Id is required");
+        if (Objects.isNull(id)) {
+            throw new IllegalArgumentException("Parameter 'id' is null");
+        }
 
-        Account account = this.accountRepository.findById(id).orElseThrow(
-                () -> new SubentityNotFoundException("Account with id:%s not found".formatted(id), Account.class)
-        );
+        Account account = accountRepository
+                .findById(id)
+                .orElseThrow(() -> new SubentityNotFoundException("Account with id:%s not found".formatted(id), Account.class));
 
         account.setDeleted(true);
-        this.accountRepository.save(account);
+        accountRepository.save(account);
     }
 
 
     @Transactional(readOnly = true)
     @Override
     public boolean existAccountByLogin(String login) {
-        if (Objects.isNull(login))
-            throw new NullPointerException("Login is required");
+        if (Objects.isNull(login)) {
+            throw new IllegalArgumentException("Parameter 'login' is null");
+        }
 
-        return this.accountRepository.existsAccountByCredential_Login(login);
+        return accountRepository.existsAccountByCredential_Login(login);
     }
 
 
     @Override
-    public boolean checkOwnership(Long currentAccountId, Long targetAccountId) {
-        if (Objects.isNull(currentAccountId) || Objects.isNull(targetAccountId))
-            throw new NullPointerException("Parameters is null");
+    public boolean checkOwnership(Long ownerId, Long targetId) {
+        if (Objects.isNull(ownerId) || Objects.isNull(targetId)) {
+            throw new IllegalArgumentException("Parameters 'ownerId' or 'targetId' are null");
+        }
 
-        return Objects.equals(currentAccountId, targetAccountId);
+        return Objects.equals(ownerId, targetId);
     }
 
 
     @Override
-    public void checkOwnershipOrElseThrow(Long currentAccountId, Long targetAccountId) {
-        if (!this.checkOwnership(currentAccountId, targetAccountId)) {
-            String message = "You can chane only your account";
+    public void checkOwnershipOrElseThrow(Long ownerId, Long targetId) {
+        if (!this.checkOwnership(ownerId, targetId)) {
+            String message = "You can access only your account";
             throw new SubentityNotFoundException(message, Account.class);
         }
     }

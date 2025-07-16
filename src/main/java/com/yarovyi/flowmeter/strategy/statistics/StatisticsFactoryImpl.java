@@ -53,28 +53,19 @@ public class StatisticsFactoryImpl implements StatisticsFactory {
             throw new UnsupportedOperationException("Not supported scope: " + params.scope());
         }
 
-        StatInterval statInterval = createStatInterval(params, statisticsSource, queryStrategy);
-        return fillStrategy.fillGaps(statInterval);
+        StatInterval statInterval = createStatInterval(params, statisticsSource);
+        List<EfficiencyView> efficiencyViews = queryStrategy.fetch(params, statisticsSource);
+
+        return fillStrategy.fillGaps(statInterval, efficiencyViews);
     }
 
 
-    private StatInterval createStatInterval(StatParams params,
-                                            StatisticsRepository statisticsSource,
-                                            StatisticsQueryStrategy queryStrategy) {
+    private StatInterval createStatInterval(StatParams params, StatisticsRepository statisticsSource) {
         Integer year = params.getYearDependsScope();
         String interval = params.getIntervalDependsScope();
         String flowTitle = statisticsSource.getFlowTitleByFlowId(params.flowId());
 
-        List<EfficiencyView> exists = queryStrategy.fetch(params, statisticsSource);
-        if (exists.isEmpty()) {
-            return new StatInterval(interval, flowTitle, year, List.of());
-        } else {
-            List<StatPoint> statPoints = exists.stream()
-                    .map(v -> new StatPoint(v.getFullDate(), v.getAveragePercent()))
-                    .toList();
-
-            return new StatInterval(interval, flowTitle, year, statPoints);
-        }
+        return new StatInterval(interval, flowTitle, year, List.of());
     }
 
 

@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import org.instancio.GeneratorSpecProvider;
 import org.instancio.Instancio;

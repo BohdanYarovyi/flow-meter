@@ -21,8 +21,9 @@ public class CaseServiceImpl implements CaseService {
     @Transactional
     @Override
     public Case createCaseForStep(Step step, Case case1) {
-        if (Objects.isNull(case1) || Objects.isNull(step))
-            throw new NullPointerException("case or step are null");
+        if (Objects.isNull(case1) || Objects.isNull(step)) {
+            throw new IllegalArgumentException("Parameters 'case1' or 'step' are null");
+        }
 
         step.getCases().add(case1);
         case1.setStep(step);
@@ -34,11 +35,13 @@ public class CaseServiceImpl implements CaseService {
     @Transactional
     @Override
     public Case edit(Case editedCase) {
-        if (Objects.isNull(editedCase))
-            throw new NullPointerException("editedCase is null");
+        if (Objects.isNull(editedCase)) {
+            throw new IllegalArgumentException("Parameter 'editedCase' is null");
+        }
 
-        if (Objects.isNull(editedCase.getId()))
-            throw new EntityBadRequestException("To update case caseID is required, but it is null");
+        if (Objects.isNull(editedCase.getId())) {
+            throw new EntityBadRequestException("Case.caseId is null");
+        }
 
         Case existCase = this.caseRepository
                 .findById(editedCase.getId())
@@ -53,21 +56,25 @@ public class CaseServiceImpl implements CaseService {
     @Override
     public void deleteCaseById(Long caseId) {
         if (Objects.isNull(caseId))
-            throw new NullPointerException("CaseId is null");
+            throw new IllegalArgumentException("Parameter 'caseId' is null");
 
-        Case case1 = this.caseRepository
+        Case case1 = caseRepository
                 .findById(caseId)
                 .orElseThrow(() -> new SubentityNotFoundException(Case.class));
 
         // soft-delete
         case1.delete();
-        this.caseRepository.save(case1);
+        caseRepository.save(case1);
     }
 
 
     @Transactional(readOnly = true)
     @Override
     public boolean checkOwnership(Long caseId, Long accountId) {
+        if (caseId == null || accountId == null) {
+            throw new IllegalArgumentException("Parameters 'caseId' or 'accountId' are null");
+        }
+
         return this.caseRepository.existsByIdAndAccountId(caseId, accountId);
     }
 
@@ -79,6 +86,5 @@ public class CaseServiceImpl implements CaseService {
             throw new SubentityNotFoundException("Account has not such case", Case.class);
         }
     }
-
 
 }

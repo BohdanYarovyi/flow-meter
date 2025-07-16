@@ -33,10 +33,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public Set<UniqueMonth> getSortedUniqueMonths(Long flowId) {
         if (flowId == null) {
-            throw new IllegalArgumentException("flowId is not present");
+            throw new IllegalArgumentException("Parameter 'flowId' is null");
         }
 
-        Flow flow = this.flowRepository
+        Flow flow = flowRepository
                 .findById(flowId)
                 .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
 
@@ -56,9 +56,17 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new IllegalArgumentException("Parameters are not present");
         }
 
-        this.validateMonth(month);
+        validateMonth(month);
         var params = new StatParams(StatisticsScope.MONTH, flowId, year, month);
-        return this.statisticsFactory.prepareStatistics(params, this.statisticsRepository);
+        return statisticsFactory.prepareStatistics(params, statisticsRepository);
+    }
+
+    private void validateMonth(String month) {
+        try {
+            Month.valueOf(month.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidParametersException("Month parameter is invalid: " + month);
+        }
     }
 
 
@@ -70,7 +78,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         var params = new StatParams(StatisticsScope.LAST_WEEK, flowId, null, null);
-        return this.statisticsFactory.prepareStatistics(params, this.statisticsRepository);
+        return statisticsFactory.prepareStatistics(params, statisticsRepository);
     }
 
 
@@ -82,7 +90,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         var params = new StatParams(StatisticsScope.LAST_MONTH, flowId, null, null);
-        return this.statisticsFactory.prepareStatistics(params, this.statisticsRepository);
+        return statisticsFactory.prepareStatistics(params, statisticsRepository);
     }
 
 
@@ -95,15 +103,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         var params = new StatParams(StatisticsScope.LAST_YEAR, flowId, null, null);
         return this.statisticsFactory.prepareStatistics(params, this.statisticsRepository);
-    }
-
-
-    private void validateMonth(String month) {
-        try {
-            Month.valueOf(month.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidParametersException("Month parameter is invalid: " + month);
-        }
     }
 
 }

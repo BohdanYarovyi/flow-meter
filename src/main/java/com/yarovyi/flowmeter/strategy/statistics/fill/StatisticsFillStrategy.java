@@ -2,15 +2,17 @@ package com.yarovyi.flowmeter.strategy.statistics.fill;
 
 import com.yarovyi.flowmeter.dto.stat.StatInterval;
 import com.yarovyi.flowmeter.dto.stat.StatPoint;
+import com.yarovyi.flowmeter.entity.view.EfficiencyView;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface StatisticsFillStrategy {
 
-    StatInterval fillGaps(StatInterval statInterval);
+    StatInterval fillGaps(StatInterval statInterval, List<EfficiencyView> efficiencyViews);
 
     /**
      * Adds missing {@link StatPoint} entries to the provided list of points,
@@ -38,6 +40,10 @@ public interface StatisticsFillStrategy {
                 points.add(emptyPoint);
             }
         }
+    }
+
+    default List<StatPoint> mapFromEfficiencyView(List<EfficiencyView> efficiencyViews) {
+        return new ArrayList<>(efficiencyViews.stream().map(StatPoint::of).toList());
     }
 
 }

@@ -12,17 +12,14 @@ public class FileReaderServiceImpl implements FileReaderService {
     @Override
     public String readFile(Path path) throws IOException {
         if (path == null) {
-            throw new IllegalArgumentException("Path is required");
+            throw new IllegalArgumentException("Parameter 'path' is required");
         }
 
-        String content = "";
         try {
-            content = Files.readString(path);
+            return Files.readString(path);
         } catch (IOException e) {
             throw new IOException("Failed to read file: " + path, e);
         }
-
-        return content;
     }
 
 }

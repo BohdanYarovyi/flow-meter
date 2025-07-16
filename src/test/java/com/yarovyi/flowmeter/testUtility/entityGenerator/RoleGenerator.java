@@ -1,10 +1,9 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import com.yarovyi.flowmeter.entity.account.Role;
 import org.instancio.Instancio;
 import org.instancio.Model;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.instancio.Select.field;

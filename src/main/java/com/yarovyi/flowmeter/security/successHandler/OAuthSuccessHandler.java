@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final NotificationService notificationService;
 
 
+    @Transactional
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -51,7 +53,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                 Account account = accountOptional.get();
                 securityService.reauthenticate(account, session);
             } else {
-                Account createdAccount = this.createAccountOfGoogle(principal);
+                Account createdAccount = createAccountOfGoogle(principal);
                 securityService.reauthenticate(createdAccount, session);
             }
         }

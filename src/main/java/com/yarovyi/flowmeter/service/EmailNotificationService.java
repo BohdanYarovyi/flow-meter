@@ -29,6 +29,10 @@ public class EmailNotificationService implements NotificationService {
 
     @Override
     public void sendMessageWithPassword(String to, String password) {
+        if (to == null || password == null) {
+            throw new IllegalArgumentException("Parameters 'to' or 'password' are null");
+        }
+
         var htmlFileName = "SendPasswordToEmailForm.html";
         var htmlPath = BASE_LETTERS_PATH.resolve(htmlFileName);
 
@@ -36,12 +40,9 @@ public class EmailNotificationService implements NotificationService {
             String subject = "Welcome!";
             String html = fileReaderService
                     .readFile(htmlPath)
-                    .formatted(password);
+                    .replace("{{password}}", password);
 
             sendHtml(to, subject, html);
-        } catch (IllegalFormatException e) {
-            log.error("{} has problem with format", htmlPath, e);
-            throw new EmailNotificationException("Failed to create letter for: " + to, e);
         } catch (HtmlMailException e) {
             log.error("Failed to send letter, cause: {}", e.getMessage(), e);
             throw new EmailNotificationException("Failed to send letter to: " + to, e);
@@ -61,9 +62,9 @@ public class EmailNotificationService implements NotificationService {
             helper.setText(html, true);
 
             sender.send(message);
-        } catch (MailException e) {
-            throw new HtmlMailException("Failed to configure letter");
         } catch (MessagingException e) {
+            throw new HtmlMailException("Failed to configure letter");
+        } catch (MailException e) {
             throw new HtmlMailException("Failed to send letter");
         }
     }
