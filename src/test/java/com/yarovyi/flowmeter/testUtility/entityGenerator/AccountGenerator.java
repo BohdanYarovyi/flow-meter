@@ -1,20 +1,17 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import com.yarovyi.flowmeter.entity.account.Account;
-import com.yarovyi.flowmeter.entity.account.Role;
-import com.yarovyi.flowmeter.entity.flow.Flow;
 import org.instancio.Instancio;
 import org.instancio.Model;
-import org.instancio.Select;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.BaseEntityGenerator.generateWithBaseEntity;
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.CredentialGenerator.oneCredential;
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.FlowGenerator.flows;
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.PersonalInfoGenerator.onePersonalInfo;
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.RoleGenerator.roles;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.BaseEntityGenerator.generateWithBaseEntity;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.CredentialGenerator.oneCredential;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.FlowGenerator.flows;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.PersonalInfoGenerator.onePersonalInfo;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.RoleGenerator.roles;
 import static org.instancio.Select.field;
 
 public class AccountGenerator implements AccountGeneratorRule {
@@ -39,7 +36,7 @@ public class AccountGenerator implements AccountGeneratorRule {
 
     private static Model<Account> base() {
         var possibleRoles = roles(3);
-        var flows = List.copyOf(flows(3, 6, 4));
+        var flows = new ArrayList(flows(3, 6, 4));
         var credentials = oneCredential();
         var personalInfo = onePersonalInfo();
 

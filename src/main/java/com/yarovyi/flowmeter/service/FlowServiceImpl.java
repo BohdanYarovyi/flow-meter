@@ -24,36 +24,38 @@ public class FlowServiceImpl implements FlowService {
     @Transactional(readOnly = true)
     @Override
     public List<Flow> getAll() {
-        return this.flowRepository.findAll();
+        return flowRepository.findAll();
     }
-
 
     @Transactional(readOnly = true)
     @Override
     public List<Flow> getAllByAccountId(Long accountId) {
-        if (Objects.isNull(accountId))
-            throw new NullPointerException("accountId is required");
+        if (accountId == null) {
+            throw new IllegalArgumentException("Parameter 'accountId' is null");
+        }
 
-        return this.flowRepository.findAllByAccountIdWithEagerFetch(accountId);
+        return flowRepository.findAllByAccountIdWithEagerFetch(accountId);
     }
-
 
     @Transactional(readOnly = true)
     @Override
     public Optional<Flow> getById(Long id) {
-        if (Objects.isNull(id))
-            throw new NullPointerException("id is required");
+        if (id == null) {
+            throw new IllegalArgumentException("Parameter 'id' is null");
+        }
 
-        return this.flowRepository.findById(id);
+        return flowRepository.findById(id);
     }
-
 
     @Transactional(readOnly = true)
     @Override
     public boolean checkOwnership(Long flowId, Long accountId) {
-        return this.flowRepository.existsByIdAndAccount_Id(flowId, accountId);
-    }
+        if (flowId == null || accountId == null) {
+            throw new IllegalArgumentException("Parameters 'flowId' or 'accountId' is null");
+        }
 
+        return flowRepository.existsByIdAndAccount_Id(flowId, accountId);
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -62,51 +64,52 @@ public class FlowServiceImpl implements FlowService {
             throw new SubentityNotFoundException("Account has not such flow", Flow.class);
     }
 
-
     @Transactional
     @Override
-    public Flow update(Flow flow) {
-        if (Objects.isNull(flow))
-            throw new NullPointerException("flow is null");
+    public Flow update(Flow updated) {
+        if (updated == null) {
+            throw new IllegalArgumentException("Parameter 'updated' is null");
+        }
 
-        if (Objects.isNull(flow.getId()))
-            throw new EntityBadRequestException("To edit flow flowID is required, but it is null");
+        if (updated.getId() == null) {
+            throw new EntityBadRequestException("Flow.id is null");
+        }
 
-        Flow existsFlow = this.flowRepository
-                .findById(flow.getId())
+        Flow existsFlow = flowRepository
+                .findById(updated.getId())
                 .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
-        existsFlow = COMMIT_FLOW_UPDATE.apply(existsFlow, flow);
+        existsFlow = COMMIT_FLOW_UPDATE.apply(existsFlow, updated);
 
-        return this.flowRepository.save(existsFlow);
+        return flowRepository.save(existsFlow);
     }
-
 
     @Transactional
     @Override
     public void delete(Long id) {
-        if (Objects.isNull(id))
-            throw new NullPointerException("Flow id is null");
+        if (id == null) {
+            throw new IllegalArgumentException("Parameter 'id' is null");
+        }
 
-        Flow flow = this.flowRepository
+        Flow flow = flowRepository
                 .findById(id)
                 .orElseThrow(() -> new SubentityNotFoundException(Flow.class));
 
         // soft-delete
         flow.delete();
-        this.flowRepository.save(flow);
+        flowRepository.save(flow);
     }
-
 
     @Transactional
     @Override
     public Flow createFlowForAccount(Flow flow, Account account) {
-        if (Objects.isNull(flow) || Objects.isNull(account))
-            throw new NullPointerException("flow or account is null");
+        if (flow == null || account == null) {
+            throw new IllegalArgumentException("Parameters 'flow' or 'account' are null");
+        }
 
         account.getFlows().add(flow);
         flow.setAccount(account);
 
-        return this.flowRepository.save(flow);
+        return flowRepository.save(flow);
     }
 
 }

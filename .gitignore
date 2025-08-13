@@ -1,5 +1,6 @@
 **/credentials.txt
 **/oauth_google_client_secret.json
+**/secret/**
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -10,6 +11,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/runConfigurations/
 *.iws
 *.iml
 *.ipr

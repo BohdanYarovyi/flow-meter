@@ -2,6 +2,7 @@ package com.yarovyi.flowmeter.strategy.statistics.fill;
 
 import com.yarovyi.flowmeter.dto.stat.StatInterval;
 import com.yarovyi.flowmeter.dto.stat.StatPoint;
+import com.yarovyi.flowmeter.entity.view.EfficiencyView;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -12,9 +13,9 @@ import java.util.List;
 public class StatisticsMonthFillStrategy implements StatisticsFillStrategy {
 
     @Override
-    public StatInterval fillGaps(StatInterval statInterval) {
+    public StatInterval fillGaps(StatInterval statInterval, List<EfficiencyView> efficiencyViews) {
         YearMonth yearMonth = getYearMonth(statInterval);
-        List<StatPoint> efficiency = statInterval.points();
+        List<StatPoint> efficiency = mapFromEfficiencyView(efficiencyViews);
 
         StatPoint[] temp = new StatPoint[yearMonth.lengthOfMonth()];
         for (StatPoint point : efficiency) {

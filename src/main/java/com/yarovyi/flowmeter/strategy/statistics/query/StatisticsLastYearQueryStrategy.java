@@ -36,6 +36,7 @@ public class StatisticsLastYearQueryStrategy implements StatisticsQueryStrategy 
                     .month(projection.getMonth())
                     .fullDate(fullDate)
                     .averagePercent(projection.getAveragePercent())
+                    .averageCount(projection.getAverageCount())
                     .build();
 
             lastYearEfficientViews.add(efficientView);

@@ -113,6 +113,7 @@ async function setFlowSelected(flowItem, flow) {
     STATE.selectedScope = null;
 
     await fillMonths(flow.id);
+    clearSelections();
 }
 
 function disableOptionPane() {

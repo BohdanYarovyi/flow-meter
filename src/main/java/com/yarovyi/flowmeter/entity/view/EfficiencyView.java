@@ -1,9 +1,6 @@
 package com.yarovyi.flowmeter.entity.view;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -34,4 +31,6 @@ public class EfficiencyView {
     private LocalDate fullDate;
     @Column(name = "average_percent")
     private Integer averagePercent;
+    @Transient
+    private Integer averageCount;
 }

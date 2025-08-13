@@ -1,4 +1,4 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import com.yarovyi.flowmeter.entity.account.PersonalInfo;
 import org.instancio.Instancio;

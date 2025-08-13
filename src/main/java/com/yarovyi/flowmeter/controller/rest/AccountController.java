@@ -132,7 +132,7 @@ public class AccountController {
         this.accountService.checkOwnershipOrElseThrow(currentAccount.getId(), accountId);
 
         this.accountService.changePassword(currentAccount, passwordChangeRequest);
-        this.securityService.deauthenticate(currentAccount, session);
+        this.securityService.deauthenticate(session);
 
         return ResponseEntity
                 .noContent()

@@ -1,12 +1,9 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import com.yarovyi.flowmeter.entity.BaseEntity;
 import com.yarovyi.flowmeter.entity.account.Account;
 import org.instancio.Instancio;
 import org.instancio.InstancioApi;
-
-import java.time.LocalDateTime;
-import java.time.Month;
 
 import static org.instancio.Select.field;
 

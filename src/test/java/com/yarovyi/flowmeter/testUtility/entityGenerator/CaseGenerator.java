@@ -1,13 +1,12 @@
-package com.yarovyi.flowmeter.service.testUtility.entityGenerator;
+package com.yarovyi.flowmeter.testUtility.entityGenerator;
 
 import com.yarovyi.flowmeter.entity.flow.Case;
 import org.instancio.Instancio;
 import org.instancio.Model;
 
-import java.util.List;
 import java.util.Set;
 
-import static com.yarovyi.flowmeter.service.testUtility.entityGenerator.BaseEntityGenerator.generateWithBaseEntity;
+import static com.yarovyi.flowmeter.testUtility.entityGenerator.BaseEntityGenerator.generateWithBaseEntity;
 import static org.instancio.Select.field;
 
 public class CaseGenerator implements CaseGeneratorRule {

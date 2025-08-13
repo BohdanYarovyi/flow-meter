@@ -27,8 +27,9 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void loginByUsernamePassword(LoginRequest loginRequest, HttpSession session) {
-        if (Objects.isNull(loginRequest) || Objects.isNull(session))
-            throw new NullPointerException("LoginRequest or session is null in parameters");
+        if (loginRequest == null || session == null) {
+            throw new IllegalArgumentException("Parameters 'loginRequest' or 'session' are null");
+        }
 
         try {
             var authToken = new UsernamePasswordAuthenticationToken(
@@ -64,11 +65,19 @@ public class SecurityServiceImpl implements SecurityService {
     // maybe i will want to make login at the registration moment
     @Override
     public Long register(Account account, AccountService accountService) {
+        if (account == null || accountService == null) {
+            throw new IllegalArgumentException("Parameters 'account' or 'accountService' are null");
+        }
+
         return accountService.createAccount(account);
     }
 
     @Override
     public void reauthenticate(Account account, HttpSession session) {
+        if (account == null || session == null) {
+            throw new IllegalArgumentException("Parameters 'account' or 'session' are null");
+        }
+
         var username = account.getCredential().getLogin();
         var authorities = account.getRoles().stream()
                 .map(Role::getName)
@@ -82,7 +91,11 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void deauthenticate(Account account, HttpSession session) {
+    public void deauthenticate(HttpSession session) {
+        if (session == null) {
+            throw new IllegalArgumentException("Parameter 'session' is null");
+        }
+
         SecurityContext securityContext = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
         if (securityContext != null) {
             securityContext.setAuthentication(null);
@@ -91,7 +104,7 @@ public class SecurityServiceImpl implements SecurityService {
         SecurityContextHolder.clearContext();
     }
 
-    public Authentication authenticate(Authentication authentication) {
+    private Authentication authenticate(Authentication authentication) {
         return this.authenticationManager.authenticate(authentication);
     }
 

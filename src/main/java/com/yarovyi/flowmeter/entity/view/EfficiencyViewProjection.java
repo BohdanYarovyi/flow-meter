@@ -10,4 +10,5 @@ public interface EfficiencyViewProjection {
     Integer getYear();
     String getMonth();
     Integer getAveragePercent();
+    Integer getAverageCount();
 }
