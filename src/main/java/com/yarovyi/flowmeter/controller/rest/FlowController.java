@@ -72,7 +72,10 @@ public class FlowController {
                 .ok(FLOW_TO_DTO.apply(flow));
     }
 
-
+    // todo BUG: When i create new step, it is goes to db and shows on the web page,
+    //      but it shows really wrong on the page with incorrect percents.
+    //      Also, after i reload the page, it is not visible the step among other days
+    //      in the list that i have created.
     @PostMapping("/{flowId:\\d+}/steps")
     public ResponseEntity<StepDto> createStepForFlow(@PathVariable(name = "flowId") Long flowId,
                                                   @RequestBody @Validated StepDto stepDto,

@@ -29,7 +29,7 @@ public class Flow extends BaseEntity {
     @JsonIgnore
     @ManyToOne
     private Account account;
-    @OneToMany(mappedBy = "flow")
+    @OneToMany(mappedBy = "flow", fetch = FetchType.EAGER)
     private Set<Step> steps;
 
     /**

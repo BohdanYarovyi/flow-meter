@@ -84,8 +84,14 @@ class FlowServiceImplTest {
         account.getFlows().forEach(f -> f.setAccount(account));
 
         // mockito
-        Mockito.when(flowRepository.findAllByAccountIdWithEagerFetch(account.getId()))
+        Mockito.when(flowRepository.findFlowsByAccount_Id(account.getId()))
                 .thenReturn(account.getFlows());
+
+        Mockito.when(flowRepository.fetchStepsToFlows(account.getFlows()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mockito.when(flowRepository.fetchCasesToFlowsWithSteps(account.getFlows()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // when
         List<Flow> result = flowService.getAllByAccountId(account.getId());
@@ -105,7 +111,7 @@ class FlowServiceImplTest {
         List<Flow> flows = List.of();
 
         // mockito
-        Mockito.when(flowRepository.findAllByAccountIdWithEagerFetch(accountId))
+        Mockito.when(flowRepository.findFlowsByAccount_Id(accountId))
                 .thenReturn(flows);
 
         // when

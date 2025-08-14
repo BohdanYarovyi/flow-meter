@@ -25,7 +25,7 @@ public class Step extends BaseEntity {
     @JsonIgnore
     @ManyToOne
     private Flow flow;
-    @OneToMany(mappedBy = "step")
+    @OneToMany(mappedBy = "step", fetch = FetchType.EAGER)
     private Set<Case> cases;
 
     /**

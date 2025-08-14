@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.yarovyi.flowmeter.mapper.FlowMapper.COMMIT_FLOW_UPDATE;
@@ -34,7 +33,11 @@ public class FlowServiceImpl implements FlowService {
             throw new IllegalArgumentException("Parameter 'accountId' is null");
         }
 
-        return flowRepository.findAllByAccountIdWithEagerFetch(accountId);
+        List<Flow> flows = flowRepository.findFlowsByAccount_Id(accountId);
+        flows = flowRepository.fetchStepsToFlows(flows);
+        flows = flowRepository.fetchCasesToFlowsWithSteps(flows);
+
+        return flows;
     }
 
     @Transactional(readOnly = true)

@@ -15,8 +15,8 @@ public interface StepRepository extends JpaRepository<Step, Long> {
     boolean existsByIdAndFlow_Account_Id(Long stepId, Long accountId);
 
     @Query(value = """
-        SELECT s FROM Step s
-        JOIN FETCH s.cases
+        SELECT DISTINCT s FROM Step s
+        LEFT JOIN FETCH s.cases
         WHERE s.id = :stepId
     """)
     Optional<Step> getStepWithEagerFetchById(@Param("stepId") Long stepId);
